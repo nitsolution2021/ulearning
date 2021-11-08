@@ -10,14 +10,14 @@ public class MailService {
 	@Autowired
 	JavaMailSender mailSender;
 
-	    public void sendEmail(String from,String to) {
+	    public void sendEmail(String from,String to,String body) {
 
 		SimpleMailMessage message = new SimpleMailMessage();
 
 		message.setFrom(from);
 		message.setTo(to);
-		message.setSubject("This is a plain text email");
-		message.setText("Hello guys! This is a plain text email.");
+		message.setSubject("Forgot Password Link");
+		message.setText("Please click on link and reset your password:-  "+body);
 		mailSender.send(message);
 
 	}
