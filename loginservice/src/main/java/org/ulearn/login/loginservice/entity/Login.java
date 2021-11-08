@@ -11,7 +11,7 @@ public class Login {
 
 	@Id
 	@Column(name = "UID")
-	private int uId;
+	private int uid;
 	@Column(name = "FNAME")
 	private String firstName;
 	@Column(name = "LNAME")
@@ -23,7 +23,7 @@ public class Login {
 	@Column(name = "PASSWORD")
 	private String password;
 	@Column(name = "PPIC")
-	private String pPic;
+	private String ppic;
 	@Column(name = "ATOKEN")
 	private String accessToken;
 
@@ -32,32 +32,32 @@ public class Login {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Login(int uId, String firstName, String lastName, String email, String userName, String password,
-			String pPic, String accessToken) {
+	public Login(int uid, String firstName, String lastName, String email, String userName, String password,
+			String ppic, String accessToken) {
 		super();
-		this.uId = uId;
+		this.uid = uid;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
 		this.userName = userName;
 		this.password = password;
-		this.pPic = pPic;
+		this.ppic = ppic;
 		this.accessToken = accessToken;
 	}
 
 	@Override
 	public String toString() {
-		return "Login [uId=" + uId + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email
-				+ ", userName=" + userName + ", password=" + password + ", pPic=" + pPic + ", accessToken="
+		return "Login [uid=" + uid + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email
+				+ ", userName=" + userName + ", password=" + password + ", ppic=" + ppic + ", accessToken="
 				+ accessToken + "]";
 	}
 
-	public int getuId() {
-		return uId;
+	public int getUid() {
+		return uid;
 	}
 
-	public void setuId(int uId) {
-		this.uId = uId;
+	public void setUid(int uid) {
+		this.uid = uid;
 	}
 
 	public String getFirstName() {
@@ -100,12 +100,12 @@ public class Login {
 		this.password = password;
 	}
 
-	public String getpPic() {
-		return pPic;
+	public String getPpic() {
+		return ppic;
 	}
 
-	public void setpPic(String pPic) {
-		this.pPic = pPic;
+	public void setPpic(String ppic) {
+		this.ppic = ppic;
 	}
 
 	public String getAccessToken() {
