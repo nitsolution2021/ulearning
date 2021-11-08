@@ -3,6 +3,9 @@ package org.ulearn.login.loginservice.contoller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.ulearn.login.loginservice.entity.Login;
 import org.ulearn.login.loginservice.repository.LoginRepository;
 import org.ulearn.login.loginservice.services.MailService;
@@ -54,6 +57,11 @@ public class LoginContoller {
 		Login login = new Login();
 		
 		return "";
+	}
+	
+	@PostMapping("/changePassword")
+	public void changePassword(@RequestBody String name, @RequestHeader(name = "Authorization") String token) {
+		
 	}
 
 }
