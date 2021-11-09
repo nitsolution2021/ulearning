@@ -37,7 +37,7 @@ public class LoginContoller {
 
 	@Autowired
 	private LoginRepository loginRepository;
-	
+
 	@Autowired
 	private LoginResetRepo loginResetRepo;
 
@@ -67,26 +67,37 @@ public class LoginContoller {
 		String forgotPasswordLink = "https://ulearn.nichetechnosolution.com/forgotpassword/" + uuid.toString() + "/"
 				+ encodedString;
 		Optional<LoginEntity> findByUserName = loginRepository.findByUserName(email);
-		if(findByUserName.isPresent()) {
+		if (findByUserName.isPresent()) {
 			LoginResetEntity loginResetEntity = new LoginResetEntity();
 			loginResetEntity.setuId(findByUserName.get().getUid());
 			loginResetEntity.setPrToken(forgotPasswordLink);
 			loginResetEntity.setStatus("NEW");
 			loginResetEntity.setCreatedOn(new Date());
 			LoginResetEntity save = loginResetRepo.save(loginResetEntity);
-			if(!save.equals(null)) {
-				mailService.sendEmail("soumendolui077@gmail.com", findByUserName.get().getEmail() ,forgotPasswordLink);
+			if (!save.equals(null)) {
+				mailService.sendEmail("soumendolui077@gmail.com", findByUserName.get().getEmail(), forgotPasswordLink);
 			}
-			
-	}
+
+		}
 		return forgotPasswordLink;
 	}
 
-public String resetPassword() {
-	LoginEntity login = new LoginEntity();
-
-	return "";
-}
+	public String resetPassword(@PathVariable("link") String link , @RequestBody GlobalEntity globalEntity) {
+		LoginEntity login = new LoginEntity();
+		Optional<LoginResetEntity> findByPrToken = loginResetRepo.findByPrToken(link);
+		
+		if(findByPrToken.isPresent()) {
+			LoginResetEntity loginResetEntity = findByPrToken.get();
+			Optional<LoginEntity> findById = loginRepository.findById(loginResetEntity.getuId());
+			if(findById.isPresent()) {
+				
+			}
+		}else {
+			return "throw error";
+		}
+		
+		return "";
+	}
 
 	@PostMapping("/changePassword")
 	public GlobalResponse changePassword(@RequestBody GlobalEntity globalEntity,
