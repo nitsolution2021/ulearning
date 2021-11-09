@@ -11,7 +11,7 @@ public class LoginEntity {
 
 	@Id
 	@Column(name = "UID")
-	private int uid;
+	private Long uid;
 	@Column(name = "FNAME")
 	private String firstName;
 	@Column(name = "LNAME")
@@ -32,7 +32,7 @@ public class LoginEntity {
 		// TODO Auto-generated constructor stub
 	}
 
-	public LoginEntity(int uid, String firstName, String lastName, String email, String userName, String password,
+	public LoginEntity(Long uid, String firstName, String lastName, String email, String userName, String password,
 			String ppic, String accessToken) {
 		super();
 		this.uid = uid;
@@ -52,11 +52,11 @@ public class LoginEntity {
 				+ accessToken + "]";
 	}
 
-	public int getUid() {
+	public Long getUid() {
 		return uid;
 	}
 
-	public void setUid(int uid) {
+	public void setUid(Long uid) {
 		this.uid = uid;
 	}
 

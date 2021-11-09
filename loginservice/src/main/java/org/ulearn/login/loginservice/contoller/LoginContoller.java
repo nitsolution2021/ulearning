@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 import org.ulearn.login.loginservice.entity.LoginEntity;
+import org.ulearn.login.loginservice.entity.LoginResetEntity;
 import org.ulearn.login.loginservice.repository.LoginRepository;
+import org.ulearn.login.loginservice.repository.LoginResetRepo;
 import org.ulearn.login.loginservice.services.MailService;
 
 
@@ -35,6 +37,9 @@ public class LoginContoller {
 	@Autowired
 	private LoginRepository loginRepository;
 	
+	@Autowired
+	private LoginResetRepo loginResetRepo;
+	
 	@GetMapping("/sendmail")
 	public String sendMail() {
 		mailService.sendEmail("soumendolui077@gmail.com", "shantanurong44@gmail.com","");
@@ -56,7 +61,16 @@ public class LoginContoller {
 		String forgotPasswordLink = "https://ulearn.nichetechnosolution.com/forgotpassword/"+uuid.toString()+"/"+encodedString;
 		Optional<LoginEntity> findByUserName = loginRepository.findByUserName(email);
 		if(findByUserName.isPresent()) {
-			mailService.sendEmail("soumendolui077@gmail.com", findByUserName.get().getEmail() ,forgotPasswordLink);
+			LoginResetEntity loginResetEntity = new LoginResetEntity();
+			loginResetEntity.setuId(findByUserName.get().getUid());
+			loginResetEntity.setPrToken(forgotPasswordLink);
+			loginResetEntity.setStatus("NEW");
+			loginResetEntity.setCreatedOn(new Date());
+			LoginResetEntity save = loginResetRepo.save(loginResetEntity);
+			if(!save.equals(null)) {
+				mailService.sendEmail("soumendolui077@gmail.com", findByUserName.get().getEmail() ,forgotPasswordLink);
+			}
+			
 		}
 		return forgotPasswordLink;
 	}
