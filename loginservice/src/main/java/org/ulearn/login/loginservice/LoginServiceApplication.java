@@ -31,16 +31,6 @@ public class LoginServiceApplication implements CommandLineRunner{
 	@Autowired
 	private YMLConfig myConfig;
 	
-	
-	
-	public static void main(String[] args) {
-		SpringApplication.run(LoginServiceApplication.class, args);
-		LOGGER.info("In Main Method");
-		
-	}
-	
-
-	
 	@Bean
     public JavaMailSender javaMailSender() {
 		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
@@ -65,6 +55,12 @@ public class LoginServiceApplication implements CommandLineRunner{
 		LOGGER.info("contextpath : "+myConfig.getContextpath());
 		LOGGER.info("servers: "+myConfig.getServers());
 		LOGGER.info("-------------------------------------");
+	}
+	
+	public static void main(String[] args) {
+		SpringApplication.run(LoginServiceApplication.class, args);
+		LOGGER.info("In LoginServiceApplication Main Method");
+		
 	}
 	
 	
