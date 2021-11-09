@@ -9,8 +9,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.ulearn.licenseservice.config.YMLConfig;
 
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
 @SpringBootApplication
 @ComponentScan(basePackages = {"org.ulearn.licenseservice.*"})
+@EnableSwagger2
 public class LicenseserviceApplication implements CommandLineRunner {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(LicenseserviceApplication.class);
