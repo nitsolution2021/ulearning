@@ -7,7 +7,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "tbl_login")
-public class Login {
+public class LoginEntity {
 
 	@Id
 	@Column(name = "UID")
@@ -27,12 +27,12 @@ public class Login {
 	@Column(name = "ATOKEN")
 	private String accessToken;
 
-	public Login() {
+	public LoginEntity() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public Login(int uid, String firstName, String lastName, String email, String userName, String password,
+	public LoginEntity(int uid, String firstName, String lastName, String email, String userName, String password,
 			String ppic, String accessToken) {
 		super();
 		this.uid = uid;

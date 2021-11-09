@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-import org.ulearn.login.loginservice.entity.Login;
+import org.ulearn.login.loginservice.entity.LoginEntity;
 import org.ulearn.login.loginservice.repository.LoginRepository;
 import org.ulearn.login.loginservice.services.MailService;
 
@@ -54,7 +54,7 @@ public class LoginContoller {
 		byte[] decodedBytes = Base64.getDecoder().decode(encodedString);
 		String decodedString = new String(decodedBytes);
 		String forgotPasswordLink = "https://ulearn.nichetechnosolution.com/forgotpassword/"+uuid.toString()+"/"+encodedString;
-		Optional<Login> findByUserName = loginRepository.findByUserName(email);
+		Optional<LoginEntity> findByUserName = loginRepository.findByUserName(email);
 		if(findByUserName.isPresent()) {
 			mailService.sendEmail("soumendolui077@gmail.com", findByUserName.get().getEmail() ,forgotPasswordLink);
 		}
@@ -62,7 +62,7 @@ public class LoginContoller {
 	}
 	
 	public String resetPassword() {
-		Login login = new Login();
+		LoginEntity login = new LoginEntity();
 		
 		return "";
 	}
