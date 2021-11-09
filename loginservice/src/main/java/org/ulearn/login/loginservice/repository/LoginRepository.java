@@ -7,5 +7,9 @@ import org.ulearn.login.loginservice.entity.LoginEntity;
 
 
 public interface LoginRepository extends JpaRepository<LoginEntity, Long> {
+
 	Optional<LoginEntity> findByUserName(String userName);
+
+	public Optional<LoginEntity> findByEmail(String email);
+
 }
