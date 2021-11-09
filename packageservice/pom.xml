@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>org.ulearn</groupId>
-	<artifactId>Instituteservice</artifactId>
+	<artifactId>packageservice</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Instituteservice</name>
-	<description>This service for institute</description>
+	<name>packageservice</name>
+	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>1.8</java.version>
 	</properties>
