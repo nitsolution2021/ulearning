@@ -27,14 +27,26 @@ public class InstuteController {
 @Autowired
  private InstituteRepo instituteRepo;
 	
-	@GetMapping("/all")
-	public String getInstute() {
-		return "Welcone to institute";
+	@GetMapping("/list")
+	public List<InstituteEntrity> getInstute() {
+		LOGGER.info("Inside - InstituteController.getInstute()");
+		
+		try {
+			List<InstituteEntrity> findAll = instituteRepo.findAll();
+			if (findAll.size() < 1) {
+				throw new CustomeException("Institute Not Found!");
+			}else {				
+				return findAll;
+			}			
+		} catch (Exception e) {
+			throw new CustomeException(e.getMessage());
+		}
+		
 	}
 	
 	@PostMapping("/add")
 	public GlobalResponse postInstituteDetails(@RequestBody InstituteEntrity instituteEntrity) {
-	LOGGER.info("Inside - InstituteController.postInstituteDetails()");
+		LOGGER.info("Inside - InstituteController.postInstituteDetails()");
 		
 	try {
 		List<InstituteEntrity> findByInstituteName = instituteRepo.findByInstName(instituteEntrity.getInstName());
