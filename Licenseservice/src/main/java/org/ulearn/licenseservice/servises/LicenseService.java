@@ -21,12 +21,9 @@ public class LicenseService {
 	public GlobalResponse addLicense( LicenseEntity license ) {
 	
 		try {
-			
-			if(! fieldValidation.isEmpty(license.getLcType()) & ! fieldValidation.isEmpty(license.getLcCreatDate()) & ! fieldValidation.isEmpty(license.getLcEndDate()) ) {
 				
 				LicenseEntity licenseAdd = new LicenseEntity();
 				
-				licenseAdd.setInstId(license.getInstId());
 				licenseAdd.setLcCreatDate(license.getLcCreatDate());
 				licenseAdd.setLcType(license.getLcType());
 				licenseAdd.setLcStype(license.getLcStype());
@@ -43,11 +40,6 @@ public class LicenseService {
 				LicenseRepo.save(licenseAdd);
 				
 				return new GlobalResponse("Success","License Add successfully");
-				
-			}
-			else {
-				return new GlobalResponse("Error", "Validation Error some data is messing");
-			}
 			
 		}
 		catch(Exception ex) {
