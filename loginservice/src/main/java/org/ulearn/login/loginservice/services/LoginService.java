@@ -6,21 +6,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.ulearn.login.loginservice.entity.GlobalEntity;
 import org.ulearn.login.loginservice.entity.GlobalResponse;
-import org.ulearn.login.loginservice.entity.Login;
+import org.ulearn.login.loginservice.entity.LoginEntity;
 import org.ulearn.login.loginservice.repository.LoginRepository;
 
 @Service
 public class LoginService {
-	
+
 	@Autowired
 	private LoginRepository loginRepository;
-	
+
 	public GlobalResponse changePass(GlobalEntity globalEntity, String token) {
 		if (!token.equals(null)) {
-			Optional<Login> findByEmail = loginRepository.findByEmail(globalEntity.getEmail());
+			Optional<LoginEntity> findByEmail = loginRepository.findByEmail(globalEntity.getEmail());
 			if (findByEmail.isPresent()) {
 				if (findByEmail.get().getPassword().equals(globalEntity.getOldPass())) {
-					Login login = new Login();
+					LoginEntity login = new LoginEntity();
 					login.setFirstName(findByEmail.get().getFirstName());
 					login.setLastName(findByEmail.get().getLastName());
 					login.setAccessToken(findByEmail.get().getAccessToken());
@@ -30,15 +30,15 @@ public class LoginService {
 					login.setUid(findByEmail.get().getUid());
 					login.setUserName(findByEmail.get().getUserName());
 					loginRepository.save(login);
-					return new GlobalResponse("Success","Password changed");
+					return new GlobalResponse("Success", "Password changed");
 				} else {
-					return new GlobalResponse("Faild","Password not match");
+					return new GlobalResponse("Faild", "Password not match");
 				}
 			} else {
-				return new GlobalResponse("Faild","User not found");
+				return new GlobalResponse("Faild", "User not found");
 			}
 		} else {
-			return new GlobalResponse("Faild","Token not valid");
+			return new GlobalResponse("Faild", "Token not valid");
 		}
 	}
 }
