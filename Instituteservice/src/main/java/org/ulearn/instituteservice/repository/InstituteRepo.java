@@ -7,4 +7,5 @@ import org.ulearn.instituteservice.entity.InstituteEntrity;
 
 public interface InstituteRepo extends JpaRepository<InstituteEntrity, Long> {
 	List<InstituteEntrity> findByInstName(String instName);
+	
 }
