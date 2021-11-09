@@ -6,8 +6,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.ulearn.login.loginservice.entity.GlobalEntity;
+import org.ulearn.login.loginservice.entity.GlobalResponse;
 import org.ulearn.login.loginservice.entity.Login;
 import org.ulearn.login.loginservice.repository.LoginRepository;
+import org.ulearn.login.loginservice.services.LoginService;
 import org.ulearn.login.loginservice.services.MailService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,6 +30,9 @@ public class LoginContoller {
 	
 	@Autowired
 	private LoginRepository loginRepository;
+	
+	@Autowired
+	private LoginService loginService;
 	
 	@GetMapping("/sendmail")
 	public String sendMail() {
@@ -60,7 +66,8 @@ public class LoginContoller {
 	}
 	
 	@PostMapping("/changePassword")
-	public void changePassword(@RequestBody String name, @RequestHeader(name = "Authorization") String token) {
+	public GlobalResponse changePassword(@RequestBody GlobalEntity globalEntity, @RequestHeader(name = "Authorization") String token) {
+		return this.loginService.changePass(globalEntity, token);
 		
 	}
 
