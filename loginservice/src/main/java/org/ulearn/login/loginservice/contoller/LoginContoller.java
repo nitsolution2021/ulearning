@@ -34,6 +34,8 @@ public class LoginContoller {
 
 	@Autowired
 	private MailService mailService;
+	
+
 
 	@Autowired
 	private LoginRepository loginRepository;
@@ -46,8 +48,8 @@ public class LoginContoller {
 
 	@GetMapping("/sendmail")
 	public String sendMail() {
-		mailService.sendEmail("soumendolui077@gmail.com", "shantanurong44@gmail.com", "");
-		return "send successfully";
+		mailService.sendEmail("soumendolui077@gmail.com", "ahadul@nitsolution.in", "");
+		return "send successfully"; 
 	}
 
 	@GetMapping("/mailForgotPasswordLink")
@@ -83,14 +85,15 @@ public class LoginContoller {
 	}
 
 	public String resetPassword(@PathVariable("link") String link , @RequestBody GlobalEntity globalEntity) {
-		LoginEntity login = new LoginEntity();
 		Optional<LoginResetEntity> findByPrToken = loginResetRepo.findByPrToken(link);
 		
 		if(findByPrToken.isPresent()) {
 			LoginResetEntity loginResetEntity = findByPrToken.get();
 			Optional<LoginEntity> findById = loginRepository.findById(loginResetEntity.getuId());
 			if(findById.isPresent()) {
-				
+				LoginEntity loginEntity = findById.get();
+				loginEntity.setPassword(globalEntity.getNewPass());
+				loginRepository.save(loginEntity);
 			}
 		}else {
 			return "throw error";
