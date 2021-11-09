@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.ulearn.licenseservice.entity.GlobalResponse;
 import org.ulearn.licenseservice.entity.LicenseEntity;
 import org.ulearn.licenseservice.servises.LicenseService;
 
@@ -22,10 +23,10 @@ public class LicenseController {
 	
 	
 	@PostMapping("/add")
-	public void addLicense(@RequestBody LicenseEntity licenseEntity ) {
+	public GlobalResponse addLicense(@RequestBody LicenseEntity licenseEntity ) {
 		
 		LOGGER.info("Inside the LicenseController Add License");
 		
-		licenseService.addLicense(licenseEntity);
+		return this.licenseService.addLicense(licenseEntity);
 	}
 }

@@ -1,9 +1,13 @@
 package org.ulearn.licenseservice.servises;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.ulearn.licenseservice.entity.GlobalResponse;
 import org.ulearn.licenseservice.entity.LicenseEntity;
 import org.ulearn.licenseservice.repository.LicenseRepo;
+import org.ulearn.licenseservice.validation.FieldValidation;
 
 @Service
 public class LicenseService {
@@ -11,18 +15,45 @@ public class LicenseService {
 	@Autowired 
 	public LicenseRepo LicenseRepo;
 	
-	public void addLicense( LicenseEntity license ) {
+	@Autowired
+	public FieldValidation fieldValidation;
+	
+	public GlobalResponse addLicense( LicenseEntity license ) {
 	
 		try {
 			
-			LicenseEntity licenseAdd = new LicenseEntity();
-			
-			
+			if(! fieldValidation.isEmpty(license.getLcType()) & ! fieldValidation.isEmpty(license.getLcCreatDate()) & ! fieldValidation.isEmpty(license.getLcEndDate()) ) {
+				
+				LicenseEntity licenseAdd = new LicenseEntity();
+				
+				licenseAdd.setInstId(license.getInstId());
+				licenseAdd.setLcCreatDate(license.getLcCreatDate());
+				licenseAdd.setLcType(license.getLcType());
+				licenseAdd.setLcStype(license.getLcStype());
+				licenseAdd.setLcValidityType(license.getLcValidityType());
+				licenseAdd.setLcValidityNum(license.getLcValidityNum());
+				licenseAdd.setLcEndDate(license.getLcEndDate());
+				licenseAdd.setHsnId(license.getHsnId());
+				licenseAdd.setLcComment(license.getLcComment());
+				licenseAdd.setLcStatus(license.getLcStatus());
+				licenseAdd.setIsActive(1);
+				licenseAdd.setIsDeleted(0);
+				licenseAdd.setCreatedOn(new Date());
+				
+				LicenseRepo.save(licenseAdd);
+				
+				return new GlobalResponse("Success","License Add successfully");
+				
+			}
+			else {
+				return new GlobalResponse("Error", "Validation Error some data is messing");
+			}
 			
 		}
 		catch(Exception ex) {
-			ex.getMessage();
+			return new GlobalResponse("Error", "Catch error");
 		}
+		
 	}
 
 }
