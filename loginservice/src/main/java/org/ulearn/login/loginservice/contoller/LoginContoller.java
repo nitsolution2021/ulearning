@@ -46,8 +46,8 @@ public class LoginContoller {
 
 	@GetMapping("/sendmail")
 	public String sendMail() {
-		mailService.sendEmail("soumendolui077@gmail.com", "shantanurong44@gmail.com", "");
-		return "send successfully";
+		mailService.sendEmail("soumendolui077@gmail.com", "ahadul@nitsolution.in", "");
+		return "send successfully"; 
 	}
 
 	@GetMapping("/mailForgotPasswordLink")
