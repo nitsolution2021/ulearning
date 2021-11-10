@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class RestExceptionHandler {
 	@ExceptionHandler
-	public ResponseEntity<CustomeErrorMessage> handleException(CustomeException exc){
+	public ResponseEntity<CustomErrorMessage> handleException(CustomException exc){
 		
-		CustomeErrorMessage customeErrorMessage = new CustomeErrorMessage(HttpStatus.BAD_REQUEST.value(),
+		CustomErrorMessage customeErrorMessage = new CustomErrorMessage(HttpStatus.BAD_REQUEST.value(),
 				exc.getMessage(),
 				System.currentTimeMillis());
 		return new ResponseEntity<>(customeErrorMessage, HttpStatus.BAD_REQUEST);
@@ -18,9 +18,9 @@ public class RestExceptionHandler {
 	}
 	
 	@ExceptionHandler
-	public ResponseEntity<CustomeErrorMessage> handleException(Exception exc){
+	public ResponseEntity<CustomErrorMessage> handleException(Exception exc){
 		
-		CustomeErrorMessage customeErrorMessage = new CustomeErrorMessage(HttpStatus.BAD_REQUEST.value(),
+		CustomErrorMessage customeErrorMessage = new CustomErrorMessage(HttpStatus.BAD_REQUEST.value(),
 				exc.getMessage(),
 				System.currentTimeMillis());
 		return new ResponseEntity<>(customeErrorMessage, HttpStatus.BAD_REQUEST);

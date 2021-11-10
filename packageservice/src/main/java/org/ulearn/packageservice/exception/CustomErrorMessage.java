@@ -1,7 +1,6 @@
-package org.ulearn.login.loginservice.exception;
+package org.ulearn.packageservice.exception;
 
-public class CustomeErrorMessage {
-
+public class CustomErrorMessage {
 	private int statuss;
 	private String messagee;
 	private long timeStampp;
@@ -28,15 +27,14 @@ public class CustomeErrorMessage {
 		return "CustomeErrorMessage [statuss=" + statuss + ", messagee=" + messagee + ", timeStampp=" + timeStampp
 				+ "]";
 	}
-	public CustomeErrorMessage(int statuss, String messagee, long timeStampp) {
+	public CustomErrorMessage(int statuss, String messagee, long timeStampp) {
 		super();
 		this.statuss = statuss;
 		this.messagee = messagee;
 		this.timeStampp = timeStampp;
 	}
-	public CustomeErrorMessage() {
+	public CustomErrorMessage() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	
 }

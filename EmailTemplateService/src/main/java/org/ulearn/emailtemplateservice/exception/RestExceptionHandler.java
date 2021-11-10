@@ -1,4 +1,4 @@
-package org.ulearn.login.loginservice.exception;
+package org.ulearn.emailtemplateservice.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class RestExceptionHandler {
-	
 	@ExceptionHandler
 	public ResponseEntity<CustomErrorMessage> handleException(CustomException exc){
 		
@@ -27,5 +26,4 @@ public class RestExceptionHandler {
 		return new ResponseEntity<>(customeErrorMessage, HttpStatus.BAD_REQUEST);
 		
 	}
-
 }

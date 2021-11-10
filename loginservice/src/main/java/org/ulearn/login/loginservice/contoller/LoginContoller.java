@@ -13,7 +13,7 @@ import org.ulearn.login.loginservice.entity.GlobalEntity;
 import org.ulearn.login.loginservice.entity.GlobalResponse;
 import org.ulearn.login.loginservice.entity.LoginEntity;
 import org.ulearn.login.loginservice.entity.LoginResetEntity;
-import org.ulearn.login.loginservice.exception.CustomeException;
+import org.ulearn.login.loginservice.exception.CustomException;
 import org.ulearn.login.loginservice.repository.LoginRepository;
 import org.ulearn.login.loginservice.repository.LoginResetRepo;
 import org.ulearn.login.loginservice.services.LoginService;
@@ -113,7 +113,7 @@ public class LoginContoller {
 	@GetMapping("/checkException")
 	public String checkException() {
 		
-		throw new CustomeException("The exception is working");
+		throw new CustomException("The exception is working");
 	}
 
 }
