@@ -31,9 +31,7 @@ logging:
         org.ulearn.*: INFO
         org.hibernate: ERROR
         
-jwt.secret.key: secret
-jwt.token.validity: 36000000
-        
+      
 jwt.secret.key: secret
 jwt.token.validity: 36000000
         
@@ -74,15 +72,10 @@ logging:
         org.ulearn.*: INFO
         org.hibernate: ERROR
         
-<<<<<<< HEAD
-jwt.secret.key: secret
-jwt.token.validity: 36000000   
-        
-=======
-        
+  
 jwt.secret.key: secret
 jwt.token.validity: 36000000        
->>>>>>> d0314c1d3a684624191e306bb252de35ee74b484
+
         
         
 ---      
