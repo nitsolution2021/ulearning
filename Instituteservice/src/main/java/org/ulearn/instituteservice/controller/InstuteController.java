@@ -1,6 +1,5 @@
 package org.ulearn.instituteservice.controller;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -57,29 +56,50 @@ public class InstuteController {
 			Optional<InstituteEntrity> findByInstituteName = instituteRepo
 					.findByInstName(instituteEntrity.getInstName());
 
-			if (findByInstituteName.isPresent()) {
-				InstituteEntrity filterInsDetails = new InstituteEntrity();
+			Optional<InstituteEntrity> findByInstEmail = instituteRepo.findByInstEmail(instituteEntrity.getInstEmail());
 
-				filterInsDetails.setInstName(instituteEntrity.getInstName());
-				filterInsDetails.setInstEndDate(instituteEntrity.getInstEndDate());
-				filterInsDetails.setInstWebsite(instituteEntrity.getInstWebsite());
-				filterInsDetails.setInstEmail(instituteEntrity.getInstEmail());
-				filterInsDetails.setInstCnum(instituteEntrity.getInstCnum());
-				filterInsDetails.setInstMnum(instituteEntrity.getInstMnum());
-				filterInsDetails.setIsntRegDate(new Date());
-				filterInsDetails.setInstLogo(instituteEntrity.getInstLogo());
-				filterInsDetails.setInstPanNum(instituteEntrity.getInstPanNum());
-				filterInsDetails.setInstGstNum(instituteEntrity.getInstGstNum());
-				filterInsDetails.setInstStatus(instituteEntrity.getInstStatus());
-				filterInsDetails.setIsActive(0);
-				filterInsDetails.setIsDeleted(0);
-				filterInsDetails.setCreatedOn(new Date());
-				filterInsDetails.setUpdatedOn(new Date());
+			if ((fieldValidation.isEmpty(instituteEntrity.getInstCnum()))
+					& (fieldValidation.isEmpty(instituteEntrity.getInstName()))
+					& (fieldValidation.isEmpty(instituteEntrity.getInstEmail()))
+					& (fieldValidation.isEmpty(instituteEntrity.getInstEndDate()))
+					& (fieldValidation.isEmpty(instituteEntrity.getInstGstNum()))
+					& (fieldValidation.isEmpty(instituteEntrity.getInstLogo()))
+					& (fieldValidation.isEmpty(instituteEntrity.getInstMnum()))
+					& (fieldValidation.isEmpty(instituteEntrity.getInstName()))
+					& (fieldValidation.isEmpty(instituteEntrity.getInstStatus()))
+					& (fieldValidation.isEmpty(instituteEntrity.getInstWebsite()))
+					& (fieldValidation.isEmpty(instituteEntrity.getInstPanNum()))) {
+				if (!findByInstituteName.isPresent()) {
+					if (!findByInstEmail.isPresent()) {
 
-				InstituteEntrity save = instituteRepo.save(filterInsDetails);
-				return new GlobalResponse("success", "Institute Added Successfully");
+						InstituteEntrity filterInsDetails = new InstituteEntrity();
+
+						filterInsDetails.setInstName(instituteEntrity.getInstName());
+						filterInsDetails.setInstEndDate(instituteEntrity.getInstEndDate());
+						filterInsDetails.setInstWebsite(instituteEntrity.getInstWebsite());
+						filterInsDetails.setInstEmail(instituteEntrity.getInstEmail());
+						filterInsDetails.setInstCnum(instituteEntrity.getInstCnum());
+						filterInsDetails.setInstMnum(instituteEntrity.getInstMnum());
+						filterInsDetails.setIsntRegDate(new Date());
+						filterInsDetails.setInstLogo(instituteEntrity.getInstLogo());
+						filterInsDetails.setInstPanNum(instituteEntrity.getInstPanNum());
+						filterInsDetails.setInstGstNum(instituteEntrity.getInstGstNum());
+						filterInsDetails.setInstStatus(instituteEntrity.getInstStatus());
+						filterInsDetails.setIsActive(0);
+						filterInsDetails.setIsDeleted(0);
+						filterInsDetails.setCreatedOn(new Date());
+						filterInsDetails.setUpdatedOn(new Date());
+
+						InstituteEntrity save = instituteRepo.save(filterInsDetails);
+						return new GlobalResponse("success", "Institute Added Successfully");
+					} else {
+						throw new CustomException("Institute Email Already Exist!");
+					}
+				} else {
+					throw new CustomException("Institute Name Already Exist!");
+				}
 			} else {
-				throw new CustomException("Institute Name already exist!");
+				throw new CustomException("Validation Error!");
 			}
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
