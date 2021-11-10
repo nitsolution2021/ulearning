@@ -1,7 +1,7 @@
 package org.ulearn.instituteservice.entity;
 
 public class GlobalResponse {
-	private String resion;
+	private String reason;
 	private String message;
 
 	public GlobalResponse() {
@@ -9,23 +9,12 @@ public class GlobalResponse {
 		// TODO Auto-generated constructor stub
 	}
 
-	public GlobalResponse(String resion, String message) {
-		super();
-		this.resion = resion;
-		this.message = message;
+	public String getReason() {
+		return reason;
 	}
 
-	@Override
-	public String toString() {
-		return "GlobalResponse [resion=" + resion + ", message=" + message + "]";
-	}
-
-	public String getResion() {
-		return resion;
-	}
-
-	public void setResion(String resion) {
-		this.resion = resion;
+	public void setReason(String reason) {
+		this.reason = reason;
 	}
 
 	public String getMessage() {
@@ -33,6 +22,17 @@ public class GlobalResponse {
 	}
 
 	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	@Override
+	public String toString() {
+		return "GlobalResponse [reason=" + reason + ", message=" + message + "]";
+	}
+
+	public GlobalResponse(String reason, String message) {
+		super();
+		this.reason = reason;
 		this.message = message;
 	}
 

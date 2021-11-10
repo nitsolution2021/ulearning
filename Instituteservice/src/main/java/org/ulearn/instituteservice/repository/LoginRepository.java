@@ -1,10 +1,11 @@
-package org.ulearn.login.loginservice.repository;
+package org.ulearn.instituteservice.repository;
 
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.ulearn.login.loginservice.entity.LoginEntity;
+import org.ulearn.instituteservice.entity.LoginEntity;
+
 
 
 public interface LoginRepository extends JpaRepository<LoginEntity, Long> {
