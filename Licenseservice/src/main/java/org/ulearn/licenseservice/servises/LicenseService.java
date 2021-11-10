@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.ulearn.licenseservice.entity.GlobalResponse;
 import org.ulearn.licenseservice.entity.LicenseEntity;
-import org.ulearn.licenseservice.exception.CustomeException;
+import org.ulearn.licenseservice.exception.CustomException;
 import org.ulearn.licenseservice.repository.LicenseRepo;
 import org.ulearn.licenseservice.validation.FieldValidation;
 
@@ -43,11 +43,11 @@ public class LicenseService {
 				if (!save.equals(null)) {
 					return new GlobalResponse("Success","License Add successfully");
 				} else {
-					throw new CustomeException("Data not store");
+					throw new CustomException("Data not store");
 				}
 		}
 		catch(Exception ex) {
-			throw new CustomeException(ex.getMessage());
+			throw new CustomException(ex.getMessage());
 		}
 		
 	}

@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.ulearn.instituteservice.entity.GlobalResponse;
 import org.ulearn.instituteservice.entity.InstituteEntrity;
-import org.ulearn.instituteservice.exception.CustomeException;
+import org.ulearn.instituteservice.exception.CustomException;
 import org.ulearn.instituteservice.repository.InstituteRepo;
 import org.ulearn.instituteservice.validation.FieldValidation;
 
@@ -42,12 +42,12 @@ private FieldValidation fieldValidation;
 		try {
 			List<InstituteEntrity> findAll = instituteRepo.findAll();
 			if (findAll.size() < 1) {
-				throw new CustomeException("Institute Not Found!");
+				throw new CustomException("Institute Not Found!");
 			}else {				
 				return findAll;
 			}			
 		} catch (Exception e) {
-			throw new CustomeException(e.getMessage());
+			throw new CustomException(e.getMessage());
 		}
 		
 	}
@@ -81,10 +81,10 @@ private FieldValidation fieldValidation;
 			InstituteEntrity save=instituteRepo.save(filterInsDetails);
 			return new GlobalResponse("success","Institute Added Successfully");	
 		}else {
-			throw new CustomeException("Institute Name already exist!");
+			throw new CustomException("Institute Name already exist!");
 		}
 	} catch (Exception e) {
-		 throw new CustomeException(e.getMessage());
+		 throw new CustomException(e.getMessage());
 	}
 		
 	}
