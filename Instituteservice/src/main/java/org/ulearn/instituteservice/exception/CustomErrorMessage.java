@@ -1,22 +1,23 @@
 package org.ulearn.instituteservice.exception;
 
-public class CustomeErrorMessage {
+
+public class CustomErrorMessage {
 	private int statuss;
 	private String messagee;
 	private long timeStampp;
 	
-	public CustomeErrorMessage() {
+	public CustomErrorMessage() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 	
-	public CustomeErrorMessage(int statuss, String messagee, long timeStampp) {
+	public CustomErrorMessage(int statuss, String messagee, long timeStampp) {
 		super();
 		this.statuss = statuss;
 		this.messagee = messagee;
 		this.timeStampp = timeStampp;
 	}
-	
+	// Test push
 	@Override
 	public String toString() {
 		return "CustomeErrorMessage [statuss=" + statuss + ", messagee=" + messagee + ", timeStampp=" + timeStampp

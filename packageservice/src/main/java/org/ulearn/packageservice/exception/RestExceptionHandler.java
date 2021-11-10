@@ -1,4 +1,4 @@
-package org.ulearn.login.loginservice.exception;
+package org.ulearn.packageservice.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class RestExceptionHandler {
-	
 	@ExceptionHandler
 	public ResponseEntity<CustomErrorMessage> handleException(CustomException exc){
 		

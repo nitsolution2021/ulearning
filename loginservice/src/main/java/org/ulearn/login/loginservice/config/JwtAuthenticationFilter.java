@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.ulearn.login.loginservice.entity.LoginEntity;
-import org.ulearn.login.loginservice.exception.CustomeException;
+import org.ulearn.login.loginservice.exception.CustomException;
 import org.ulearn.login.loginservice.helper.JwtUtil;
 import org.ulearn.login.loginservice.repository.LoginRepository;
 import org.ulearn.login.loginservice.services.VendorDetailsService;
@@ -59,7 +59,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				try {
 					username = this.jwtUtil.extractUsername(jwtToken);
 				} catch (Exception e) {
-					throw new CustomeException("token is not validated");
+					throw new CustomException("token is not validated");
 				}
 				
 				
@@ -69,7 +69,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 					this.userDetails = vendorDetailsService.loadUserByUsername(username);
 				} else {
 					
-						throw new CustomeException("Token not valid");
+						throw new CustomException("Token not valid");
 					
 				}
 				
@@ -80,7 +80,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 					SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 				}
 				else {
-					throw new CustomeException("token is not validated");
+					throw new CustomException("token is not validated");
 				}
 				
 			}

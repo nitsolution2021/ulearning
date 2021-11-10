@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.ulearn.licenseservice.entity.GlobalResponse;
 import org.ulearn.licenseservice.entity.LicenseEntity;
+import org.ulearn.licenseservice.exception.CustomException;
 import org.ulearn.licenseservice.repository.LicenseRepo;
 import org.ulearn.licenseservice.validation.FieldValidation;
 
@@ -18,7 +19,7 @@ public class LicenseService {
 	@Autowired
 	public FieldValidation fieldValidation;
 	
-	public GlobalResponse addLicense( LicenseEntity license ) {
+	public GlobalResponse addLicense(LicenseEntity license) {
 	
 		try {
 				
@@ -37,13 +38,16 @@ public class LicenseService {
 				licenseAdd.setIsDeleted(0);
 				licenseAdd.setCreatedOn(new Date());
 				
-				LicenseRepo.save(licenseAdd);
+				LicenseEntity save = LicenseRepo.save(licenseAdd);
 				
-				return new GlobalResponse("Success","License Add successfully");
-			
+				if (!save.equals(null)) {
+					return new GlobalResponse("Success","License Add successfully");
+				} else {
+					throw new CustomException("Data not store");
+				}
 		}
 		catch(Exception ex) {
-			return new GlobalResponse("Error", "Catch error");
+			throw new CustomException(ex.getMessage());
 		}
 		
 	}

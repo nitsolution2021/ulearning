@@ -1,4 +1,4 @@
-package org.ulearn.instituteservice.entity;
+package org.ulearn.emailtemplateservice.entity;
 
 public class GlobalResponse {
 	private String reason;
@@ -7,6 +7,17 @@ public class GlobalResponse {
 	public GlobalResponse() {
 		super();
 		// TODO Auto-generated constructor stub
+	}
+
+	public GlobalResponse(String reason, String message) {
+		super();
+		this.reason = reason;
+		this.message = message;
+	}
+
+	@Override
+	public String toString() {
+		return "GlobalResponse [reason=" + reason + ", message=" + message + "]";
 	}
 
 	public String getReason() {
@@ -24,16 +35,4 @@ public class GlobalResponse {
 	public void setMessage(String message) {
 		this.message = message;
 	}
-
-	@Override
-	public String toString() {
-		return "GlobalResponse [reason=" + reason + ", message=" + message + "]";
-	}
-
-	public GlobalResponse(String reason, String message) {
-		super();
-		this.reason = reason;
-		this.message = message;
-	}
-
 }

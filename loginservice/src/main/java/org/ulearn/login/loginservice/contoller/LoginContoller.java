@@ -23,8 +23,8 @@ import org.ulearn.login.loginservice.entity.GlobalResponse;
 import org.ulearn.login.loginservice.entity.LoginEntity;
 import org.ulearn.login.loginservice.entity.LoginResetEntity;
 import org.ulearn.login.loginservice.entity.LoginUserDetails;
-import org.ulearn.login.loginservice.exception.CustomeException;
 import org.ulearn.login.loginservice.helper.JwtUtil;
+import org.ulearn.login.loginservice.exception.CustomException;
 import org.ulearn.login.loginservice.repository.LoginRepository;
 import org.ulearn.login.loginservice.repository.LoginResetRepo;
 import org.ulearn.login.loginservice.services.LoginService;
@@ -109,7 +109,7 @@ public class LoginContoller {
 			return new GlobalResponse("Mail Send Successfully","SUCCESS");
 
 		} catch (Exception e) {
-			throw new CustomeException(e.getMessage());
+			throw new CustomException(e.getMessage());
 		}
 
 	}
@@ -149,7 +149,7 @@ public class LoginContoller {
 			this.authenticationManager.authenticate(
 					new UsernamePasswordAuthenticationToken(loginEntity.getUserName(), loginEntity.getPassword()));
 		} catch (Exception e) {
-			throw new CustomeException(e.getMessage());
+			throw new CustomException(e.getMessage());
 		}
 
 		UserDetails vendor = this.vendorDetailsService.loadUserByUsername(loginEntity.getUserName());
@@ -163,10 +163,11 @@ public class LoginContoller {
 		LoginEntity save = loginRepository.save(loginEntityAfterCheck);
 		
 		if(save.equals(null)) {
-			throw new CustomeException("Data Not Save Try Again");
+			throw new CustomException("Data Not Save Try Again");
 		}
-		
+
 		return ResponseEntity.ok(new LoginUserDetails(token,findByUserName.get().getUid(),findByUserName.get().getUserName() , findByUserName.get().getPassword()));
+
 	}
 
 }
