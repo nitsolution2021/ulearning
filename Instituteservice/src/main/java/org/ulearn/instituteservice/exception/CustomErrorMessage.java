@@ -1,5 +1,6 @@
 package org.ulearn.instituteservice.exception;
 
+
 public class CustomErrorMessage {
 	private int statuss;
 	private String messagee;
@@ -16,7 +17,7 @@ public class CustomErrorMessage {
 		this.messagee = messagee;
 		this.timeStampp = timeStampp;
 	}
-	
+	// Test push
 	@Override
 	public String toString() {
 		return "CustomeErrorMessage [statuss=" + statuss + ", messagee=" + messagee + ", timeStampp=" + timeStampp
