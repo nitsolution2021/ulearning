@@ -1,6 +1,6 @@
 spring: 
   application: 
-     name: InstituteService
+     name: SMSTemplateService
   datasource: 
     url: jdbc:mysql://ulearn-mysql.cdvo6qjmkkri.ap-south-1.rds.amazonaws.com:3306/ulearn_dev_sadmin
     username: ulearn
@@ -13,7 +13,7 @@ server:
   port: 8089
   servlet: 
     contextPath: /default
-name: instute-default-yml
+name: smstemplateservice-default-yml
 environment: default
 enabled: true
 contextpath: /default
@@ -22,7 +22,7 @@ servers:
    - www.default1.com
 logging: 
       file: 
-        name: logs/instute_default_logs.log
+        name: logs/smstemplateservice_default_logs.log
       pattern:
         console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
         file: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
@@ -31,18 +31,15 @@ logging:
         org.ulearn.*: INFO
         org.hibernate: ERROR
         
-jwt.secret.key: secret
-jwt.token.validity: 36000000
         
-jwt.secret.key: secret
-jwt.token.validity: 36000000
+
         
         
 ---
 spring: 
   profiles: dev
   application: 
-     name: InstituteService
+     name: SMSTemplateService
   datasource: 
     url: jdbc:mysql://ulearn-mysql.cdvo6qjmkkri.ap-south-1.rds.amazonaws.com:3306/ulearn_dev_sadmin
     username: ulearn
@@ -56,7 +53,7 @@ server:
   port: 8088
   servlet: 
     contextPath: /dev
-name: institute-dev-yml
+name: smstemplateservice-dev-yml
 environment: dev
 enabled: true
 contextpath: /dev
@@ -65,7 +62,7 @@ servers:
    - www.dev1.com
 logging: 
       file: 
-        name: logs/institute_dev_logs.log
+        name: logs/smstemplateservice_dev_logs.log
       pattern:
         console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
         file: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
@@ -74,22 +71,15 @@ logging:
         org.ulearn.*: INFO
         org.hibernate: ERROR
         
-<<<<<<< HEAD
-jwt.secret.key: secret
-jwt.token.validity: 36000000   
         
-=======
         
-jwt.secret.key: secret
-jwt.token.validity: 36000000        
->>>>>>> d0314c1d3a684624191e306bb252de35ee74b484
         
         
 ---      
 spring: 
   profiles: prod
   application: 
-     name: InstituteService
+     name: SMSTemplateService
   datasource: 
     url: jdbc:mysql://localhost:3306/ulearn
     username: root
@@ -102,7 +92,7 @@ server:
   port: 8087
   servlet: 
     contextPath: /prod
-name: institute-prod-yml
+name: smstemplateservice-prod-yml
 environment: prod
 enabled: true
 contextpath: /prod
@@ -111,7 +101,7 @@ servers:
    - prod.com
 logging: 
       file: 
-        name: logs/institute_prod_logs.log
+        name: logs/smstemplateservice_prod_logs.log
       pattern:
         console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
         file: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"

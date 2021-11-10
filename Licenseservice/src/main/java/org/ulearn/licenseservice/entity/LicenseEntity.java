@@ -19,6 +19,8 @@ public class LicenseEntity {
 	private Long lcId;
 	@Column(name = "INST_ID")
 	private Long instId;
+	@Column(name="LC_NAME")
+	private String lcName;
 	@Column(name = "LC_CDATE")
 	private Date lcCreatDate;
 	@Column(name = "LC_TYPE")
@@ -31,8 +33,6 @@ public class LicenseEntity {
 	private int lcValidityNum;
 	@Column(name = "LC_EDATE")
 	private Date lcEndDate;
-	@Column(name = "HS_ID")
-	private Long hsnId;
 	@Column(name = "LC_COMMENT")
 	private String lcComment;
 	@Column(name = "LC_STATUS")
@@ -46,24 +46,29 @@ public class LicenseEntity {
 	@Column(name = "UPDATED_ON")
 	private Date updatedOn;
 
+	
+
+	
+
+	
 	public LicenseEntity() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public LicenseEntity(Long lcId, Long instId, Date lcCreatDate, String lcType, String lcStype, String lcValidityType,
-			int lcValidityNum, Date lcEndDate, Long hsnId, String lcComment, String lcStatus, int isActive,
-			int isDeleted, Date createdOn, Date updatedOn) {
+	public LicenseEntity(Long lcId, Long instId, String lcName, Date lcCreatDate, String lcType, String lcStype,
+			String lcValidityType, int lcValidityNum, Date lcEndDate, String lcComment, String lcStatus,
+			int isActive, int isDeleted, Date createdOn, Date updatedOn) {
 		super();
 		this.lcId = lcId;
 		this.instId = instId;
+		this.lcName = lcName;
 		this.lcCreatDate = lcCreatDate;
 		this.lcType = lcType;
 		this.lcStype = lcStype;
 		this.lcValidityType = lcValidityType;
 		this.lcValidityNum = lcValidityNum;
 		this.lcEndDate = lcEndDate;
-		this.hsnId = hsnId;
 		this.lcComment = lcComment;
 		this.lcStatus = lcStatus;
 		this.isActive = isActive;
@@ -74,11 +79,27 @@ public class LicenseEntity {
 
 	@Override
 	public String toString() {
-		return "LicenseEntity [lcId=" + lcId + ", instId=" + instId + ", lcCreatDate=" + lcCreatDate + ", lcType="
-				+ lcType + ", lcStype=" + lcStype + ", lcValidityType=" + lcValidityType + ", lcValidityNum="
-				+ lcValidityNum + ", lcEndDate=" + lcEndDate + ", hsnId=" + hsnId + ", lcComment=" + lcComment
-				+ ", lcStatus=" + lcStatus + ", isActive=" + isActive + ", isDeleted=" + isDeleted + ", createdOn="
-				+ createdOn + ", updatedOn=" + updatedOn + "]";
+		return "LicenseEntity [lcId=" + lcId + ", instId=" + instId + ", lcName=" + lcName + ", lcCreatDate="
+				+ lcCreatDate + ", lcType=" + lcType + ", lcStype=" + lcStype + ", lcValidityType=" + lcValidityType
+				+ ", lcValidityNum=" + lcValidityNum + ", lcEndDate=" + lcEndDate + ", lcComment="
+				+ lcComment + ", lcStatus=" + lcStatus + ", isActive=" + isActive + ", isDeleted=" + isDeleted
+				+ ", createdOn=" + createdOn + ", updatedOn=" + updatedOn + ", getLcName()=" + getLcName()
+				+ ", getLcId()=" + getLcId() + ", getInstId()=" + getInstId() + ", getLcCreatDate()=" + getLcCreatDate()
+				+ ", getLcType()=" + getLcType() + ", getLcStype()=" + getLcStype() + ", getLcValidityType()="
+				+ getLcValidityType() + ", getLcValidityNum()=" + getLcValidityNum() + ", getLcEndDate()="
+				+ getLcEndDate() + ", getLcComment()=" + getLcComment()
+				+ ", getLcStatus()=" + getLcStatus() + ", getIsActive()=" + getIsActive() + ", getIsDeleted()="
+				+ getIsDeleted() + ", getCreatedOn()=" + getCreatedOn() + ", getUpdatedOn()=" + getUpdatedOn()
+				+ ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + ", toString()=" + super.toString()
+				+ "]";
+	}
+
+	public String getLcName() {
+		return lcName;
+	}
+
+	public void setLcName(String lcName) {
+		this.lcName = lcName;
 	}
 
 	public Long getLcId() {
@@ -143,14 +164,6 @@ public class LicenseEntity {
 
 	public void setLcEndDate(Date lcEndDate) {
 		this.lcEndDate = lcEndDate;
-	}
-
-	public Long getHsnId() {
-		return hsnId;
-	}
-
-	public void setHsnId(Long hsnId) {
-		this.hsnId = hsnId;
 	}
 
 	public String getLcComment() {
