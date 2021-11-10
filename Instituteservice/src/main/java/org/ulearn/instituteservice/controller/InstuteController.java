@@ -97,7 +97,7 @@ private FieldValidation fieldValidation;
 		{
 			Optional<InstituteEntrity> findById = this.instituteRepo.findById(instId);
 			if (!(findById.isPresent())) {							
-				throw new CustomeException("Institute Not Found!");
+				throw new CustomException("Institute Not Found!");
 			}else {
 				return findById;
 			}
@@ -105,7 +105,7 @@ private FieldValidation fieldValidation;
 		}
 		catch(Exception e)
 		{
-			throw new CustomeException(e.getMessage());
+			throw new CustomException(e.getMessage());
 		}
 		//return ResponseEntity.ok(instId);
 	}
@@ -180,12 +180,12 @@ private FieldValidation fieldValidation;
 			}
 			else
 			{				
-				throw new CustomeException("Institute Not Found!");
+				throw new CustomException("Institute Not Found!");
 			}
 		}
 		catch(Exception e)
 		{ 
-			throw new CustomeException(e.getMessage());
+			throw new CustomException(e.getMessage());
 		}
 	}
 }
