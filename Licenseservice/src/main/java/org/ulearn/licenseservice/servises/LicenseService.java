@@ -28,6 +28,7 @@ public class LicenseService {
 				LicenseEntity licenseAdd = new LicenseEntity();
 				
 				licenseAdd.setLcName(license.getLcName());
+				licenseAdd.setInstId(license.getInstId());
 				licenseAdd.setLcCreatDate(license.getLcCreatDate());
 				licenseAdd.setLcType(license.getLcType());
 				licenseAdd.setLcStype(license.getLcStype());
@@ -65,6 +66,8 @@ public class LicenseService {
 					LicenseEntity licenseUpdate = new LicenseEntity();
 					
 					licenseUpdate.setLcName(licenseForUpdate.getLcName());
+					licenseUpdate.setLcId(licenseForUpdate.getLcId());
+					licenseUpdate.setInstId(licenseForUpdate.getInstId());
 					licenseUpdate.setLcCreatDate(licenseForUpdate.getLcCreatDate());
 					licenseUpdate.setLcType(licenseForUpdate.getLcType());
 					licenseUpdate.setLcStype(licenseForUpdate.getLcStype());
@@ -73,6 +76,7 @@ public class LicenseService {
 					licenseUpdate.setLcEndDate(licenseForUpdate.getLcEndDate());
 					licenseUpdate.setLcComment(licenseForUpdate.getLcComment());
 					licenseUpdate.setLcStatus(licenseForUpdate.getLcStatus());
+//					licenseUpdate.setIsDeleted(1);
 					licenseUpdate.setUpdatedOn(new Date());
 					
 					LicenseEntity save = LicenseRepo.save(licenseUpdate);
@@ -81,19 +85,19 @@ public class LicenseService {
 						return new GlobalResponse("Success","Update Successfull");
 					}
 					else {
-						throw new CustomeException("Upade not successfull");
+						throw new CustomException("Upade not successfull");
 					}
 				}
 				else {
-					throw new CustomeException("License id not matched");
+					throw new CustomException("License id not matched");
 				}
 			}
 			else {
-				throw new CustomeException("License not found for this Id"+licenseId);
+				throw new CustomException("License not found for this Id  "+licenseId);
 			}
 		}
 		catch(Exception ex) {
-			throw new CustomeException(ex.getMessage());
+			throw new CustomException(ex.getMessage());
 		}
 	}
 
@@ -104,14 +108,14 @@ public class LicenseService {
 			
 			List<LicenseEntity> findAll = LicenseRepo.findAllIsNotDeleted();
 			if(findAll.size()<1) {
-				throw new CustomeException("No license found");
+				throw new CustomException("No license found");
 			}
 			else {
 				return findAll;
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
-			throw new CustomeException(e.getMessage());
+			throw new CustomException(e.getMessage());
 		}
 	}
 
@@ -125,12 +129,12 @@ public class LicenseService {
 				return findById;
 			}
 			else {
-				throw new CustomeException("No license found for this id");
+				throw new CustomException("No license found for this id");
 			}
 			
 		} catch (Exception e) {
 			// TODO: handle exception
-			throw new CustomeException(e.getMessage());
+			throw new CustomException(e.getMessage());
 		}
 		
 	}

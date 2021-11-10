@@ -47,11 +47,15 @@ public class LicenseController {
 	@GetMapping("/list")
 	public List<LicenseEntity> getLicenseList() {
 		
+		LOGGER.info("Inside the LicenseController view all License");
+		
 		return this.licenseService.getAllLicenseList();
 	}
 	
 	@GetMapping("/view/{lcId}")
 	public Optional<LicenseEntity> getLicense(@PathVariable long lcId){
+		
+		LOGGER.info("Inside the LicenseController view License by id");
 		
 		return this.licenseService.getLicense(lcId);
 	}
