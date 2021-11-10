@@ -2,7 +2,7 @@ spring:
   application: 
      name: LicenseService
   datasource: 
-    url: jdbc:mysql://ulearn-mysql.cdvo6qjmkkri.ap-south-1.rds.amazonaws.com:3306/uLearn_dev
+    url: jdbc:mysql://ulearn-mysql.cdvo6qjmkkri.ap-south-1.rds.amazonaws.com:3306/ulearn_dev_sadmin
     username: ulearn
     password: ULearn2121
   jpa:
@@ -41,7 +41,7 @@ spring:
   application: 
      name: LicenseService
   datasource: 
-    url: jdbc:mysql://ulearn-mysql.cdvo6qjmkkri.ap-south-1.rds.amazonaws.com:3306/uLearn_dev
+    url: jdbc:mysql://ulearn-mysql.cdvo6qjmkkri.ap-south-1.rds.amazonaws.com:3306/ulearn_dev_sadmin
     username: ulearn
     password: ULearn2121
     driverClassName: com.mysql.cj.jdbc.Driver

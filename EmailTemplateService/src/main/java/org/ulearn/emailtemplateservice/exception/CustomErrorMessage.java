@@ -1,16 +1,16 @@
-package org.ulearn.licenseservice.exception;
+package org.ulearn.emailtemplateservice.exception;
 
-public class CustomeErrorMessage {
+public class CustomErrorMessage {
 	private int statuss;
 	private String messagee;
 	private long timeStampp;
 
-	public CustomeErrorMessage() {
+	public CustomErrorMessage() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public CustomeErrorMessage(int statuss, String messagee, long timeStampp) {
+	public CustomErrorMessage(int statuss, String messagee, long timeStampp) {
 		super();
 		this.statuss = statuss;
 		this.messagee = messagee;
