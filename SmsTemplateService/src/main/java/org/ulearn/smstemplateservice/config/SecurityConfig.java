@@ -1,4 +1,4 @@
-package org.ulearn.login.loginservice.config;
+package org.ulearn.smstemplateservice.config;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -19,7 +19,7 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.ulearn.login.loginservice.services.VendorDetailsService;
+import org.ulearn.smstemplateservice.services.SuperAdminDetailsService;
 
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
@@ -28,7 +28,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
-	private VendorDetailsService vendorDetailsService;
+	private SuperAdminDetailsService superAdminDetailsService;
 	
 	@Autowired
 	private JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -41,14 +41,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		
-
-			
-//				auth.userDetailsService(customerDetailsServices);
-			
-				auth.userDetailsService(vendorDetailsService);
-				
-
-			
+		auth.userDetailsService(superAdminDetailsService);
+		
 	}
 	
 
@@ -66,8 +60,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers(HttpMethod.GET,"/webjars/**").permitAll()
 				.antMatchers(HttpMethod.GET,"/swagger-resources/**").permitAll()
 				.antMatchers(HttpMethod.GET,"/v2/api-docs").permitAll()
-				.antMatchers(HttpMethod.POST,"/resetPassword/{link}/{linktime}").permitAll()
-				
 				.anyRequest().authenticated()
 				.and()
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

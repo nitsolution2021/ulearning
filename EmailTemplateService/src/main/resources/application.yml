@@ -30,7 +30,9 @@ logging:
         org.springframework.web: ERROR
         org.ulearn.*: INFO
         org.hibernate: ERROR
-        
+   
+jwt.secret.key: secret
+jwt.token.validity: 36000000
         
 
         
@@ -70,7 +72,9 @@ logging:
         org.springframework.web: ERROR
         org.ulearn.*: INFO
         org.hibernate: ERROR
-        
+       
+jwt.secret.key: secret
+jwt.token.validity: 36000000
         
         
         
@@ -109,3 +113,6 @@ logging:
         org.springframework.web: ERROR
         org.ulearn.*: INFO
         org.hibernate: ERROR
+
+jwt.secret.key: secret
+jwt.token.validity: 36000000

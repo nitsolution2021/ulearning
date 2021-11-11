@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.ulearn.login.loginservice.config.YMLConfig;
 
 
@@ -30,6 +31,12 @@ public class LoginServiceApplication implements CommandLineRunner{
 	
 	@Autowired
 	private YMLConfig myConfig;
+	
+	@Bean
+	public BCryptPasswordEncoder bcryptPassword() {
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		return passwordEncoder;
+	}
 	
 	@Bean
     public JavaMailSender javaMailSender() {
@@ -62,6 +69,8 @@ public class LoginServiceApplication implements CommandLineRunner{
 		LOGGER.info("In LoginServiceApplication Main Method");
 		
 	}
+	
+	
 	
 	
 	
