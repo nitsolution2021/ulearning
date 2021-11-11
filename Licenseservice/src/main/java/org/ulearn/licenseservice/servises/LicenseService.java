@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.ulearn.licenseservice.entity.GlobalResponse;
 import org.ulearn.licenseservice.entity.LicenseEntity;
+import org.ulearn.licenseservice.entity.LicenseLogEntity;
 import org.ulearn.licenseservice.exception.CustomException;
+import org.ulearn.licenseservice.repository.LicenseLogRepo;
 import org.ulearn.licenseservice.repository.LicenseRepo;
 import org.ulearn.licenseservice.validation.FieldValidation;
 
@@ -21,32 +23,71 @@ public class LicenseService {
 	@Autowired
 	public FieldValidation fieldValidation;
 	
+	@Autowired
+	public LicenseLogRepo licenseLogRepo;
+	
 	public GlobalResponse addLicense(LicenseEntity license) {
 	
 		try {
-				
-				LicenseEntity licenseAdd = new LicenseEntity();
-				
-				licenseAdd.setLcName(license.getLcName());
-				licenseAdd.setInstId(license.getInstId());
-				licenseAdd.setLcCreatDate(license.getLcCreatDate());
-				licenseAdd.setLcType(license.getLcType());
-				licenseAdd.setLcStype(license.getLcStype());
-				licenseAdd.setLcValidityType(license.getLcValidityType());
-				licenseAdd.setLcValidityNum(license.getLcValidityNum());
-				licenseAdd.setLcEndDate(license.getLcEndDate());
-				licenseAdd.setLcComment(license.getLcComment());
-				licenseAdd.setLcStatus("Complete");
-				licenseAdd.setIsActive(1);
-				licenseAdd.setIsDeleted(0);
-				licenseAdd.setCreatedOn(new Date());
-				
-				LicenseEntity save = LicenseRepo.save(licenseAdd);
-				
-				if (!save.equals(null)) {
-					return new GlobalResponse("Success","License Add successfully");
-				} else {
-					throw new CustomException("Data not store");
+			
+			
+			if(fieldValidation.isEmpty(license.getInstId()) & fieldValidation.isEmpty(license.getLcName()) & fieldValidation.isEmpty(license.getLcCreatDate()) &
+					fieldValidation.isEmpty(license.getLcType()) & fieldValidation.isEmpty(license.getLcStype()) &
+					fieldValidation.isEmpty(license.getLcValidityType()) & fieldValidation.isEmpty(license.getLcValidityNum()) &
+					fieldValidation.isEmpty(license.getLcEndDate())) {
+					
+					Optional<LicenseEntity> findByInstId = LicenseRepo.findByInstId(license.getInstId());
+					if(!findByInstId.isPresent()) {
+						
+					
+						LicenseEntity licenseAdd = new LicenseEntity();
+						
+						//Set date for license table
+						licenseAdd.setLcName(license.getLcName());
+						licenseAdd.setInstId(license.getInstId());
+						licenseAdd.setLcCreatDate(license.getLcCreatDate());
+						licenseAdd.setLcType(license.getLcType());
+						licenseAdd.setLcStype(license.getLcStype());
+						licenseAdd.setLcValidityType(license.getLcValidityType());
+						licenseAdd.setLcValidityNum(license.getLcValidityNum());
+						licenseAdd.setLcEndDate(license.getLcEndDate());
+						licenseAdd.setLcComment(license.getLcComment());
+						licenseAdd.setLcStatus("Complete");
+						licenseAdd.setIsActive(1);
+						licenseAdd.setIsDeleted(0);
+						licenseAdd.setCreatedOn(new Date());
+						
+						
+						//Insert data into license table
+						LicenseEntity save = LicenseRepo.save(licenseAdd);
+						
+						//Set data for license log table
+						
+						LicenseLogEntity licenseLogAdd = new LicenseLogEntity();
+						
+						licenseLogAdd.setLcIdFk(save.getLcId().intValue());
+						licenseLogAdd.setLlAction("Add license");
+						licenseLogAdd.setLlValidityType(save.getLcValidityType());
+						licenseLogAdd.setLlValidityNum(save.getLcValidityNum());
+						licenseLogAdd.setLlComment(save.getLcComment());
+						licenseLogAdd.setLlStatus("Complete");
+						licenseLogAdd.setCreatedOn(new Date());
+						
+						LicenseLogEntity save2 = licenseLogRepo.save(licenseLogAdd);
+						
+						
+						if (!save.equals(null)) {
+							return new GlobalResponse("Success","License Add successfully");
+						} else {
+							throw new CustomException("Data not store");
+						}
+					}
+					else {
+						throw new CustomException("A license have already assigned for ths institute..");
+					}
+				}
+				else {
+					throw new CustomException("Some required field are missing..");
 				}
 		}
 		catch(Exception ex) {
