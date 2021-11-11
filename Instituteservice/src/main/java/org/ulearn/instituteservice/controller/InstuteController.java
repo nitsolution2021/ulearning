@@ -38,11 +38,11 @@ public class InstuteController {
 	private FieldValidation fieldValidation;
 
 	@GetMapping("/list")
-	public List<InstituteEntity> getInstute() {
+	public List<InstituteGlobalEntity> getInstute() {
 		LOGGER.info("Inside - InstituteController.getInstute()");
 
 		try {
-			List<InstituteEntity> findAll = instituteRepo.findAll();
+			List<InstituteGlobalEntity> findAll = instituteRepo.findByAllInst();
 			if (findAll.size() < 1) {
 				throw new CustomException("Institute Not Found!");
 			} else {
@@ -105,8 +105,7 @@ public class InstuteController {
 						filterInsDetails.setUpdatedOn(new Date());
 
 						InstituteEntity save = instituteRepo.save(filterInsDetails);
-						
-						LOGGER.info("Inside - InstituteController.postInstituteDetails()**"+save.getInstId());
+												
 						
 						InstituteAddressEntity filterInsAdrDetails = new InstituteAddressEntity();
 
