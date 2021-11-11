@@ -38,11 +38,11 @@ public class InstuteController {
 	private FieldValidation fieldValidation;
 
 	@GetMapping("/list")
-	public List<InstituteGlobalEntity> getInstute() {
+	public List<InstituteEntity> getInstute() {
 		LOGGER.info("Inside - InstituteController.getInstute()");
 
 		try {
-			List<InstituteGlobalEntity> findAll = instituteRepo.findByAllInst();
+			List<InstituteEntity> findAll = instituteRepo.findAll();
 			if (findAll.size() < 1) {
 				throw new CustomException("Institute Not Found!");
 			} else {
