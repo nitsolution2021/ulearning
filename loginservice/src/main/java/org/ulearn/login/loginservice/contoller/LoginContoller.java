@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import org.springframework.web.bind.annotation.PathVariable;
@@ -63,9 +64,13 @@ public class LoginContoller {
 	
 	@Autowired
 	private AuthenticationManager authenticationManager;
+	
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
 
 	@Autowired
 	private LoginService loginService;
+
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(LoginContoller.class);
 
@@ -95,18 +100,25 @@ public class LoginContoller {
 			if (findByUserName.isPresent()) {
 				LoginResetEntity loginResetEntity = new LoginResetEntity();
 				loginResetEntity.setuId(findByUserName.get().getUid());
-				loginResetEntity.setPrToken(forgotPasswordLink);
+				loginResetEntity.setPrToken(uuid.toString() + "/" + encodedString);
 				loginResetEntity.setStatus("NEW");
 				loginResetEntity.setCreatedOn(new Date());
 				//** SAVE THE DETAILS IN DATABASE **//
 				LoginResetEntity save = loginResetRepo.save(loginResetEntity);
-				if (!save.equals(null)) {
+				System.out.println("save "+save.toString());
+				if (save.equals(null)) {
+					throw new CustomException("Data Not Save Try Again");
+				}else {
 					//** SEND MAIL IF DETAILS SAVE IN DATABASE **//
 					mailService.sendEmail("soumendolui077@gmail.com", findByUserName.get().getEmail(),forgotPasswordLink);
 				}
+				
+				return new GlobalResponse("Mail Send Successfully","SUCCESS");
 
+			}else {
+				throw new CustomException("UserName Not Present");
 			}
-			return new GlobalResponse("Mail Send Successfully","SUCCESS");
+			
 
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
@@ -114,60 +126,109 @@ public class LoginContoller {
 
 	}
 
-	public String resetPassword(@PathVariable("link") String link, @RequestBody GlobalEntity globalEntity) {
-		Optional<LoginResetEntity> findByPrToken = loginResetRepo.findByPrToken(link);
+	@PostMapping("/resetPassword/{link}/{linkTime}")
+	@Description("After Got The Link in Mail, Using That link He/She Can Create New Password")
+	public GlobalResponse resetPassword(@PathVariable("link") String link, @PathVariable("linkTime") String linkTime, @RequestBody GlobalEntity globalEntity) {
+		
+		LOGGER.info("Inside - LoginContoller.resetPassword()");
+		try {
+			
+			//** CHECK THE LINK IS PRESENT IN DB **//
+			Optional<LoginResetEntity> findByPrToken = loginResetRepo.findByPrToken(link + "/" + linkTime);
 
-		if (findByPrToken.isPresent()) {
-			LoginResetEntity loginResetEntity = findByPrToken.get();
-			Optional<LoginEntity> findById = loginRepository.findById(loginResetEntity.getuId());
-			if (findById.isPresent()) {
-				LoginEntity loginEntity = findById.get();
-				loginEntity.setPassword(globalEntity.getNewPass());
-				loginRepository.save(loginEntity);
+			if (findByPrToken.isPresent()) {
+				//** Create Current Time **//
+				SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+				Date date = new Date();
+				formatter.format(date);
+				Calendar calObjForCurrentTime = Calendar.getInstance();
+				calObjForCurrentTime.setTime(date);
+				
+				byte[] forgotPasswordLinkCreateTimeByte = Base64.getDecoder().decode(linkTime);
+				String forgotPasswordLinkCreateTimeString = new String(forgotPasswordLinkCreateTimeByte);
+				Calendar calObjForLinkCreateTime = Calendar.getInstance();
+				Date dateObjForLinkCreateTime = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
+                        .parse(forgotPasswordLinkCreateTimeString);
+				calObjForLinkCreateTime.setTime(dateObjForLinkCreateTime);
+				
+				if(calObjForCurrentTime.get(Calendar.YEAR)==calObjForLinkCreateTime.get(Calendar.YEAR) && calObjForCurrentTime.get(Calendar.MONTH)==calObjForLinkCreateTime.get(Calendar.MONTH) && calObjForCurrentTime.get(Calendar.DATE)==calObjForLinkCreateTime.get(Calendar.DATE) && calObjForCurrentTime.get(Calendar.HOUR)==calObjForLinkCreateTime.get(Calendar.HOUR)) {
+					
+				}else {
+					throw new CustomException("This Link is Expier");
+				}
+			//** FIND THE USER CORRESPONDING THE LINK IN LOGIN TABLE **//
+				LoginResetEntity loginResetEntity = findByPrToken.get();
+				Optional<LoginEntity> findById = loginRepository.findById(loginResetEntity.getuId());
+				if (findById.isPresent()) {
+			//** CREATE NEW PASSWORD AND SAVE **//
+					LoginEntity loginEntity = findById.get();
+					loginEntity.setPassword(passwordEncoder.encode(globalEntity.getNewPass()));
+					LoginEntity save = loginRepository.save(loginEntity);
+					if(save.equals(null)) {
+						throw new CustomException("Data Not Save Try Again");
+					}
+				}
+			} else {
+				throw new CustomException("This URL is Not Valid");
 			}
-		} else {
-			return "throw error";
-		}
 
-		return "";
+			return new GlobalResponse("Password Generate Successfully","SUCCESS");
+			
+		}catch(Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+		
 	}
 
 	@PostMapping("/changePassword")
 	public GlobalResponse changePassword(@RequestBody GlobalEntity globalEntity,
 			@RequestHeader(name = "Authorization") String token) {
-		return this.loginService.changePass(globalEntity, token);
-
-	}
-	
-	
-	
-	
-	@PostMapping("/login")
-	public ResponseEntity<?> venderLogin(@RequestBody LoginEntity loginEntity) {
-		LOGGER.info("Inside - VendorLoginController.venderLogin()");
+		
+		LOGGER.info("Inside - LoginContoller.changePassword()");
 		try {
-			this.authenticationManager.authenticate(
-					new UsernamePasswordAuthenticationToken(loginEntity.getUserName(), loginEntity.getPassword()));
-		} catch (Exception e) {
+			return this.loginService.changePass(globalEntity, token);
+		}catch(Exception e) {
 			throw new CustomException(e.getMessage());
 		}
-
-		UserDetails vendor = this.vendorDetailsService.loadUserByUsername(loginEntity.getUserName());
-
-		String token = jwtUtil.generateToken(vendor);
-
-		Optional<LoginEntity> findByUserName = loginRepository.findByUserName(vendor.getUsername());
 		
-		LoginEntity loginEntityAfterCheck = findByUserName.get();
-		loginEntityAfterCheck.setAccessToken(token);
-		LoginEntity save = loginRepository.save(loginEntityAfterCheck);
-		
-		if(save.equals(null)) {
-			throw new CustomException("Data Not Save Try Again");
-		}
-
-		return ResponseEntity.ok(new LoginUserDetails(token,findByUserName.get().getUid(),findByUserName.get().getUserName() , findByUserName.get().getPassword()));
 
 	}
+	
+	
+	
+	
+	@PostMapping("/superAdminLogin")
+	public ResponseEntity<?> superAdminLogin(@RequestBody LoginEntity loginEntity) {
+		
+		LOGGER.info("Inside - LoginContoller.superAdminLogin()");
+		try {
+			try {
+				this.authenticationManager.authenticate(
+						new UsernamePasswordAuthenticationToken(loginEntity.getUserName(), loginEntity.getPassword()));
+			} catch (Exception e) {
+				throw new CustomException(e.getMessage());
+			}
+
+			UserDetails vendor = this.vendorDetailsService.loadUserByUsername(loginEntity.getUserName());
+
+			String token = jwtUtil.generateToken(vendor);
+
+			Optional<LoginEntity> findByUserName = loginRepository.findByUserName(vendor.getUsername());
+			
+			LoginEntity loginEntityAfterCheck = findByUserName.get();
+			loginEntityAfterCheck.setAccessToken(token);
+			LoginEntity save = loginRepository.save(loginEntityAfterCheck);
+			
+			if(save.equals(null)) {
+				throw new CustomException("Data Not Save Try Again");
+			}
+
+			return ResponseEntity.ok(new LoginUserDetails(token,findByUserName.get().getUid(),findByUserName.get().getUserName() , findByUserName.get().getPassword()));
+
+		
+		}catch(Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+	}	
 
 }

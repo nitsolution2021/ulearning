@@ -3,36 +3,27 @@ package org.ulearn.emailtemplateservice.entity;
 import java.util.Date;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
 
-@Entity
-@Table(name = "tbl_email_templates")
-public class EmailTemplateEntity {
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "ET_ID") private Long etId;
-	@Column(name = "ET_NAME") private String etName;
-	@Column(name = "ET_SUBJECT") private String etSubject;
-	@Column(name = "ET_BODY") private String etBody;
-	@Column(name = "ET_TYPE") private String etType;
-	@Column(name = "ET_ACTION") private String etAction;
-	@Column(name = "IS_ACTIVE") private int isActive;
-	@Column(name = "IS_DELETED") private int isDeleted;
-	@Column(name = "IS_PRIMARY") private int isPrimary;
-	@Column(name = "ET_ORDER") private Long etOrder;
-	@Column(name = "ET_TAGS") private String etTags;
-	@Column(name = "CREATED_ON") private Date createdOn;
-	@Column(name = "UPDATED_ON") private Date updatedOn;
-	public EmailTemplateEntity() {
+public class GlobalEntity {
+	private Long etId;
+	private String etName;
+	private String etSubject;
+	private String etBody;
+	private String etType;
+	private String etAction;
+	private Long isActive;
+	private Long isDeleted;
+	private Long isPrimary;
+	private Long etOrder;
+	private String etTags;
+	private Date createdOn;
+	private Date updatedOn;
+	public GlobalEntity() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	public EmailTemplateEntity(Long etId, String etName, String etSubject, String etBody, String etType,
-			String etAction, int isActive, int isDeleted, int isPrimary, Long etOrder, String etTags, Date createdOn,
+	public GlobalEntity(Long etId, String etName, String etSubject, String etBody, String etType,
+			String etAction, Long isActive, Long isDeleted, Long isPrimary, Long etOrder, String etTags, Date createdOn,
 			Date updatedOn) {
 		super();
 		this.etId = etId;
@@ -85,22 +76,22 @@ public class EmailTemplateEntity {
 	public void setEtAction(String etAction) {
 		this.etAction = etAction;
 	}
-	public int getIsActive() {
+	public Long getIsActive() {
 		return isActive;
 	}
-	public void setIsActive(int isActive) {
+	public void setIsActive(Long isActive) {
 		this.isActive = isActive;
 	}
-	public int getIsDeleted() {
+	public Long getIsDeleted() {
 		return isDeleted;
 	}
-	public void setIsDeleted(int isDeleted) {
+	public void setIsDeleted(Long isDeleted) {
 		this.isDeleted = isDeleted;
 	}
-	public int getIsPrimary() {
+	public Long getIsPrimary() {
 		return isPrimary;
 	}
-	public void setIsPrimary(int isPrimary) {
+	public void setIsPrimary(Long isPrimary) {
 		this.isPrimary = isPrimary;
 	}
 	public Long getEtOrder() {
@@ -134,9 +125,5 @@ public class EmailTemplateEntity {
 				+ isDeleted + ", isPrimary=" + isPrimary + ", etOrder=" + etOrder + ", etTags=" + etTags
 				+ ", createdOn=" + createdOn + ", updatedOn=" + updatedOn + "]";
 	}
-	
-	
-	
-	
 
 }
