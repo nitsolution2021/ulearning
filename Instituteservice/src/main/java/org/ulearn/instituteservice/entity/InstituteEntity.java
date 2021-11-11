@@ -11,7 +11,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "tbl_institutes")
-public class InstituteEntrity {
+public class InstituteEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -48,12 +48,12 @@ public class InstituteEntrity {
 	@Column(name = "UPDATED_ON")
 	private Date updatedOn;
 
-	public InstituteEntrity() {
+	public InstituteEntity() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public InstituteEntrity(Long instId, String instName, Date instEndDate, String instWebsite, String instEmail,
+	public InstituteEntity(Long instId, String instName, Date instEndDate, String instWebsite, String instEmail,
 			String instCnum, String instMnum, Date isntRegDate, String instLogo, String instPanNum, String instGstNum,
 			String instStatus, int isActive, int isDeleted, Date createdOn, Date updatedOn) {
 		super();
