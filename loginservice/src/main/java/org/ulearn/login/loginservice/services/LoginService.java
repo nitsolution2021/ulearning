@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import org.ulearn.login.loginservice.entity.GlobalEntity;
 import org.ulearn.login.loginservice.entity.GlobalResponse;
 import org.ulearn.login.loginservice.entity.LoginEntity;
+import org.ulearn.login.loginservice.exception.CustomException;
+import org.ulearn.login.loginservice.helper.JwtUtil;
 import org.ulearn.login.loginservice.repository.LoginRepository;
 
 @Service
@@ -14,31 +16,45 @@ public class LoginService {
 
 	@Autowired
 	private LoginRepository loginRepository;
+	
+	@Autowired
+	private JwtUtil jwtUtil;
 
 	public GlobalResponse changePass(GlobalEntity globalEntity, String token) {
-		if (!token.equals(null)) {
-			Optional<LoginEntity> findByEmail = loginRepository.findByEmail(globalEntity.getEmail());
-			if (findByEmail.isPresent()) {
-				if (findByEmail.get().getPassword().equals(globalEntity.getOldPass())) {
-					LoginEntity login = new LoginEntity();
-					login.setFirstName(findByEmail.get().getFirstName());
-					login.setLastName(findByEmail.get().getLastName());
-					login.setAccessToken(findByEmail.get().getAccessToken());
-					login.setEmail(findByEmail.get().getEmail());
-					login.setPpic(findByEmail.get().getPpic());
-					login.setPassword(globalEntity.getNewPass());
-					login.setUid(findByEmail.get().getUid());
-					login.setUserName(findByEmail.get().getUserName());
-					loginRepository.save(login);
-					return new GlobalResponse("Success", "Password changed");
+		
+		try {
+			if (!token.equals(null)) {
+				Optional<LoginEntity> findByUserName = loginRepository.findByUserName(globalEntity.getUserName());
+				if (findByUserName.isPresent()) {
+					if (jwtUtil.extractUsername(token).equals(globalEntity.getUserName())) {
+						if(findByUserName.get().getPassword().equals(globalEntity.getOldPass())) {
+							LoginEntity login = new LoginEntity();
+							login.setFirstName(findByUserName.get().getFirstName());
+							login.setLastName(findByUserName.get().getLastName());
+							login.setAccessToken(findByUserName.get().getAccessToken());
+							login.setEmail(findByUserName.get().getEmail());
+							login.setPpic(findByUserName.get().getPpic());
+							login.setPassword(globalEntity.getNewPass());
+							login.setUid(findByUserName.get().getUid());
+							login.setUserName(findByUserName.get().getUserName());
+							loginRepository.save(login);
+							return new GlobalResponse("Success", "Password changed");
+						}else {
+							throw new CustomException("Password not match");
+						}
+						
+					} else {
+						throw new CustomException("UserName Not Matched");
+					}
 				} else {
-					return new GlobalResponse("Faild", "Password not match");
+					throw new CustomException("User not found");
 				}
 			} else {
-				return new GlobalResponse("Faild", "User not found");
+				throw new CustomException("Token not valid");
 			}
-		} else {
-			return new GlobalResponse("Faild", "Token not valid");
+		}catch(Exception e) {
+			throw new CustomException(e.getMessage());
 		}
+		
 	}
 }
