@@ -25,8 +25,8 @@ public interface InstituteRepo extends JpaRepository<InstituteEntity, Long> {
 //	List<InstituteEntity> findAllByInstId(Long instId);
 	
 
-//	@Query(value = "select * from tbl_institutes",nativeQuery = true)
-//	List<InstituteGlobalEntity> findByInstUnq();
+	@Query(value = "select * from tbl_institutes",nativeQuery = true)
+	List<InstituteGlobalEntity> findByInstUnq();
 
 	
 }
