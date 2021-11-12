@@ -11,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,6 +45,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/login")
 public class LoginContoller {
 
@@ -85,11 +87,11 @@ public class LoginContoller {
 			UUID uuid = UUID.randomUUID();
 			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 			Date date = new Date();
-			formatter.format(date);
+			String format = formatter.format(date);
 			Calendar calObj = Calendar.getInstance();
 			calObj.setTime(date);
-			String forgotPasswordLinkCreateTime = calObj.get(Calendar.YEAR) + "-" + (calObj.get(Calendar.MONTH) + 1)+ "-" + calObj.get(Calendar.DATE) + "-" + (calObj.get(Calendar.HOUR) + "-"+ (calObj.get(Calendar.MINUTE) + "-" + (calObj.get(Calendar.SECOND))));
-			String encodedString = Base64.getEncoder().encodeToString(forgotPasswordLinkCreateTime.getBytes());
+//			String forgotPasswordLinkCreateTime = calObj.get(Calendar.YEAR) + "-" + (calObj.get(Calendar.MONTH) + 1)+ "-" + calObj.get(Calendar.DATE) + "-" + (calObj.get(Calendar.HOUR) + "-"+ (calObj.get(Calendar.MINUTE) + "-" + (calObj.get(Calendar.SECOND))));
+			String encodedString = Base64.getEncoder().encodeToString(format.getBytes());
 			byte[] decodedBytes = Base64.getDecoder().decode(encodedString);
 			String decodedString = new String(decodedBytes);
 			String forgotPasswordLink = "https://ulearn.nichetechnosolution.com/forgotpassword/" + uuid.toString() + "/"+ encodedString;
