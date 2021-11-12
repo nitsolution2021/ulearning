@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.ulearn.instituteservice.entity.InstituteEntity;
+import org.ulearn.instituteservice.entity.InstituteAddressEntity;
 import org.ulearn.instituteservice.entity.InstituteGlobalEntity;
 
 public interface InstituteRepo extends JpaRepository<InstituteEntity, Long> {
@@ -20,9 +21,11 @@ public interface InstituteRepo extends JpaRepository<InstituteEntity, Long> {
 	@Query(value = "select INST_EMAIL from tbl_institutes where INST_ID <> ? and INST_EMAIL=?",nativeQuery = true)
 	Optional<InstituteEntity> findByInstUnqEmail(long INST_ID,String instEmail);
 	 
-	@Query(value = "select InstituteEntityOBJ,InstituteAddressEntityOBJ from InstituteEntity InstituteEntityOBJ INNER JOIN InstituteAddressEntity InstituteAddressEntityOBJ on InstituteEntityOBJ.instId = InstituteAddressEntityOBJ.instId")
-	List<InstituteGlobalEntity> findByAllInst();
+//	@Query(value = "select tbl_institutes.INST_NAME from tbl_institutes INNER JOIN tbl_inst_addr on tbl_institutes.INST_ID = tbl_inst_addr.INST_ID",nativeQuery = true)
+	List<InstituteEntity> findAllByInstId(Long instId);
 	
+	//select customer from CustomerRegister customer , CustomerDepartments dep where customer.userId = dep.primaryContact and dep.departmentId = ?1
 	
+		//select * from tbl_institutes INNER JOIN tbl_inst_addr on tbl_institutes.INST_ID = tbl_inst_addr.INST_ID;
 	
 }
