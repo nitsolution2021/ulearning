@@ -51,7 +51,9 @@ public class InstuteController {
 		LOGGER.info("Inside - InstituteController.getInstute()");
 
 		try {
+
 			List<InstituteGlobalEntity> findAll = instituteRepo.findByInstUnq();
+
 			if (findAll.size() < 1) {
 				throw new CustomException("Institute Not Found!");
 			} else {
@@ -62,6 +64,7 @@ public class InstuteController {
 		}
 
 	}
+
 
 	@PostMapping("/add")
 	public GlobalResponse postInstituteDetails(@RequestBody InstituteGlobalEntity instituteGlobalEntrity) {
@@ -172,6 +175,7 @@ public class InstuteController {
 		}
 
 	}
+
 
 	@GetMapping("/view/{instId}")
 	public Optional<InstituteEntity> viewInstituteDetails(@PathVariable() long instId) {

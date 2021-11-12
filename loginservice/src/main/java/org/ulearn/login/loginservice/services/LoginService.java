@@ -3,6 +3,7 @@ package org.ulearn.login.loginservice.services;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.ulearn.login.loginservice.entity.GlobalEntity;
 import org.ulearn.login.loginservice.entity.GlobalResponse;
@@ -19,26 +20,34 @@ public class LoginService {
 	
 	@Autowired
 	private JwtUtil jwtUtil;
+	
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
 
 	public GlobalResponse changePass(GlobalEntity globalEntity, String token) {
-		
 		try {
+			
 			if (!token.equals(null)) {
 				Optional<LoginEntity> findByUserName = loginRepository.findByUserName(globalEntity.getUserName());
 				if (findByUserName.isPresent()) {
-					if (jwtUtil.extractUsername(token).equals(globalEntity.getUserName())) {
-						if(findByUserName.get().getPassword().equals(globalEntity.getOldPass())) {
+					if (globalEntity.getUserName().equals(jwtUtil.extractUsername(token.substring(7)))) {
+						if(passwordEncoder.matches(globalEntity.getOldPass(), findByUserName.get().getPassword())) {
 							LoginEntity login = new LoginEntity();
 							login.setFirstName(findByUserName.get().getFirstName());
 							login.setLastName(findByUserName.get().getLastName());
 							login.setAccessToken(findByUserName.get().getAccessToken());
 							login.setEmail(findByUserName.get().getEmail());
 							login.setPpic(findByUserName.get().getPpic());
-							login.setPassword(globalEntity.getNewPass());
+							login.setPassword(passwordEncoder.encode(globalEntity.getNewPass()));
 							login.setUid(findByUserName.get().getUid());
 							login.setUserName(findByUserName.get().getUserName());
-							loginRepository.save(login);
-							return new GlobalResponse("Success", "Password changed");
+							LoginEntity save = loginRepository.save(login);
+							if(save.equals(null)) {
+								throw new CustomException("Data Not Save Try Again");
+							}else {
+								return new GlobalResponse("Success", "Password changed");
+							}
+							
 						}else {
 							throw new CustomException("Password not match");
 						}

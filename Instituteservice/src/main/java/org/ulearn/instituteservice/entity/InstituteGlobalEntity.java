@@ -2,7 +2,12 @@ package org.ulearn.instituteservice.entity;
 
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
 public class InstituteGlobalEntity {
+
 
 	private Long instId;
 	private String instName;
@@ -482,6 +487,7 @@ public class InstituteGlobalEntity {
 	}
 	
 	
+
 	
 	
 	
