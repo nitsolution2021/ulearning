@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+@Entity
+@Table(name="tbl_institute")
 public class InstituteEntity {
 
 	@Id
