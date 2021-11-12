@@ -25,7 +25,7 @@ public class PackageEntity {
 	@Column(name = "PK_VALIDITY_TYPE") private String pkValidityType;
 	@Column(name = "PK_VALIDITY_NUM") private Long pkValidityNum;
 	@Column(name = "PK_CDATE") private Date pkCdate;
-	@Column(name = "HS_ID") private Long hsId;
+	//@Column(name = "HS_ID") private Long hsId;
 	@Column(name = "PK_COMMENT") private String pkComment;
 	@Column(name = "PARENT_ID") private Long parentId;
 	@Column(name = "IS_ACTIVE") private Long isActive;
@@ -87,12 +87,12 @@ public class PackageEntity {
 	public void setPkCdate(Date pkCdate) {
 		this.pkCdate = pkCdate;
 	}
-	public Long getHsId() {
+	/*public Long getHsId() {
 		return hsId;
 	}
 	public void setHsId(Long hsId) {
 		this.hsId = hsId;
-	}
+	}*/
 	public String getPkComment() {
 		return pkComment;
 	}
@@ -139,7 +139,7 @@ public class PackageEntity {
 	public String toString() {
 		return "PackageEntity [pkId=" + pkId + ", instId=" + instId + ", pkType=" + pkType + ", pkName=" + pkName
 				+ ", pkFname=" + pkFname + ", pkNusers=" + pkNusers + ", pkValidityType=" + pkValidityType
-				+ ", pkValidityNum=" + pkValidityNum + ", pkCdate=" + pkCdate + ", hsId=" + hsId + ", pkComment="
+				+ ", pkValidityNum=" + pkValidityNum + ", pkCdate=" + pkCdate + ", pkComment="
 				+ pkComment + ", parentId=" + parentId + ", isActive=" + isActive + ", isDeleted=" + isDeleted
 				+ ", pkStatus=" + pkStatus + ", createdOn=" + createdOn + ", updatedOn=" + updatedOn + "]";
 	}
@@ -156,7 +156,7 @@ public class PackageEntity {
 		this.pkValidityType = pkValidityType;
 		this.pkValidityNum = pkValidityNum;
 		this.pkCdate = pkCdate;
-		this.hsId = hsId;
+		//this.hsId = hsId;
 		this.pkComment = pkComment;
 		this.parentId = parentId;
 		this.isActive = isActive;

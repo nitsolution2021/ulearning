@@ -3,6 +3,9 @@ package org.ulearn.packageservice.validation;
 import java.util.Date;
 import java.util.regex.Pattern;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class FieldValidation {
 	public boolean isEmpty(String string) {
 		if (string == null) {
