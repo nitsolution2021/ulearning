@@ -14,10 +14,10 @@ public interface InstituteRepo extends JpaRepository<InstituteEntity, Long> {
 	Optional<InstituteEntity> findByInstEmail(String instName);
 	
 	
-	@Query(value = "select obj from InstituteEntity obj where obj.instId = ?1 and obj.instName = ?2")
+	@Query(value = "select obj from InstituteEntity obj where obj.instId != ?1 and obj.instName = ?2")
 	Optional<InstituteEntity> findByInstUnqName(long instId,String instName); 
 	
-	@Query(value = "select obj from InstituteEntity obj where obj.instId = ?1 and obj.instEmail = ?2")
+	@Query(value = "select obj from InstituteEntity obj where obj.instId != ?1 and obj.instEmail = ?2")
 	Optional<InstituteEntity> findByInstUnqEmail(long instId,String instEmail);
 	 
 	@Query(value = "select InstituteEntityOBJ,InstituteAddressEntityOBJ from InstituteEntity InstituteEntityOBJ INNER JOIN InstituteAddressEntity InstituteAddressEntityOBJ on InstituteEntityOBJ.instId = InstituteAddressEntityOBJ.instId")
