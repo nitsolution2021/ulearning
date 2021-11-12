@@ -38,11 +38,11 @@ public class InstuteController {
 	private FieldValidation fieldValidation;
 
 	@GetMapping("/list")
-	public List<InstituteEntity> getInstute() {
+	public List<InstituteGlobalEntity> getInstute() {
 		LOGGER.info("Inside - InstituteController.getInstute()");
 
 		try {
-			List<InstituteEntity> findAll = instituteRepo.findAll();
+			List<InstituteGlobalEntity> findAll = instituteRepo.findByInstUnq();
 			if (findAll.size() < 1) {
 				throw new CustomException("Institute Not Found!");
 			} else {
@@ -79,9 +79,9 @@ public class InstuteController {
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrPincode()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrState()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrTaluka()))
-//					& (fieldValidation.isEmpty(instituteAddressEntity.getAdrType()))
-//					& (fieldValidation.isEmpty(instituteAddressEntity.getAdrOrder()))
-//					& (fieldValidation.isEmpty(instituteAddressEntity.getIsPrimary()))					
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrType()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrOrder()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getIsPrimary()))					
 					) {
 				if (!findByInstituteName.isPresent()) {
 					if (!findByInstEmail.isPresent()) {
@@ -162,8 +162,8 @@ public class InstuteController {
 	}
 
 	@PutMapping("/update/{instId}")
-	public GlobalResponse putInstituteDetails(@RequestBody InstituteEntity instituteGlobalEntrity,
-			@PathVariable() long instId) {
+	public GlobalResponse putInstituteDetails(@RequestBody InstituteGlobalEntity instituteGlobalEntrity,
+			@PathVariable("instId") long instId) {
 		LOGGER.info("Inside - InstituteController.putInstituteDetails()"+instituteGlobalEntrity);
 		try {
 			if ((fieldValidation.isEmpty(instituteGlobalEntrity.getInstCnum()))
@@ -172,25 +172,24 @@ public class InstuteController {
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstEndDate()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstGstNum()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstLogo()))
-					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstMnum()))
-					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstName()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstMnum()))					
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstStatus()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstWebsite()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstPanNum()))
-//					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrCountry()))
-//					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrDistrict()))
-//					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrLine1()))
-//					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrPincode()))
-//					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrState()))
-//					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrTaluka()))
-//					& (fieldValidation.isEmpty(instituteAddressEntity.getAdrType()))
-//					& (fieldValidation.isEmpty(instituteAddressEntity.getAdrOrder()))
-//					& (fieldValidation.isEmpty(instituteAddressEntity.getIsPrimary()))					
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrCountry()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrDistrict()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrLine1()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrPincode()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrState()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrTaluka()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrType()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrOrder()))
+//					& (fieldValidation.isEmpty(instituteGlobalEntrity.getIsPrimary()))					
 					) {
 				Optional<InstituteEntity> findById = instituteRepo.findById(instId);
 				Optional<InstituteEntity> findByInstName = instituteRepo.findByInstUnqName(instId,
 						instituteGlobalEntrity.getInstName());
-				LOGGER.info("Inside - InstituteController.putInstituteDetails()///"+instituteGlobalEntrity.getInstName());
+//				LOGGER.info("Inside - InstituteController.putInstituteDetails()///"+findByInstName);
 				Optional<InstituteEntity> findByInstEmail = instituteRepo.findByInstUnqEmail(instId,
 						instituteGlobalEntrity.getInstEmail());
 				
@@ -220,25 +219,25 @@ public class InstuteController {
 							InstituteAddressEntity filterInsAdrDetails = new InstituteAddressEntity();
 
 							filterInsAdrDetails.setInstId(instituteGlobalEntrity.getInstId());
-//							filterInsAdrDetails.setAdrCity(instituteGlobalEntrity.getAdrCity());
-//							filterInsAdrDetails.setAdrCountry(instituteGlobalEntrity.getAdrCountry());
-//							filterInsAdrDetails.setAdrDistrict(instituteGlobalEntrity.getAdrDistrict());
-//							filterInsAdrDetails.setAdrLine1(instituteGlobalEntrity.getAdrLine1());
-//							filterInsAdrDetails.setAdrLine2(instituteGlobalEntrity.getAdrLine2());
-//							filterInsAdrDetails.setAdrOrder(instituteGlobalEntrity.getAdrOrder());
-//							filterInsAdrDetails.setAdrPincode(instituteGlobalEntrity.getAdrPincode());
-//							filterInsAdrDetails.setAdrState(instituteGlobalEntrity.getAdrState());
-//							filterInsAdrDetails.setAdrTaluka(instituteGlobalEntrity.getAdrTaluka());
-//							filterInsAdrDetails.setAdrType(instituteGlobalEntrity.getAdrType());
-////							filterInsAdrDetails.setInstId(save.getInstId());
-//							filterInsAdrDetails.setIsPrimary(instituteGlobalEntrity.getIsPrimary());						
-//							filterInsAdrDetails.setAdrStatus(instituteGlobalEntrity.getAdrStatus());
-//							filterInsAdrDetails.setIsActive(0);
-//							filterInsAdrDetails.setIsDeleted(0);
-//							filterInsAdrDetails.setCreatedOn(new Date());
-//							filterInsAdrDetails.setUpdatedOn(new Date());
+							filterInsAdrDetails.setAdrCity(instituteGlobalEntrity.getAdrCity());
+							filterInsAdrDetails.setAdrCountry(instituteGlobalEntrity.getAdrCountry());
+							filterInsAdrDetails.setAdrDistrict(instituteGlobalEntrity.getAdrDistrict());
+							filterInsAdrDetails.setAdrLine1(instituteGlobalEntrity.getAdrLine1());
+							filterInsAdrDetails.setAdrLine2(instituteGlobalEntrity.getAdrLine2());
+							filterInsAdrDetails.setAdrOrder(instituteGlobalEntrity.getAdrOrder());
+							filterInsAdrDetails.setAdrPincode(instituteGlobalEntrity.getAdrPincode());
+							filterInsAdrDetails.setAdrState(instituteGlobalEntrity.getAdrState());
+							filterInsAdrDetails.setAdrTaluka(instituteGlobalEntrity.getAdrTaluka());
+							filterInsAdrDetails.setAdrType(instituteGlobalEntrity.getAdrType());
+							filterInsAdrDetails.setInstId(save.getInstId());
+							filterInsAdrDetails.setIsPrimary(instituteGlobalEntrity.getIsPrimary());						
+							filterInsAdrDetails.setAdrStatus(instituteGlobalEntrity.getAdrStatus());
+							filterInsAdrDetails.setIsActive(0);
+							filterInsAdrDetails.setIsDeleted(0);
+							filterInsAdrDetails.setCreatedOn(new Date());
+							filterInsAdrDetails.setUpdatedOn(new Date());
 
-//							InstituteAddressEntity InsAdrDetails = instituteAddressRepo.save(filterInsAdrDetails);
+							InstituteAddressEntity InsAdrDetails = instituteAddressRepo.save(filterInsAdrDetails);
 
 							if (save.equals(null)) {
 								throw new CustomException("Institute Email Already Exist!");
