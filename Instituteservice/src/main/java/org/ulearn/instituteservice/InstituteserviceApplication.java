@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.ulearn.instituteservice.config.YMLConfig;
 
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
@@ -34,5 +36,12 @@ public class InstituteserviceApplication implements CommandLineRunner {
 		LOGGER.info("servers: " + myConfig.getServers());
 		LOGGER.info("-------------------------------------");
 	}
+	
+	@Bean
+	public BCryptPasswordEncoder bcryptPassword() {
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		return passwordEncoder;
+	}
+	
 
 }

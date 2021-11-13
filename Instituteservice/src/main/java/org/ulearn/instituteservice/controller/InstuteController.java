@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,16 +43,16 @@ public class InstuteController {
 	@Autowired
 	private FieldValidation fieldValidation;
 	
-//	@Autowired
-//	private BCryptPasswordEncoder passwordEncoder;
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
 
 	@GetMapping("/list")
-	public List<InstituteEntity> getInstute() {
+	public List<InstituteGlobalEntity> getInstute() {
 		LOGGER.info("Inside - InstituteController.getInstute()");
 
 		try {
 
-			List<InstituteEntity> findAll = instituteRepo.findAll();
+			List<InstituteGlobalEntity> findAll = instituteRepo.findByAllInstQuery();
 
 			if (findAll.size() < 1) {
 				throw new CustomException("Institute Not Found!");
@@ -94,8 +95,8 @@ public class InstuteController {
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrOrder()))
 //					& (fieldValidation.isEmpty(instituteGlobalEntrity.getIsPrimary()))					
 					) {
-				if (!findByInstituteName.isEmpty()) {
-					if (!findByInstEmail.isEmpty()) {
+				if (!findByInstituteName.isPresent()) {
+					if (!findByInstEmail.isPresent()) {
 
 						InstituteEntity filterInsDetails = new InstituteEntity();
 
@@ -150,8 +151,8 @@ public class InstuteController {
 						filterInsAmdDetails.setAmdMnum(instituteGlobalEntrity.getAmdMnum());
 						filterInsAmdDetails.setAmdEmail(instituteGlobalEntrity.getAmdEmail());
 						filterInsAmdDetails.setAmdUsername(instituteGlobalEntrity.getAmdUsername());
-						filterInsAmdDetails.setAmdPassword(instituteGlobalEntrity.getAmdPassword());
-//						filterInsAmdDetails.setAmdPassword(passwordEncoder.encode(instituteGlobalEntrity.getAmdPassword()));
+//						filterInsAmdDetails.setAmdPassword(instituteGlobalEntrity.getAmdPassword());
+						filterInsAmdDetails.setAmdPassword(passwordEncoder.encode(instituteGlobalEntrity.getAmdPassword()));
 						filterInsAmdDetails.setAmdPpic(instituteGlobalEntrity.getAmdPpic());
 						filterInsAmdDetails.setInstId(save.getInstId());
 						filterInsAmdDetails.setCreatedOn(new Date());
@@ -226,11 +227,11 @@ public class InstuteController {
 				
 				if (findById.isPresent()) {
 
-					if (findByInstName.isEmpty()) {
-						if (findByInstEmail.isEmpty()) {
+					if (!findByInstName.isPresent()) {
+						if (!findByInstEmail.isPresent()) {
 
 							InstituteEntity InstEntrity = new InstituteEntity();
-
+							
 							InstEntrity.setInstCnum(instituteGlobalEntrity.getInstCnum());
 							InstEntrity.setInstEmail(instituteGlobalEntrity.getInstEmail());
 							InstEntrity.setInstEndDate(instituteGlobalEntrity.getInstEndDate());
