@@ -82,7 +82,7 @@ public class LicenseService {
 						
 						
 						if (!save.equals(null)) {
-							return new GlobalResponse("Success","License Add successfully");
+							return new GlobalResponse("SUCCESS","License Add successfully",200);
 						} else {
 							throw new CustomException("Data not store");
 						}
@@ -130,11 +130,10 @@ public class LicenseService {
 							licenseUpdate.setLcValidityNum(licenseForUpdate.getLcValidityNum());
 							licenseUpdate.setLcEndDate(licenseForUpdate.getLcEndDate());
 							licenseUpdate.setLcComment(licenseForUpdate.getLcComment());
-							licenseUpdate.setLcStatus(licenseForUpdate.getLcStatus());
-							licenseUpdate.setIsActive(licenseForUpdate.getIsActive());
-							licenseUpdate.setIsDeleted(licenseForUpdate.getIsDeleted());
+							licenseUpdate.setLcStatus(findById.get().getLcStatus());
+							licenseUpdate.setIsActive(findById.get().getIsActive());
+							licenseUpdate.setIsDeleted(findById.get().getIsDeleted());
 							licenseUpdate.setCreatedOn(findById.get().getCreatedOn());
-							
 							licenseUpdate.setUpdatedOn(new Date());
 							
 							LicenseEntity save = LicenseRepo.save(licenseUpdate);
@@ -156,7 +155,7 @@ public class LicenseService {
 							
 							
 							if(!save.equals(null)) {
-								return new GlobalResponse("Success","Update Successfull");
+								return new GlobalResponse("SUCCESS","Update Successfull",200);
 							}
 							else {
 								throw new CustomException("Upade not successfull");
@@ -221,6 +220,27 @@ public class LicenseService {
 			throw new CustomException(e.getMessage());
 		}
 		
+	}
+
+	public GlobalResponse addSuspendLicense(long lcId, LicenseLogEntity licenseLogEntitySuspend) {
+		// TODO Auto-generated method stub
+		
+		try {
+			
+			if(fieldValidation.isEmpty(licenseLogEntitySuspend.getLlEdate()) 
+					& fieldValidation.isEmpty(licenseLogEntitySuspend.getLlComment())) {
+				
+				licenseLogRepo.findByLcId(lcId,"Add suspend");
+			}
+			else {
+				throw new CustomException("Some required value are missing, please check..");
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			throw new CustomException(e.getMessage());
+		}
+		return null;
 	}
 
 }
