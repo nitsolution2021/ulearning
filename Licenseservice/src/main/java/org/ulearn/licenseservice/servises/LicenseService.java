@@ -4,8 +4,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.ulearn.licenseservice.controller.LicenseController;
 import org.ulearn.licenseservice.entity.GlobalResponse;
 import org.ulearn.licenseservice.entity.LicenseEntity;
 import org.ulearn.licenseservice.entity.LicenseLogEntity;
@@ -16,6 +19,8 @@ import org.ulearn.licenseservice.validation.FieldValidation;
 
 @Service
 public class LicenseService {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(LicenseController.class);
 	
 	@Autowired 
 	public LicenseRepo LicenseRepo;
@@ -31,10 +36,10 @@ public class LicenseService {
 		try {
 			
 			
-			if(fieldValidation.isEmpty(license.getInstId()) & fieldValidation.isEmpty(license.getLcName()) & fieldValidation.isEmpty(license.getLcCreatDate()) &
-					fieldValidation.isEmpty(license.getLcType()) & fieldValidation.isEmpty(license.getLcStype()) &
-					fieldValidation.isEmpty(license.getLcValidityType()) & fieldValidation.isEmpty(license.getLcValidityNum()) &
-					fieldValidation.isEmpty(license.getLcEndDate())) {
+			if(fieldValidation.isEmpty(license.getInstId()) & fieldValidation.isEmpty(license.getLcName()) & 
+					fieldValidation.isEmpty(license.getLcCreatDate()) & fieldValidation.isEmpty(license.getLcType()) & 
+					fieldValidation.isEmpty(license.getLcStype()) & fieldValidation.isEmpty(license.getLcValidityType()) & 
+					fieldValidation.isEmpty(license.getLcValidityNum()) & fieldValidation.isEmpty(license.getLcEndDate())) {
 					
 					Optional<LicenseEntity> findByInstId = LicenseRepo.findByInstId(license.getInstId());
 					if(!findByInstId.isPresent()) {
@@ -87,7 +92,7 @@ public class LicenseService {
 					}
 				}
 				else {
-					throw new CustomException("Some required field are missing..");
+					throw new CustomException("Some required value are missing..");
 				}
 		}
 		catch(Exception ex) {
@@ -101,40 +106,78 @@ public class LicenseService {
 		
 		try {
 			
-			Optional<LicenseEntity> findById = this.LicenseRepo.findById(licenseId);
-			if(findById.isPresent()) {
-				if(findById.get().getLcId().equals(licenseId)) {
-					LicenseEntity licenseUpdate = new LicenseEntity();
+			if(fieldValidation.isEmpty(licenseForUpdate.getInstId()) & fieldValidation.isEmpty(licenseForUpdate.getLcName()) & 
+					fieldValidation.isEmpty(licenseForUpdate.getLcCreatDate()) & fieldValidation.isEmpty(licenseForUpdate.getLcType()) & 
+					fieldValidation.isEmpty(licenseForUpdate.getLcStype()) & fieldValidation.isEmpty(licenseForUpdate.getLcValidityType()) & 
+					fieldValidation.isEmpty(licenseForUpdate.getLcValidityNum()) & fieldValidation.isEmpty(licenseForUpdate.getLcEndDate())) {
+			
+//					Optional<LicenseEntity> findByInstId = LicenseRepo.findByInstId(licenseForUpdate.getInstId());
+//					if(!findByInstId.isPresent()) {
 					
-					licenseUpdate.setLcName(licenseForUpdate.getLcName());
-					licenseUpdate.setLcId(licenseForUpdate.getLcId());
-					licenseUpdate.setInstId(licenseForUpdate.getInstId());
-					licenseUpdate.setLcCreatDate(licenseForUpdate.getLcCreatDate());
-					licenseUpdate.setLcType(licenseForUpdate.getLcType());
-					licenseUpdate.setLcStype(licenseForUpdate.getLcStype());
-					licenseUpdate.setLcValidityType(licenseForUpdate.getLcValidityType());
-					licenseUpdate.setLcValidityNum(licenseForUpdate.getLcValidityNum());
-					licenseUpdate.setLcEndDate(licenseForUpdate.getLcEndDate());
-					licenseUpdate.setLcComment(licenseForUpdate.getLcComment());
-					licenseUpdate.setLcStatus(licenseForUpdate.getLcStatus());
-//					licenseUpdate.setIsDeleted(1);
-					licenseUpdate.setUpdatedOn(new Date());
-					
-					LicenseEntity save = LicenseRepo.save(licenseUpdate);
-					
-					if(!save.equals(null)) {
-						return new GlobalResponse("Success","Update Successfull");
+					Optional<LicenseEntity> findById = this.LicenseRepo.findById(licenseId);
+					if(findById.isPresent()) {
+						if(findById.get().getLcId().equals(licenseId)) {
+							LicenseEntity licenseUpdate = new LicenseEntity();
+							
+							//LOGGER.info(findById.get().getCreatedOn()+"");
+							licenseUpdate.setLcName(licenseForUpdate.getLcName());
+							licenseUpdate.setLcId(findById.get().getLcId());
+							licenseUpdate.setInstId(licenseForUpdate.getInstId());
+							licenseUpdate.setLcCreatDate(licenseForUpdate.getLcCreatDate());
+							licenseUpdate.setLcType(licenseForUpdate.getLcType());
+							licenseUpdate.setLcStype(licenseForUpdate.getLcStype());
+							licenseUpdate.setLcValidityType(licenseForUpdate.getLcValidityType());
+							licenseUpdate.setLcValidityNum(licenseForUpdate.getLcValidityNum());
+							licenseUpdate.setLcEndDate(licenseForUpdate.getLcEndDate());
+							licenseUpdate.setLcComment(licenseForUpdate.getLcComment());
+							licenseUpdate.setLcStatus(licenseForUpdate.getLcStatus());
+							licenseUpdate.setIsActive(licenseForUpdate.getIsActive());
+							licenseUpdate.setIsDeleted(licenseForUpdate.getIsDeleted());
+							licenseUpdate.setCreatedOn(findById.get().getCreatedOn());
+							
+							licenseUpdate.setUpdatedOn(new Date());
+							
+							LicenseEntity save = LicenseRepo.save(licenseUpdate);
+							
+							//Set data for license log table
+							
+							LicenseLogEntity licenseLogAdd = new LicenseLogEntity();
+							
+							licenseLogAdd.setLcIdFk(save.getLcId().intValue());
+							licenseLogAdd.setLlAction("Update license");
+							licenseLogAdd.setLlValidityType(save.getLcValidityType());
+							licenseLogAdd.setLlValidityNum(save.getLcValidityNum());
+							licenseLogAdd.setLlComment(save.getLcComment());
+							licenseLogAdd.setLlStatus("Complete");
+							licenseLogAdd.setCreatedOn(new Date());
+							licenseLogAdd.setUpdatedOn(new Date());
+							
+							LicenseLogEntity save2 = licenseLogRepo.save(licenseLogAdd);
+							
+							
+							if(!save.equals(null)) {
+								return new GlobalResponse("Success","Update Successfull");
+							}
+							else {
+								throw new CustomException("Upade not successfull");
+							}
+						}
+						else {
+							throw new CustomException("License id not matched");
+						}
 					}
 					else {
-						throw new CustomException("Upade not successfull");
+						throw new CustomException("License not found for this Id  "+licenseId);
 					}
-				}
-				else {
-					throw new CustomException("License id not matched");
-				}
+//				}
+//				else {
+//					
+//					throw new CustomException("A license have already assigned for ths institute..");
+//				}
 			}
 			else {
-				throw new CustomException("License not found for this Id  "+licenseId);
+			
+				throw new CustomException("Some required value are missing, please check..");
 			}
 		}
 		catch(Exception ex) {

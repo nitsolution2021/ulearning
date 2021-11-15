@@ -32,7 +32,7 @@ logging:
         org.hibernate: ERROR
         
 jwt.secret.key: secret
-jwt.token.validity: 36000000
+jwt.token.validity: 1296000000
         
         
 
