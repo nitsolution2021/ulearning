@@ -47,12 +47,12 @@ public class InstuteController {
 	private BCryptPasswordEncoder passwordEncoder;
 
 	@GetMapping("/list")
-	public List<InstituteGlobalEntity> getInstute() {
+	public List<InstituteEntity> getInstute() {
 		LOGGER.info("Inside - InstituteController.getInstute()");
 
 		try {
 
-			List<InstituteGlobalEntity> findAll = instituteRepo.findByAllInstQuery();
+			List<InstituteEntity> findAll = instituteRepo.findAll();
 
 			if (findAll.size() < 1) {
 				throw new CustomException("Institute Not Found!");
@@ -93,10 +93,17 @@ public class InstuteController {
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrTaluka()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrType()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrOrder()))
-//					& (fieldValidation.isEmpty(instituteGlobalEntrity.getIsPrimary()))					
+//					& (fieldValidation.isEmpty(instituteGlobalEntrity.getIsPrimary()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdFname()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdLname()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdDob()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdEmail()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdUsername()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdPassword()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdPpic()))					
 					) {
-				if (findByInstituteName.isPresent()) {
-					if (findByInstEmail.isPresent()) {
+				if (!findByInstituteName.isPresent()) {
+					if (!findByInstEmail.isPresent()) {
 
 						InstituteEntity filterInsDetails = new InstituteEntity();
 
@@ -159,7 +166,7 @@ public class InstuteController {
 
 						InstituteAdminEntity InsAmdDetails = instituteAdminRepo.save(filterInsAmdDetails);
 						
-						return new GlobalResponse("success", "Institute Added Successfully");
+						return new GlobalResponse("SUCCESS", "Institute Added Successfully");
 					} else {
 						throw new CustomException("Institute Email Already Exist!");
 					}
@@ -192,6 +199,7 @@ public class InstuteController {
 		}
 	}
 
+	
 	@PutMapping("/update/{instId}")
 	public GlobalResponse putInstituteDetails(@RequestBody InstituteGlobalEntity instituteGlobalEntrity,
 			@PathVariable("instId") long instId) {
@@ -215,19 +223,28 @@ public class InstuteController {
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrTaluka()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrType()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrOrder()))
-//					& (fieldValidation.isEmpty(instituteGlobalEntrity.getIsPrimary()))					
+//					& (fieldValidation.isEmpty(instituteGlobalEntrity.getIsPrimary()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdFname()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdLname()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdDob()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdEmail()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdUsername()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdPassword()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdPpic()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdmId()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstId()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrId()))
 					) {
 				Optional<InstituteEntity> findById = instituteRepo.findById(instId);
-				Optional<InstituteEntity> findByInstName = instituteRepo.findByInstUnqName(instId,
-						instituteGlobalEntrity.getInstName());
-				LOGGER.info("Inside - InstituteController.putInstituteDetails()///"+findByInstName);
-				Optional<InstituteEntity> findByInstEmail = instituteRepo.findByInstUnqEmail(instId,
+				List<InstituteEntity> findByInstName = instituteRepo.findByInstUnqName(instId,instituteGlobalEntrity.getInstName());
+				LOGGER.info("Inside - InstituteController.putInstituteDetails()///"+findById);
+				List<InstituteEntity> findByInstEmail = instituteRepo.findByInstUnqEmail(instId,
 						instituteGlobalEntrity.getInstEmail());
 				
 				if (findById.isPresent()) {
 
-					if (findByInstName.isPresent()) {
-						if (findByInstEmail.isPresent()) {
+					if (findByInstName.size() == 0) {
+						if (findByInstEmail.size() == 0) {
 
 							InstituteEntity InstEntrity = new InstituteEntity();
 							
@@ -287,12 +304,9 @@ public class InstuteController {
 							filterInsAmdDetails.setUpdatedOn(new Date());
 
 							InstituteAdminEntity InsAmdDetails = instituteAdminRepo.save(filterInsAmdDetails);
-
-							if (save.equals(null)) {
-								throw new CustomException("Institute Email Already Exist!");
-							}
-							return new GlobalResponse("success", "Institute Updated Successfully");
-
+							
+							return new GlobalResponse("SUCCESS", "Institute Updated Successfully");
+							
 						} else {
 							throw new CustomException("Institute Email Already Exist!");
 						}
@@ -307,6 +321,26 @@ public class InstuteController {
 			}
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
+		}
+	}
+	@GetMapping("/insIdvalidation/{insId}")
+	public String insIdvalidation(@PathVariable long insId)
+	{
+		try
+		{
+			LOGGER.info("Inside-InstituteController.insIdvalidation");
+			if(instituteRepo.existsById(insId))
+			{
+				return "Ok";
+			}
+			else
+			{
+				return "notOk";
+			}
+		}
+		catch(Exception e)
+		{
+			return "Exception";
 		}
 	}
 }
