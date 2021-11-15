@@ -16,7 +16,7 @@ public interface InstituteRepo extends JpaRepository<InstituteEntity, Long> {
 	
 	
 //	@Query(value = "select instD from InstituteEntity instD where instD.instId <> ?1 and instD.instName = ?2")
-	@Query(value = "select * from tbl_institutes where INST_ID != '?' and INST_NAME = ?",nativeQuery = true)
+	@Query(value = "select * from tbl_institutes where INST_ID != ? and INST_NAME = ?",nativeQuery = true)
 	List<InstituteEntity> findByInstUnqName(long instId,String instName); 
 	
 	@Query(value = "select instD from InstituteEntity instD where instD.instId != ?1 and instD.instEmail = ?2")

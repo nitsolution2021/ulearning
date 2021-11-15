@@ -93,7 +93,14 @@ public class InstuteController {
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrTaluka()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrType()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrOrder()))
-//					& (fieldValidation.isEmpty(instituteGlobalEntrity.getIsPrimary()))					
+//					& (fieldValidation.isEmpty(instituteGlobalEntrity.getIsPrimary()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdFname()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdLname()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdDob()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdEmail()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdUsername()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdPassword()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdPpic()))					
 					) {
 				if (!findByInstituteName.isPresent()) {
 					if (!findByInstEmail.isPresent()) {
@@ -215,7 +222,17 @@ public class InstuteController {
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrTaluka()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrType()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrOrder()))
-//					& (fieldValidation.isEmpty(instituteGlobalEntrity.getIsPrimary()))					
+//					& (fieldValidation.isEmpty(instituteGlobalEntrity.getIsPrimary()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdFname()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdLname()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdDob()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdEmail()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdUsername()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdPassword()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdPpic()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdmId()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstId()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrId()))
 					) {
 				Optional<InstituteEntity> findById = instituteRepo.findById(instId);
 				List<InstituteEntity> findByInstName = instituteRepo.findByInstUnqName(instId,instituteGlobalEntrity.getInstName());
@@ -225,8 +242,8 @@ public class InstuteController {
 				
 				if (findById.isPresent()) {
 
-					if (findByInstName.size() <= 1) {
-						if (findByInstEmail.size() <= 1) {
+					if (findByInstName.size() == 0) {
+						if (findByInstEmail.size() == 0) {
 
 							InstituteEntity InstEntrity = new InstituteEntity();
 							
