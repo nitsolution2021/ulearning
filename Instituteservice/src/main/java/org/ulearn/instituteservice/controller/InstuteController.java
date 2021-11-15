@@ -194,10 +194,10 @@ public class InstuteController {
 				Optional<InstituteEntity> findByInstEmail = instituteRepo.findByInstUnqEmail(instId,
 						instituteGlobalEntrity.getInstEmail());
 				
-				if (findById.isPresent()) {
+				if (!findById.isPresent()) {
 
-					if (!findByInstName.isPresent()) {
-						if (!findByInstEmail.isPresent()) {
+					if (findByInstName.isEmpty()) {
+						if (findByInstEmail.isEmpty()) {
 
 							InstituteEntity InstEntrity = new InstituteEntity();
 
@@ -259,6 +259,26 @@ public class InstuteController {
 			}
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
+		}
+	}
+	@GetMapping("/insIdvalidation/{insId}")
+	public String insIdvalidation(@PathVariable long insId)
+	{
+		try
+		{
+			LOGGER.info("Inside-InstituteController.insIdvalidation");
+			if(instituteRepo.existsById(insId))
+			{
+				return "Ok";
+			}
+			else
+			{
+				return "notOk";
+			}
+		}
+		catch(Exception e)
+		{
+			return "Exception";
 		}
 	}
 }

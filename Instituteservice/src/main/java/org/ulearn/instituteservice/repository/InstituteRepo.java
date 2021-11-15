@@ -22,6 +22,10 @@ public interface InstituteRepo extends JpaRepository<InstituteEntity, Long> {
 	 
 	@Query(value = "select InstituteEntityOBJ,InstituteAddressEntityOBJ from InstituteEntity InstituteEntityOBJ INNER JOIN InstituteAddressEntity InstituteAddressEntityOBJ on InstituteEntityOBJ.instId = InstituteAddressEntityOBJ.instId")
 	List<InstituteGlobalEntity> findByAllInst();
+
+	//boolean existsById(String instEmail);
+
+	
 	
 	
 	
