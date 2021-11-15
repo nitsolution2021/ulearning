@@ -237,11 +237,11 @@ public class InstuteController {
 					) {
 				Optional<InstituteEntity> findById = instituteRepo.findById(instId);
 				List<InstituteEntity> findByInstName = instituteRepo.findByInstUnqName(instId,instituteGlobalEntrity.getInstName());
-//				LOGGER.info("Inside - InstituteController.putInstituteDetails()///"+findByInstName.size());
+				LOGGER.info("Inside - InstituteController.putInstituteDetails()///"+findById);
 				List<InstituteEntity> findByInstEmail = instituteRepo.findByInstUnqEmail(instId,
 						instituteGlobalEntrity.getInstEmail());
 				
-				if (!findById.isPresent()) {
+				if (findById.isPresent()) {
 
 					if (findByInstName.size() == 0) {
 						if (findByInstEmail.size() == 0) {
