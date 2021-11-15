@@ -95,8 +95,8 @@ public class InstuteController {
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrOrder()))
 //					& (fieldValidation.isEmpty(instituteGlobalEntrity.getIsPrimary()))					
 					) {
-				if (findByInstituteName.isPresent()) {
-					if (findByInstEmail.isPresent()) {
+				if (!findByInstituteName.isPresent()) {
+					if (!findByInstEmail.isPresent()) {
 
 						InstituteEntity filterInsDetails = new InstituteEntity();
 
@@ -159,7 +159,7 @@ public class InstuteController {
 
 						InstituteAdminEntity InsAmdDetails = instituteAdminRepo.save(filterInsAmdDetails);
 						
-						return new GlobalResponse("success", "Institute Added Successfully");
+						return new GlobalResponse("SUCCESS", "Institute Added Successfully");
 					} else {
 						throw new CustomException("Institute Email Already Exist!");
 					}
@@ -218,16 +218,15 @@ public class InstuteController {
 //					& (fieldValidation.isEmpty(instituteGlobalEntrity.getIsPrimary()))					
 					) {
 				Optional<InstituteEntity> findById = instituteRepo.findById(instId);
-				Optional<InstituteEntity> findByInstName = instituteRepo.findByInstUnqName(instId,
-						instituteGlobalEntrity.getInstName());
-				LOGGER.info("Inside - InstituteController.putInstituteDetails()///"+findByInstName);
-				Optional<InstituteEntity> findByInstEmail = instituteRepo.findByInstUnqEmail(instId,
+				List<InstituteEntity> findByInstName = instituteRepo.findByInstUnqName(instId,instituteGlobalEntrity.getInstName());
+//				LOGGER.info("Inside - InstituteController.putInstituteDetails()///"+findByInstName.size());
+				List<InstituteEntity> findByInstEmail = instituteRepo.findByInstUnqEmail(instId,
 						instituteGlobalEntrity.getInstEmail());
 				
 				if (findById.isPresent()) {
 
-					if (findByInstName.isPresent()) {
-						if (findByInstEmail.isPresent()) {
+					if (findByInstName.size() <= 1) {
+						if (findByInstEmail.size() <= 1) {
 
 							InstituteEntity InstEntrity = new InstituteEntity();
 							
@@ -287,12 +286,9 @@ public class InstuteController {
 							filterInsAmdDetails.setUpdatedOn(new Date());
 
 							InstituteAdminEntity InsAmdDetails = instituteAdminRepo.save(filterInsAmdDetails);
-
-							if (save.equals(null)) {
-								throw new CustomException("Institute Email Already Exist!");
-							}
-							return new GlobalResponse("success", "Institute Updated Successfully");
-
+							
+							return new GlobalResponse("SUCCESS", "Institute Updated Successfully");
+							
 						} else {
 							throw new CustomException("Institute Email Already Exist!");
 						}

@@ -16,11 +16,11 @@ public interface InstituteRepo extends JpaRepository<InstituteEntity, Long> {
 	
 	
 //	@Query(value = "select instD from InstituteEntity instD where instD.instId <> ?1 and instD.instName = ?2")
-	@Query(value = "select * from tbl_institutes where INST_ID != ? and INST_NAME = ?",nativeQuery = true)
-	Optional<InstituteEntity> findByInstUnqName(long instId,String instName); 
+	@Query(value = "select * from tbl_institutes where INST_ID != '?' and INST_NAME = ?",nativeQuery = true)
+	List<InstituteEntity> findByInstUnqName(long instId,String instName); 
 	
 	@Query(value = "select instD from InstituteEntity instD where instD.instId != ?1 and instD.instEmail = ?2")
-	Optional<InstituteEntity> findByInstUnqEmail(long instId,String instEmail);
+	List<InstituteEntity> findByInstUnqEmail(long instId,String instEmail);
 	 
 //	@Query(value = "select instAdr.* from tbl_institutes ins INNER JOIN tbl_inst_addr instAdr on inst.INST_ID = instAdr.INST_ID",nativeQuery = true)
 	@Query(value = "select instAdrObj from InstituteEntity instD INNER JOIN InstituteAddressEntity instAdrObj on instAdrObj.instId = instD.instId")
