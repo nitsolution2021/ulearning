@@ -15,8 +15,8 @@ public class InstituteAdminEntity {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "AMD_ID")
-	private Long amdId;
+	@Column(name = "ADM_ID")
+	private Long admId;
 	@Column(name = "INST_ID")
 	private Long instId;
 	@Column(name = "ADM_FNAME")
@@ -45,10 +45,10 @@ public class InstituteAdminEntity {
 		// TODO Auto-generated constructor stub
 	}
 
-	public InstituteAdminEntity(Long amdId, Long instId, String amdFname, String amdLname, Date amdDob, String amdMnum,
+	public InstituteAdminEntity(Long admId, Long instId, String amdFname, String amdLname, Date amdDob, String amdMnum,
 			String amdEmail, String amdUsername, String amdPassword, String amdPpic, Date createdOn, Date updatedOn) {
 		super();
-		this.amdId = amdId;
+		this.admId = admId;
 		this.instId = instId;
 		this.amdFname = amdFname;
 		this.amdLname = amdLname;
@@ -64,18 +64,18 @@ public class InstituteAdminEntity {
 
 	@Override
 	public String toString() {
-		return "InstituteAdminEntity [amdId=" + amdId + ", instId=" + instId + ", amdFname=" + amdFname + ", amdLname="
+		return "InstituteAdminEntity [admId=" + admId + ", instId=" + instId + ", amdFname=" + amdFname + ", amdLname="
 				+ amdLname + ", amdDob=" + amdDob + ", amdMnum=" + amdMnum + ", amdEmail=" + amdEmail + ", amdUsername="
 				+ amdUsername + ", amdPassword=" + amdPassword + ", amdPpic=" + amdPpic + ", createdOn=" + createdOn
 				+ ", updatedOn=" + updatedOn + "]";
 	}
 
-	public Long getAmdId() {
-		return amdId;
+	public Long getAdmId() {
+		return admId;
 	}
 
-	public void setAmdId(Long amdId) {
-		this.amdId = amdId;
+	public void setAdmId(Long admId) {
+		this.admId = admId;
 	}
 
 	public Long getInstId() {
@@ -168,6 +168,4 @@ public class InstituteAdminEntity {
 	
 	
 	
-	
-
 }

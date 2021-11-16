@@ -5,4 +5,6 @@ import org.ulearn.licenseservice.entity.LicenseLogEntity;
 
 public interface LicenseLogRepo extends JpaRepository<LicenseLogEntity, Long>{
 
+	void findByLcId(long lcId, String string);
+
 }

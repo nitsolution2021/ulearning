@@ -14,9 +14,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 @Entity
-@Table(name = "tbl_institute")
+@Table(name="tbl_institutes")
 public class InstituteEntity {
 
 	@Id
@@ -59,6 +62,11 @@ public class InstituteEntity {
 //	@JsonIgnore
     private Set<InstituteAddressEntity> instituteAddressEntity;
 
+
+//	@OneToMany(targetEntity = InstituteAddressEntity.class, cascade = CascadeType.ALL)
+//	@JoinColumn(name = "INST_ID", referencedColumnName = "INST_ID")
+//	private InstituteAddressEntity instituteAddressEntity;
+	
 	public InstituteEntity(Long instId, String instName, Date instEndDate, String instWebsite, String instEmail,
 			String instCnum, String instMnum, Date isntRegDate, String instLogo, String instPanNum, String instGstNum,
 			String instStatus, int isActive, int isDeleted, Date createdOn, Date updatedOn,
@@ -82,6 +90,7 @@ public class InstituteEntity {
 		this.updatedOn = updatedOn;
 		this.instituteAddressEntity = employees;
 	}
+	
 
 	public InstituteEntity() {
 		super();

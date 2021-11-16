@@ -45,7 +45,7 @@ public class LoginService {
 							if(save.equals(null)) {
 								throw new CustomException("Data Not Save Try Again");
 							}else {
-								return new GlobalResponse("Success", "Password changed");
+								return new GlobalResponse("SUCCESS", "Password changed", 200);
 							}
 							
 						}else {

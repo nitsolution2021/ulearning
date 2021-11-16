@@ -66,7 +66,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers(HttpMethod.GET,"/webjars/**").permitAll()
 				.antMatchers(HttpMethod.GET,"/swagger-resources/**").permitAll()
 				.antMatchers(HttpMethod.GET,"/v2/api-docs").permitAll()
-				.antMatchers(HttpMethod.POST,"/resetPassword/{link}/{linktime}").permitAll()
+				.antMatchers(HttpMethod.POST,"/login/resetPassword/{link}/{linktime}").permitAll()
+				.antMatchers(HttpMethod.GET,"/login/mailForgotPasswordLink/{email}").permitAll()
 				
 				.anyRequest().authenticated()
 				.and()
