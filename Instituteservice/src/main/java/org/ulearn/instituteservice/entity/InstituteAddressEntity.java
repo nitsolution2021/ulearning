@@ -73,10 +73,46 @@ public class InstituteAddressEntity {
 	
 	@Column(name = "UPDATED_ON")
 	private Date updatedOn;
-	
-	@ManyToOne
-//    @JoinColumn(foreignKey = @ForeignKey(name = "inst_id"), name = "inst_id",insertable = true,updatable = true)
-	private InstituteEntity instituteEntity;
+
+	public InstituteAddressEntity() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public InstituteAddressEntity(Long adrId, Long instId, String adrType, String adrLine1, String adrLine2,
+			Long adrCountry, Long adrState, Long adrDistrict, Long adrTaluka, Long adrCity, String adrPincode,
+			String adrStatus, Long adrOrder, int isPrimary, int isActive, int isDeleted, Date createdOn,
+			Date updatedOn) {
+		super();
+		this.adrId = adrId;
+		this.instId = instId;
+		this.adrType = adrType;
+		this.adrLine1 = adrLine1;
+		this.adrLine2 = adrLine2;
+		this.adrCountry = adrCountry;
+		this.adrState = adrState;
+		this.adrDistrict = adrDistrict;
+		this.adrTaluka = adrTaluka;
+		this.adrCity = adrCity;
+		this.adrPincode = adrPincode;
+		this.adrStatus = adrStatus;
+		this.adrOrder = adrOrder;
+		this.isPrimary = isPrimary;
+		this.isActive = isActive;
+		this.isDeleted = isDeleted;
+		this.createdOn = createdOn;
+		this.updatedOn = updatedOn;
+	}
+
+	@Override
+	public String toString() {
+		return "InstituteAddressEntity [adrId=" + adrId + ", instId=" + instId + ", adrType=" + adrType + ", adrLine1="
+				+ adrLine1 + ", adrLine2=" + adrLine2 + ", adrCountry=" + adrCountry + ", adrState=" + adrState
+				+ ", adrDistrict=" + adrDistrict + ", adrTaluka=" + adrTaluka + ", adrCity=" + adrCity + ", adrPincode="
+				+ adrPincode + ", adrStatus=" + adrStatus + ", adrOrder=" + adrOrder + ", isPrimary=" + isPrimary
+				+ ", isActive=" + isActive + ", isDeleted=" + isDeleted + ", createdOn=" + createdOn + ", updatedOn="
+				+ updatedOn + "]";
+	}
 
 	public Long getAdrId() {
 		return adrId;
@@ -221,63 +257,10 @@ public class InstituteAddressEntity {
 	public void setUpdatedOn(Date updatedOn) {
 		this.updatedOn = updatedOn;
 	}
-
-	public InstituteEntity getInstituteEntity() {
-		return instituteEntity;
-	}
-
-	public void setInstituteEntity(InstituteEntity instituteEntity) {
-		this.instituteEntity = instituteEntity;
-	}
-
-	@Override
-	public String toString() {
-		return "InstituteAddressEntity [adrId=" + adrId + ", instId=" + instId + ", adrType=" + adrType + ", adrLine1="
-				+ adrLine1 + ", adrLine2=" + adrLine2 + ", adrCountry=" + adrCountry + ", adrState=" + adrState
-				+ ", adrDistrict=" + adrDistrict + ", adrTaluka=" + adrTaluka + ", adrCity=" + adrCity + ", adrPincode="
-				+ adrPincode + ", adrStatus=" + adrStatus + ", adrOrder=" + adrOrder + ", isPrimary=" + isPrimary
-				+ ", isActive=" + isActive + ", isDeleted=" + isDeleted + ", createdOn=" + createdOn + ", updatedOn="
-				+ updatedOn + ", instituteEntity=" + instituteEntity + "]";
-	}
-
-	public InstituteAddressEntity(Long adrId, Long instId, String adrType, String adrLine1, String adrLine2,
-			Long adrCountry, Long adrState, Long adrDistrict, Long adrTaluka, Long adrCity, String adrPincode,
-			String adrStatus, Long adrOrder, int isPrimary, int isActive, int isDeleted, Date createdOn, Date updatedOn,
-			InstituteEntity instituteEntity) {
-		super();
-		this.adrId = adrId;
-		this.instId = instId;
-		this.adrType = adrType;
-		this.adrLine1 = adrLine1;
-		this.adrLine2 = adrLine2;
-		this.adrCountry = adrCountry;
-		this.adrState = adrState;
-		this.adrDistrict = adrDistrict;
-		this.adrTaluka = adrTaluka;
-		this.adrCity = adrCity;
-		this.adrPincode = adrPincode;
-		this.adrStatus = adrStatus;
-		this.adrOrder = adrOrder;
-		this.isPrimary = isPrimary;
-		this.isActive = isActive;
-		this.isDeleted = isDeleted;
-		this.createdOn = createdOn;
-		this.updatedOn = updatedOn;
-		this.instituteEntity = instituteEntity;
-	}
-
-	public InstituteAddressEntity() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
+	
+//	@ManyToOne
+//    @JoinColumn(foreignKey = @ForeignKey(name = "inst_id"), name = "inst_id",insertable = true,updatable = true)
+//	private InstituteEntity instituteEntity;
 
 	
-	
-	
-	
-	
-	
-	
-
 }

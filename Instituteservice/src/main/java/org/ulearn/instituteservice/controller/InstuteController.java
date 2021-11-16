@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,28 +85,9 @@ public class InstuteController {
 	public GlobalResponse postInstituteDetails(@RequestBody InstituteGlobalEntity instituteGlobalEntrity,@RequestHeader("Authorization") String token) {
 		LOGGER.info("Inside - InstituteController.postInstituteDetails()");
 
-		try {
+		try {					
 			
-			String mailid = instituteGlobalEntrity.getInstEmail();
-			String subject = "Institute Admin Registration from uLearn";
-			String body = "Dear "+instituteGlobalEntrity.getInstName()+
-					"<br><br> Welcome to uLearn <br><br> Regards,<br>uLearn.co.in";
-			
-			HttpHeaders headers = new HttpHeaders();
-			headers.set("Authorization", token);
-			headers.setContentType(MediaType.APPLICATION_JSON);
-			
-			JSONObject requestJson = new JSONObject();
-			requestJson.put("senderMailId", mailid);
-			requestJson.put("subject", subject);
-			requestJson.put("body", body);
-
-			HttpEntity<String> entity = new HttpEntity(requestJson, headers);
-			ResponseEntity<String> response=new RestTemplate().postForEntity("http://localhost:8088/dev/login/sendMail/", entity, String.class);
 					
-									
-			System.exit(1);
-			
 			Optional<InstituteEntity> findByInstituteName = instituteRepo.findByInstName(instituteGlobalEntrity.getInstName());
 			Optional<InstituteEntity> findByInstEmail = instituteRepo.findByInstEmail(instituteGlobalEntrity.getInstEmail());
 
@@ -183,7 +166,29 @@ public class InstuteController {
 						InstituteAddressEntity InsAdrDetails = instituteAddressRepo.save(filterInsAdrDetails);
 						
 						
+						String mailid = instituteGlobalEntrity.getAmdEmail();
+						String subject = "Institute Admin Registration from uLearn";
+						String body = "Dear "+instituteGlobalEntrity.getAmdFname()+" "+instituteGlobalEntrity.getAmdLname()+
+									"<br><br> Welcome to uLearn <br><br>"
+									+"Your are successfully register with us.<br><br>"
+									+"You login Credentials is - <br>"
+									+"Username - "+instituteGlobalEntrity.getAmdUsername()+"<br>"
+									+"Password - "+instituteGlobalEntrity.getAmdPassword()+"<br><br>"
+									+"Regards,<br>uLearn.co.in";
 						
+						HttpHeaders headers = new HttpHeaders();
+						headers.set("Authorization", token);
+						headers.setContentType(MediaType.APPLICATION_JSON);
+						
+						JSONObject requestJson = new JSONObject();
+						requestJson.put("senderMailId", mailid);
+						requestJson.put("subject", subject);
+						requestJson.put("body", body);
+						requestJson.put("enableHtml", true);
+
+						HttpEntity<String> entity = new HttpEntity(requestJson, headers);
+						ResponseEntity<String> response=new RestTemplate().postForEntity("http://localhost:8088/dev/login/sendMail/", entity, String.class);						
+												
 						
 						InstituteAdminEntity filterInsAmdDetails = new InstituteAdminEntity();
 
@@ -237,8 +242,8 @@ public class InstuteController {
 
 	
 	@PutMapping("/update/{instId}")
-	public GlobalResponse putInstituteDetails(@RequestBody InstituteGlobalEntity instituteGlobalEntrity,
-			@PathVariable("instId") long instId) {
+	public GlobalResponse putInstituteDetails(@Valid @RequestBody InstituteGlobalEntity instituteGlobalEntrity,
+			@PathVariable("instId") long instId, @RequestHeader("Authorization") String token) {
 		LOGGER.info("Inside - InstituteController.putInstituteDetails()");
 		try {
 			if ((fieldValidation.isEmpty(instituteGlobalEntrity.getInstCnum()))
@@ -273,9 +278,10 @@ public class InstuteController {
 					) {
 				Optional<InstituteEntity> findById = instituteRepo.findById(instId);
 				List<InstituteEntity> findByInstName = instituteRepo.findByInstUnqName(instId,instituteGlobalEntrity.getInstName());
-				LOGGER.info("Inside - InstituteController.putInstituteDetails()///"+findById);
-				List<InstituteEntity> findByInstEmail = instituteRepo.findByInstUnqEmail(instId,
-						instituteGlobalEntrity.getInstEmail());
+//				LOGGER.info("Inside - InstituteController.putInstituteDetails()///"+findById);
+				List<InstituteEntity> findByInstEmail = instituteRepo.findByInstUnqEmail(instId,instituteGlobalEntrity.getInstEmail());
+				Optional<InstituteAddressEntity> findByAdrId = instituteAddressRepo.findById(instituteGlobalEntrity.getAdrId());
+				Optional<InstituteAdminEntity> findByAdminId = instituteAdminRepo.findById(instituteGlobalEntrity.getAdmId());
 				
 				if (findById.isPresent()) {
 
@@ -300,6 +306,8 @@ public class InstuteController {
 							InstEntrity.setUpdatedOn(new Date());
 							InstituteEntity save = instituteRepo.save(InstEntrity);
 							
+							if (findByAdrId.isPresent()) {
+															
 							InstituteAddressEntity filterInsAdrDetails = new InstituteAddressEntity();
 
 							filterInsAdrDetails.setAdrId(instituteGlobalEntrity.getAdrId());
@@ -322,11 +330,38 @@ public class InstuteController {
 							filterInsAdrDetails.setUpdatedOn(new Date());
 
 							InstituteAddressEntity InsAdrDetails = instituteAddressRepo.save(filterInsAdrDetails);
+							}
 							
-							InstituteAdminEntity filterInsAmdDetails = new InstituteAdminEntity();
-							Optional<InstituteAdminEntity> findByAdminId = instituteAdminRepo.findById(instituteGlobalEntrity.getAdmId());
+							InstituteAdminEntity filterInsAmdDetails = new InstituteAdminEntity();							
+														
 							
-							filterInsAmdDetails.setAdmId(instituteGlobalEntrity.getAdmId());
+//							if(findByAdmId.get().getAmdUsername() != instituteGlobalEntrity.getAmdUsername() && findByAdmId.get().getAmdEmail() != ""){}
+//							String mailid = instituteGlobalEntrity.getAmdEmail();
+//							String subject = "Institute Admin Registration from uLearn";
+//							String body = "Dear "+instituteGlobalEntrity.getAmdFname()+" "+instituteGlobalEntrity.getAmdLname()+
+//										"<br><br> Welcome to uLearn <br><br>"
+//										+"Your are successfully register with us.<br><br>"
+//										+"You login Credentials is - <br>"
+//										+"Username - "+instituteGlobalEntrity.getAmdUsername()+"<br>"
+//										+"Password - "+instituteGlobalEntrity.getAmdPassword()+"<br><br>"
+//										+"Regards,<br>uLearn.co.in";
+//							
+//							HttpHeaders headers = new HttpHeaders();
+//							headers.set("Authorization", token);
+//							headers.setContentType(MediaType.APPLICATION_JSON);
+//							
+//							JSONObject requestJson = new JSONObject();
+//							requestJson.put("senderMailId", mailid);
+//							requestJson.put("subject", subject);
+//							requestJson.put("body", body);
+//							requestJson.put("enableHtml", true);
+//
+//							HttpEntity<String> entity = new HttpEntity(requestJson, headers);
+//							ResponseEntity<String> response=new RestTemplate().postForEntity("http://localhost:8088/dev/login/sendMail/", entity, String.class);
+							
+							if (findByAdminId.isPresent()) {
+								
+							filterInsAmdDetails.setAdmId(instituteGlobalEntrity.getAmdId());
 							filterInsAmdDetails.setAmdFname(instituteGlobalEntrity.getAmdFname());
 							filterInsAmdDetails.setAmdLname(instituteGlobalEntrity.getAmdLname());
 							filterInsAmdDetails.setAmdDob(instituteGlobalEntrity.getAmdDob());
@@ -340,7 +375,7 @@ public class InstuteController {
 							filterInsAmdDetails.setUpdatedOn(new Date());
 
 							InstituteAdminEntity InsAmdDetails = instituteAdminRepo.save(filterInsAmdDetails);
-							
+							}
 							return new GlobalResponse("SUCCESS", "Institute Updated Successfully");
 							
 						} else {

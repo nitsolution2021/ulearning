@@ -57,20 +57,14 @@ public class InstituteEntity {
 	@Column(name = "UPDATED_ON")
 	private Date updatedOn;
 	
-	@OneToMany( mappedBy = "instituteEntity")    
-//	@OneToMany(targetEntity = InstituteAddressEntity.class)
-//	@JsonIgnore
-    private Set<InstituteAddressEntity> instituteAddressEntity;
+	public InstituteEntity() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 
-
-//	@OneToMany(targetEntity = InstituteAddressEntity.class, cascade = CascadeType.ALL)
-//	@JoinColumn(name = "INST_ID", referencedColumnName = "INST_ID")
-//	private InstituteAddressEntity instituteAddressEntity;
-	
 	public InstituteEntity(Long instId, String instName, Date instEndDate, String instWebsite, String instEmail,
 			String instCnum, String instMnum, Date isntRegDate, String instLogo, String instPanNum, String instGstNum,
-			String instStatus, int isActive, int isDeleted, Date createdOn, Date updatedOn,
-			Set<InstituteAddressEntity> employees) {
+			String instStatus, int isActive, int isDeleted, Date createdOn, Date updatedOn) {
 		super();
 		this.instId = instId;
 		this.instName = instName;
@@ -88,13 +82,15 @@ public class InstituteEntity {
 		this.isDeleted = isDeleted;
 		this.createdOn = createdOn;
 		this.updatedOn = updatedOn;
-		this.instituteAddressEntity = employees;
 	}
-	
 
-	public InstituteEntity() {
-		super();
-		// TODO Auto-generated constructor stub
+	@Override
+	public String toString() {
+		return "InstituteEntity [instId=" + instId + ", instName=" + instName + ", instEndDate=" + instEndDate
+				+ ", instWebsite=" + instWebsite + ", instEmail=" + instEmail + ", instCnum=" + instCnum + ", instMnum="
+				+ instMnum + ", isntRegDate=" + isntRegDate + ", instLogo=" + instLogo + ", instPanNum=" + instPanNum
+				+ ", instGstNum=" + instGstNum + ", instStatus=" + instStatus + ", isActive=" + isActive
+				+ ", isDeleted=" + isDeleted + ", createdOn=" + createdOn + ", updatedOn=" + updatedOn + "]";
 	}
 
 	public Long getInstId() {
@@ -224,27 +220,16 @@ public class InstituteEntity {
 	public void setUpdatedOn(Date updatedOn) {
 		this.updatedOn = updatedOn;
 	}
-
-	public Set<InstituteAddressEntity> getInstituteAddressEntity() {
-		return instituteAddressEntity;
-	}
-
-	public void setInstituteAddressEntity(Set<InstituteAddressEntity> instituteAddressEntity) {
-		this.instituteAddressEntity = instituteAddressEntity;
-	}
-
-	@Override
-	public String toString() {
-		return "InstituteEntity [instId=" + instId + ", instName=" + instName + ", instEndDate=" + instEndDate
-				+ ", instWebsite=" + instWebsite + ", instEmail=" + instEmail + ", instCnum=" + instCnum + ", instMnum="
-				+ instMnum + ", isntRegDate=" + isntRegDate + ", instLogo=" + instLogo + ", instPanNum=" + instPanNum
-				+ ", instGstNum=" + instGstNum + ", instStatus=" + instStatus + ", isActive=" + isActive
-				+ ", isDeleted=" + isDeleted + ", createdOn=" + createdOn + ", updatedOn=" + updatedOn
-				+ ", instituteAddressEntity=" + instituteAddressEntity + "]";
-	}
 	
+//	@OneToMany( mappedBy = "instituteEntity")    
+//	@OneToMany(targetEntity = InstituteAddressEntity.class)
+//	@JsonIgnore
+//    private Set<InstituteAddressEntity> instituteAddressEntity;
 
 
+//	@OneToMany(targetEntity = InstituteAddressEntity.class, cascade = CascadeType.ALL)
+//	@JoinColumn(name = "INST_ID", referencedColumnName = "INST_ID")
+//	private InstituteAddressEntity instituteAddressEntity;
 	
-
-}
+	
+	}
