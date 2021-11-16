@@ -3,11 +3,15 @@ package org.ulearn.instituteservice.controller;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +33,8 @@ import org.ulearn.instituteservice.repository.InstituteAddressRepo;
 import org.ulearn.instituteservice.repository.InstituteAdminRepo;
 import org.ulearn.instituteservice.repository.InstituteRepo;
 import org.ulearn.instituteservice.validation.FieldValidation;
+
+import springfox.documentation.spring.web.json.Json;
 
 @RestController
 @RequestMapping("/institute")
@@ -78,6 +84,27 @@ public class InstuteController {
 		LOGGER.info("Inside - InstituteController.postInstituteDetails()");
 
 		try {
+			
+			String mailid = instituteGlobalEntrity.getInstEmail();
+			String subject = "Institute Admin Registration from uLearn";
+			String body = "Dear "+instituteGlobalEntrity.getInstName()+
+					"<br><br> Welcome to uLearn <br><br> Regards,<br>uLearn.co.in";
+			
+			HttpHeaders headers = new HttpHeaders();
+			headers.set("Authorization", token);
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			
+			JSONObject requestJson = new JSONObject();
+			requestJson.put("senderMailId", mailid);
+			requestJson.put("subject", subject);
+			requestJson.put("body", body);
+
+			HttpEntity<String> entity = new HttpEntity(requestJson, headers);
+			ResponseEntity<String> response=new RestTemplate().postForEntity("http://localhost:8088/dev/login/sendMail/", entity, String.class);
+					
+									
+			System.exit(1);
+			
 			Optional<InstituteEntity> findByInstituteName = instituteRepo.findByInstName(instituteGlobalEntrity.getInstName());
 			Optional<InstituteEntity> findByInstEmail = instituteRepo.findByInstEmail(instituteGlobalEntrity.getInstEmail());
 
@@ -131,7 +158,7 @@ public class InstuteController {
 						filterInsDetails.setUpdatedOn(new Date());
 
 						InstituteEntity save = instituteRepo.save(filterInsDetails);
-												
+						
 						
 						InstituteAddressEntity filterInsAdrDetails = new InstituteAddressEntity();
 
@@ -156,10 +183,7 @@ public class InstuteController {
 						InstituteAddressEntity InsAdrDetails = instituteAddressRepo.save(filterInsAdrDetails);
 						
 						
-						org.springframework.http.HttpHeaders header=new org.springframework.http.HttpHeaders();
-						header.set("Authorization", token);
-						HttpEntity request=new HttpEntity(header);
-						ResponseEntity<String> response=new RestTemplate().exchange("http://localhost:8088/dev/institute/insIdvalidation/"+save.getInstId(), HttpMethod.GET, request, String.class);
+						
 						
 						InstituteAdminEntity filterInsAmdDetails = new InstituteAdminEntity();
 
