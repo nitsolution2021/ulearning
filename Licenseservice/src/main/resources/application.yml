@@ -1,0 +1,113 @@
+spring: 
+  application: 
+     name: LicenseService
+  datasource: 
+    url: jdbc:mysql://ulearn-mysql.cdvo6qjmkkri.ap-south-1.rds.amazonaws.com:3306/ulearn_dev_sadmin
+    username: ulearn
+    password: ULearn2121
+  jpa:
+    hibernate: 
+      ddl-auto: none
+ 
+server: 
+  port: 8089
+  servlet: 
+    contextPath: /default
+name: license-default-yml
+environment: default
+enabled: true
+contextpath: /default
+servers: 
+   - www.default.com
+   - www.default1.com
+logging: 
+      file: 
+        name: logs/license_default_logs.log
+      pattern:
+        console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+        file: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+      level:
+        org.springframework.web: ERROR
+        org.ulearn.*: INFO
+        org.hibernate: ERROR
+        
+jwt.secret.key: secret
+jwt.token.validity: 36000000     
+
+        
+        
+---
+spring: 
+  profiles: dev
+  application: 
+     name: LicenseService
+  datasource: 
+    url: jdbc:mysql://ulearn-mysql.cdvo6qjmkkri.ap-south-1.rds.amazonaws.com:3306/ulearn_dev_sadmin
+    username: ulearn
+    password: ULearn2121
+    driverClassName: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate: 
+      ddl-auto: none
+      use-new-id-generator-mappings: false
+server: 
+  port: 8088
+  servlet: 
+    contextPath: /dev
+name: license-dev-yml
+environment: dev
+enabled: true
+contextpath: /dev
+servers: 
+   - www.dev.com
+   - www.dev1.com
+logging: 
+      file: 
+        name: logs/license_dev_logs.log
+      pattern:
+        console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+        file: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+      level:
+        org.springframework.web: ERROR
+        org.ulearn.*: INFO
+        org.hibernate: ERROR
+        
+jwt.secret.key: secret
+jwt.token.validity: 36000000        
+        
+        
+        
+---      
+spring: 
+  profiles: prod
+  application: 
+     name: LicenseService
+  datasource: 
+    url: jdbc:mysql://localhost:3306/ulearn
+    username: root
+    password: 
+  jpa:
+    hibernate: 
+      ddl-auto: none
+      use-new-id-generator-mappings: false
+server: 
+  port: 8087
+  servlet: 
+    contextPath: /prod
+name: license-prod-yml
+environment: prod
+enabled: true
+contextpath: /prod
+servers: 
+   - prod
+   - prod.com
+logging: 
+      file: 
+        name: logs/license_prod_logs.log
+      pattern:
+        console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+        file: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+      level:
+        org.springframework.web: ERROR
+        org.ulearn.*: INFO
+        org.hibernate: ERROR
