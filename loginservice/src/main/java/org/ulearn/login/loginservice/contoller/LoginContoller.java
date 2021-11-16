@@ -82,7 +82,7 @@ public class LoginContoller {
 		LOGGER.info("Inside - LoginContoller.sendMail()");
 		
 		try {
-			mailService.sendEmail(senderMailId.getSenderMailId(), senderMailId.getSubject(),senderMailId.getBody());
+			mailService.sendEmail(senderMailId.getSenderMailId(), senderMailId.getSubject(),senderMailId.getBody(),senderMailId.isEnableHtml());
 			return new GlobalResponse("SUCCESS","Mail Send Successfully", 200);
 			
 		}catch(Exception e) {
@@ -128,7 +128,7 @@ public class LoginContoller {
 					throw new CustomException("Data Not Save Try Again");
 				}else {
 					//** SEND MAIL IF DETAILS SAVE IN DATABASE **//
-					mailService.sendEmail( findByUserName.get().getEmail(),forgotPasswordLink,"Forgot Password Link");
+					mailService.sendEmail( findByUserName.get().getEmail(),forgotPasswordLink,"Forgot Password Link",false);
 				}
 				
 				return new GlobalResponse("SUCCESS","Mail Send Successfully", 200);

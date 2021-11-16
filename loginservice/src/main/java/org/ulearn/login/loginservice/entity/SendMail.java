@@ -5,6 +5,7 @@ public class SendMail {
 	String senderMailId;
 	String subject;
 	String body;
+	boolean enableHtml;
 	public String getSenderMailId() {
 		return senderMailId;
 	}
@@ -23,20 +24,29 @@ public class SendMail {
 	public void setBody(String body) {
 		this.body = body;
 	}
+	public boolean isEnableHtml() {
+		return enableHtml;
+	}
+	public void setEnableHtml(boolean enableHtml) {
+		this.enableHtml = enableHtml;
+	}
 	@Override
 	public String toString() {
-		return "SendMail [senderMailId=" + senderMailId + ", subject=" + subject + ", body=" + body + "]";
+		return "SendMail [senderMailId=" + senderMailId + ", subject=" + subject + ", body=" + body + ", enableHtml="
+				+ enableHtml + "]";
 	}
-	public SendMail(String senderMailId, String subject, String body) {
+	public SendMail(String senderMailId, String subject, String body, boolean enableHtml) {
 		super();
 		this.senderMailId = senderMailId;
 		this.subject = subject;
 		this.body = body;
+		this.enableHtml = enableHtml;
 	}
 	public SendMail() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	
 	
 
 }
