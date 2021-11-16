@@ -77,11 +77,11 @@ public class LoginContoller {
 	private static final Logger LOGGER = LoggerFactory.getLogger(LoginContoller.class);
 	
 	@PostMapping
-	public GlobalResponse sendMail(@PathVariable("senderMailId") String senderMailId, @PathVariable("body") String body, @PathVariable("subject") String subject) {
+	public GlobalResponse sendMail(@PathVariable("senderMailId") String senderMailId, @PathVariable("subject") String subject, @PathVariable("body") String body) {
 		LOGGER.info("Inside - LoginContoller.sendMail()");
 		
 		try {
-			mailService.sendEmail("soumendolui077@gmail.com", senderMailId,body,subject);
+			mailService.sendEmail("soumendolui077@gmail.com", senderMailId,subject,body);
 			return new GlobalResponse("SUCCESS","Mail Send Successfully", 200);
 			
 		}catch(Exception e) {
