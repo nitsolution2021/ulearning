@@ -6,14 +6,19 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 import org.ulearn.instituteservice.entity.GlobalResponse;
 import org.ulearn.instituteservice.entity.InstituteAddressEntity;
 import org.ulearn.instituteservice.entity.InstituteAdminEntity;
@@ -69,7 +74,7 @@ public class InstuteController {
 
 
 	@PostMapping("/add")
-	public GlobalResponse postInstituteDetails(@RequestBody InstituteGlobalEntity instituteGlobalEntrity) {
+	public GlobalResponse postInstituteDetails(@RequestBody InstituteGlobalEntity instituteGlobalEntrity,@RequestHeader("Authorization") String token) {
 		LOGGER.info("Inside - InstituteController.postInstituteDetails()");
 
 		try {
@@ -150,6 +155,11 @@ public class InstuteController {
 
 						InstituteAddressEntity InsAdrDetails = instituteAddressRepo.save(filterInsAdrDetails);
 						
+						
+						org.springframework.http.HttpHeaders header=new org.springframework.http.HttpHeaders();
+						header.set("Authorization", token);
+						HttpEntity request=new HttpEntity(header);
+						ResponseEntity<String> response=new RestTemplate().exchange("http://localhost:8088/dev/institute/insIdvalidation/"+save.getInstId(), HttpMethod.GET, request, String.class);
 						
 						InstituteAdminEntity filterInsAmdDetails = new InstituteAdminEntity();
 
