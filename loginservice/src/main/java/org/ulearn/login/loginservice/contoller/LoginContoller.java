@@ -25,6 +25,7 @@ import org.ulearn.login.loginservice.entity.GlobalResponse;
 import org.ulearn.login.loginservice.entity.LoginEntity;
 import org.ulearn.login.loginservice.entity.LoginResetEntity;
 import org.ulearn.login.loginservice.entity.LoginUserDetails;
+import org.ulearn.login.loginservice.entity.SendMail;
 import org.ulearn.login.loginservice.helper.JwtUtil;
 import org.ulearn.login.loginservice.exception.CustomException;
 import org.ulearn.login.loginservice.repository.LoginRepository;
@@ -76,12 +77,12 @@ public class LoginContoller {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(LoginContoller.class);
 	
-	@PostMapping
-	public GlobalResponse sendMail(@PathVariable("senderMailId") String senderMailId, @PathVariable("subject") String subject, @PathVariable("body") String body) {
+	@PostMapping("/sendMail")
+	public GlobalResponse sendMail(@RequestBody() SendMail senderMailId) {
 		LOGGER.info("Inside - LoginContoller.sendMail()");
 		
 		try {
-			mailService.sendEmail("soumendolui077@gmail.com", senderMailId,subject,body);
+			mailService.sendEmail(senderMailId.getSenderMailId(), senderMailId.getSubject(),senderMailId.getBody());
 			return new GlobalResponse("SUCCESS","Mail Send Successfully", 200);
 			
 		}catch(Exception e) {
@@ -127,7 +128,7 @@ public class LoginContoller {
 					throw new CustomException("Data Not Save Try Again");
 				}else {
 					//** SEND MAIL IF DETAILS SAVE IN DATABASE **//
-					mailService.sendEmail("soumendolui077@gmail.com", findByUserName.get().getEmail(),forgotPasswordLink,"Forgot Password Link");
+					mailService.sendEmail( findByUserName.get().getEmail(),forgotPasswordLink,"Forgot Password Link");
 				}
 				
 				return new GlobalResponse("SUCCESS","Mail Send Successfully", 200);
