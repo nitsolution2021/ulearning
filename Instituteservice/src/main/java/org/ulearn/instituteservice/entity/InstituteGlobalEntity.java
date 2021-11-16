@@ -62,19 +62,19 @@ public class InstituteGlobalEntity {
 	
 	
 	private Long amdId;
-	@NotEmpty
+	@NotEmpty(message = "Admin Frist Name is Required")
 	private String amdFname;
-	@NotEmpty
+	@NotEmpty(message = "Admin Last Name is Required")
 	private String amdLname;
-	@NotNull(message = "The Date of Birth is Required")
+	@NotNull(message = "Admin Date of Birth is Required")
 	private Date amdDob;
-	@NotEmpty
+	@NotEmpty(message = "Admin Mobile Number is Required")
 	private String amdMnum;
 	@Email
 	private String amdEmail;
-	@NotEmpty
+	@NotEmpty(message = "Admin Username is Required")
 	private String amdUsername;
-	@NotEmpty
+	@NotEmpty(message = "Admin Password is Required")
 	private String amdPassword;
 	private String amdPpic;
 	
