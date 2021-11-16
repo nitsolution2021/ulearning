@@ -27,6 +27,7 @@ public class InstituteGlobalEntity {
 	private Date updatedOn;
 	
 	private Long adrId;
+	private Long admId;
 	private String adrType;
 	private String adrLine1;
 	private String adrLine2;
@@ -60,9 +61,9 @@ public class InstituteGlobalEntity {
 
 	public InstituteGlobalEntity(Long instId, String instName, Date instEndDate, String instWebsite, String instEmail,
 			String instCnum, String instMnum, Date isntRegDate, String instLogo, String instPanNum, String instGstNum,
-			String instStatus, int isActive, int isDeleted, Date createdOn, Date updatedOn, Long adrId, String adrType,
-			String adrLine1, String adrLine2, Long adrCountry, Long adrState, Long adrDistrict, Long adrTaluka,
-			Long adrCity, String adrPincode, String adrStatus, Long adrOrder, int isPrimary, Long amdId,
+			String instStatus, int isActive, int isDeleted, Date createdOn, Date updatedOn, Long adrId, Long admId,
+			String adrType, String adrLine1, String adrLine2, Long adrCountry, Long adrState, Long adrDistrict,
+			Long adrTaluka, Long adrCity, String adrPincode, String adrStatus, Long adrOrder, int isPrimary, Long amdId,
 			String amdFname, String amdLname, Date amdDob, String amdMnum, String amdEmail, String amdUsername,
 			String amdPassword, String amdPpic) {
 		super();
@@ -83,6 +84,7 @@ public class InstituteGlobalEntity {
 		this.createdOn = createdOn;
 		this.updatedOn = updatedOn;
 		this.adrId = adrId;
+		this.admId = admId;
 		this.adrType = adrType;
 		this.adrLine1 = adrLine1;
 		this.adrLine2 = adrLine2;
@@ -104,6 +106,23 @@ public class InstituteGlobalEntity {
 		this.amdUsername = amdUsername;
 		this.amdPassword = amdPassword;
 		this.amdPpic = amdPpic;
+	}
+
+
+	@Override
+	public String toString() {
+		return "InstituteGlobalEntity [instId=" + instId + ", instName=" + instName + ", instEndDate=" + instEndDate
+				+ ", instWebsite=" + instWebsite + ", instEmail=" + instEmail + ", instCnum=" + instCnum + ", instMnum="
+				+ instMnum + ", isntRegDate=" + isntRegDate + ", instLogo=" + instLogo + ", instPanNum=" + instPanNum
+				+ ", instGstNum=" + instGstNum + ", instStatus=" + instStatus + ", isActive=" + isActive
+				+ ", isDeleted=" + isDeleted + ", createdOn=" + createdOn + ", updatedOn=" + updatedOn + ", adrId="
+				+ adrId + ", admId=" + admId + ", adrType=" + adrType + ", adrLine1=" + adrLine1 + ", adrLine2="
+				+ adrLine2 + ", adrCountry=" + adrCountry + ", adrState=" + adrState + ", adrDistrict=" + adrDistrict
+				+ ", adrTaluka=" + adrTaluka + ", adrCity=" + adrCity + ", adrPincode=" + adrPincode + ", adrStatus="
+				+ adrStatus + ", adrOrder=" + adrOrder + ", isPrimary=" + isPrimary + ", amdId=" + amdId + ", amdFname="
+				+ amdFname + ", amdLname=" + amdLname + ", amdDob=" + amdDob + ", amdMnum=" + amdMnum + ", amdEmail="
+				+ amdEmail + ", amdUsername=" + amdUsername + ", amdPassword=" + amdPassword + ", amdPpic=" + amdPpic
+				+ "]";
 	}
 
 
@@ -274,6 +293,16 @@ public class InstituteGlobalEntity {
 
 	public void setAdrId(Long adrId) {
 		this.adrId = adrId;
+	}
+
+
+	public Long getAdmId() {
+		return admId;
+	}
+
+
+	public void setAdmId(Long admId) {
+		this.admId = admId;
 	}
 
 
@@ -485,12 +514,7 @@ public class InstituteGlobalEntity {
 	public void setAmdPpic(String amdPpic) {
 		this.amdPpic = amdPpic;
 	}
-	
-	
 
-	
-	
-	
-		
+
 	
 }

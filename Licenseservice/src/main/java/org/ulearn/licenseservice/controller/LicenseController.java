@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.ulearn.licenseservice.entity.GlobalResponse;
 import org.ulearn.licenseservice.entity.LicenseEntity;
+import org.ulearn.licenseservice.entity.LicenseLogEntity;
+import org.ulearn.licenseservice.exception.CustomException;
 import org.ulearn.licenseservice.servises.LicenseService;
 
 @RestController
@@ -32,16 +34,32 @@ public class LicenseController {
 	public GlobalResponse addLicense(@RequestBody LicenseEntity licenseEntity ) {
 		
 		LOGGER.info("Inside the LicenseController Add License");
+		try {
+			
+			return this.licenseService.addLicense(licenseEntity);
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			throw new CustomException(e.getMessage());
+		}
 		
-		return this.licenseService.addLicense(licenseEntity);
+		
 	}
 	
 	@PutMapping("/update/{licenseId}")
 	public GlobalResponse updateLicense(@PathVariable() long licenseId, @RequestBody LicenseEntity licenseForUpdate ) {
 		
 		LOGGER.info("Inside the LicenseController Update License");
+		try {
+			
+			return this.licenseService.updateLicense(licenseId,licenseForUpdate);
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			throw new CustomException(e.getMessage());
+		}
 		
-		return this.licenseService.updateLicense(licenseId,licenseForUpdate);
+		
 	}
 	
 	@GetMapping("/list")
@@ -49,7 +67,15 @@ public class LicenseController {
 		
 		LOGGER.info("Inside the LicenseController view all License");
 		
-		return this.licenseService.getAllLicenseList();
+		try {
+		
+			return this.licenseService.getAllLicenseList();
+		} catch (Exception e) {
+			// TODO: handle exception
+			throw new CustomException(e.getMessage());
+		}
+		
+		
 	}
 	
 	@GetMapping("/view/{lcId}")
@@ -57,6 +83,27 @@ public class LicenseController {
 		
 		LOGGER.info("Inside the LicenseController view License by id");
 		
-		return this.licenseService.getLicense(lcId);
+		try {
+			
+			return this.licenseService.getLicense(lcId);
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			throw new CustomException(e.getMessage());
+		}
+	
+	}
+	
+	@PostMapping("/suspend/{lcId}")
+	public GlobalResponse addSuspend(@PathVariable long lcId, @RequestBody LicenseLogEntity licenseLogEntitySuspend) {
+		
+		LOGGER.info("Inside the suspend License");
+		try {
+			
+			return this.licenseService.addSuspendLicense(lcId,licenseLogEntitySuspend);
+		} catch (Exception e) {
+			// TODO: handle exception
+			throw new CustomException(e.getMessage());
+		}
 	}
 }

@@ -2,11 +2,14 @@ package org.ulearn.instituteservice.entity;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -53,6 +56,11 @@ public class InstituteEntity {
 		// TODO Auto-generated constructor stub
 	}
 
+
+//	@OneToMany(targetEntity = InstituteAddressEntity.class, cascade = CascadeType.ALL)
+//	@JoinColumn(name = "INST_ID", referencedColumnName = "INST_ID")
+//	private InstituteAddressEntity instituteAddressEntity;
+	
 	public InstituteEntity(Long instId, String instName, Date instEndDate, String instWebsite, String instEmail,
 			String instCnum, String instMnum, Date isntRegDate, String instLogo, String instPanNum, String instGstNum,
 			String instStatus, int isActive, int isDeleted, Date createdOn, Date updatedOn) {
@@ -74,6 +82,7 @@ public class InstituteEntity {
 		this.createdOn = createdOn;
 		this.updatedOn = updatedOn;
 	}
+	
 
 	@Override
 	public String toString() {
