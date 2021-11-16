@@ -43,7 +43,8 @@ public class InstuteController {
 	private InstituteAddressRepo instituteAddressRepo; 
 	
 	@Autowired
-	private InstituteAdminRepo instituteAdminRepo; 
+	private InstituteAdminRepo instituteAdminRepo;
+	
 
 	@Autowired
 	private FieldValidation fieldValidation;
@@ -56,6 +57,7 @@ public class InstuteController {
 		LOGGER.info("Inside - InstituteController.getInstute()");
 
 		try {
+
 
 			List<InstituteEntity> findAll = instituteRepo.findAll();
 

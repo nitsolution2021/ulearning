@@ -2,11 +2,16 @@ package org.ulearn.instituteservice.entity;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -68,6 +73,10 @@ public class InstituteAddressEntity {
 	
 	@Column(name = "UPDATED_ON")
 	private Date updatedOn;
+	
+	@ManyToOne
+//    @JoinColumn(foreignKey = @ForeignKey(name = "inst_id"), name = "inst_id",insertable = true,updatable = true)
+	private InstituteEntity instituteEntity;
 
 	public Long getAdrId() {
 		return adrId;
@@ -213,6 +222,14 @@ public class InstituteAddressEntity {
 		this.updatedOn = updatedOn;
 	}
 
+	public InstituteEntity getInstituteEntity() {
+		return instituteEntity;
+	}
+
+	public void setInstituteEntity(InstituteEntity instituteEntity) {
+		this.instituteEntity = instituteEntity;
+	}
+
 	@Override
 	public String toString() {
 		return "InstituteAddressEntity [adrId=" + adrId + ", instId=" + instId + ", adrType=" + adrType + ", adrLine1="
@@ -220,13 +237,13 @@ public class InstituteAddressEntity {
 				+ ", adrDistrict=" + adrDistrict + ", adrTaluka=" + adrTaluka + ", adrCity=" + adrCity + ", adrPincode="
 				+ adrPincode + ", adrStatus=" + adrStatus + ", adrOrder=" + adrOrder + ", isPrimary=" + isPrimary
 				+ ", isActive=" + isActive + ", isDeleted=" + isDeleted + ", createdOn=" + createdOn + ", updatedOn="
-				+ updatedOn + "]";
+				+ updatedOn + ", instituteEntity=" + instituteEntity + "]";
 	}
 
 	public InstituteAddressEntity(Long adrId, Long instId, String adrType, String adrLine1, String adrLine2,
 			Long adrCountry, Long adrState, Long adrDistrict, Long adrTaluka, Long adrCity, String adrPincode,
-			String adrStatus, Long adrOrder, int isPrimary, int isActive, int isDeleted, Date createdOn,
-			Date updatedOn) {
+			String adrStatus, Long adrOrder, int isPrimary, int isActive, int isDeleted, Date createdOn, Date updatedOn,
+			InstituteEntity instituteEntity) {
 		super();
 		this.adrId = adrId;
 		this.instId = instId;
@@ -246,12 +263,16 @@ public class InstituteAddressEntity {
 		this.isDeleted = isDeleted;
 		this.createdOn = createdOn;
 		this.updatedOn = updatedOn;
+		this.instituteEntity = instituteEntity;
 	}
 
 	public InstituteAddressEntity() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+
+
+	
 	
 	
 	
