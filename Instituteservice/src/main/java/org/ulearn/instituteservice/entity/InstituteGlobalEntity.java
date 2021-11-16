@@ -41,8 +41,9 @@ public class InstituteGlobalEntity {
 	private Long adrId;
 	private Long admId;
 	private String adrType;
-	@NotEmpty(message = "The Institute Name is Required")
+	@NotEmpty(message = "The Address Line 1 is Required")
 	private String adrLine1;
+	@NotEmpty(message = "The Address Line 2 is Required")
 	private String adrLine2;	
 	@Positive(message = "The Country is Required")
 	private Long adrCountry;	
@@ -62,19 +63,19 @@ public class InstituteGlobalEntity {
 	
 	
 	private Long amdId;
-	@NotEmpty(message = "Admin Frist Name is Required")
+	@NotEmpty(message = "Owner Frist Name is Required")
 	private String amdFname;
-	@NotEmpty(message = "Admin Last Name is Required")
+	@NotEmpty(message = "Owner Last Name is Required")
 	private String amdLname;
-	@NotNull(message = "Admin Date of Birth is Required")
+	@NotNull(message = "Owner Date of Birth is Required")
 	private Date amdDob;
-	@NotEmpty(message = "Admin Mobile Number is Required")
+	@NotEmpty(message = "Owner Mobile Number is Required")
 	private String amdMnum;
 	@Email
 	private String amdEmail;
-	@NotEmpty(message = "Admin Username is Required")
+	@NotEmpty(message = "Owner Username is Required")
 	private String amdUsername;
-	@NotEmpty(message = "Admin Password is Required")
+	@NotEmpty(message = "Owner Password is Required")
 	private String amdPassword;
 	private String amdPpic;
 	
