@@ -76,7 +76,7 @@ public class LoginContoller {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(LoginContoller.class);
 	
-	@PostMapping
+	@PostMapping("/sendMail")
 	public GlobalResponse sendMail(@PathVariable("senderMailId") String senderMailId, @PathVariable("subject") String subject, @PathVariable("body") String body) {
 		LOGGER.info("Inside - LoginContoller.sendMail()");
 		
