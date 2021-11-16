@@ -75,6 +75,19 @@ public class LoginContoller {
 
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(LoginContoller.class);
+	
+	@PostMapping
+	public GlobalResponse sendMail(@PathVariable("senderMailId") String senderMailId, @PathVariable("body") String body, @PathVariable("subject") String subject) {
+		LOGGER.info("Inside - LoginContoller.sendMail()");
+		
+		try {
+			mailService.sendEmail("soumendolui077@gmail.com", senderMailId,body,subject);
+			return new GlobalResponse("SUCCESS","Mail Send Successfully", 200);
+			
+		}catch(Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+	}
 
 	@GetMapping("/mailForgotPasswordLink/{email}")
 	@Description("Using This API You Can Send The Recovery Link to Email, and Using That Link He/She Can Recover The Password")
@@ -105,7 +118,7 @@ public class LoginContoller {
 				loginResetEntity.setPrToken(uuid.toString() + "/" + format);
 				loginResetEntity.setStatus("NEW");
 				Date dateObjForLinkCreateTime = new SimpleDateFormat("dd-MM-yyyy-HH:mm:ss")
-                        .parse(format);
+						.parse(format);
 				loginResetEntity.setCreatedOn(dateObjForLinkCreateTime);
 				//** SAVE THE DETAILS IN DATABASE **//
 				LoginResetEntity save = loginResetRepo.save(loginResetEntity);
@@ -114,7 +127,7 @@ public class LoginContoller {
 					throw new CustomException("Data Not Save Try Again");
 				}else {
 					//** SEND MAIL IF DETAILS SAVE IN DATABASE **//
-					mailService.sendEmail("soumendolui077@gmail.com", findByUserName.get().getEmail(),forgotPasswordLink);
+					mailService.sendEmail("soumendolui077@gmail.com", findByUserName.get().getEmail(),forgotPasswordLink,"Forgot Password Link");
 				}
 				
 				return new GlobalResponse("SUCCESS","Mail Send Successfully", 200);

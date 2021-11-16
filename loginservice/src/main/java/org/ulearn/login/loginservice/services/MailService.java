@@ -10,13 +10,13 @@ public class MailService {
 	@Autowired
 	JavaMailSender mailSender;
 
-	    public void sendEmail(String from,String to,String body) {
+	    public void sendEmail(String from,String to,String body,String subject) {
 
 		SimpleMailMessage message = new SimpleMailMessage();
 
 		message.setFrom(from);
 		message.setTo(to);
-		message.setSubject("Forgot Password Link");
+		message.setSubject(subject);
 		message.setText("Please click on link and reset your password:-  "+body);
 		mailSender.send(message);
 

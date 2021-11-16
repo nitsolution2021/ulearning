@@ -18,6 +18,6 @@ public interface EmailTemplateRepo extends JpaRepository<EmailTemplateEntity, Lo
 	
 	public List<EmailTemplateEntity> findByEtAction(String etAction);
 	
-	@Query(value = "select obj.etType,obj.etId from EmailTemplateEntity obj where obj.isDeleted = ?1")
-	public List<EmailTemplateEntity> findEtTypeByIdAndDelete(int isDeleted);
+	@Query(value = "select obj.etType,obj.etId from EmailTemplateEntity obj where obj.isDeleted = ?1 and obj.etAction=?2")
+	public List<EmailTemplateEntity> findEtTypeByIdAndDeleteWithDefaultET(int isDeleted, String etAction);
 }

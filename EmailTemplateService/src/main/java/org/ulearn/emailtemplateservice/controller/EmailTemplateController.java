@@ -173,7 +173,7 @@ public class EmailTemplateController {
 					return findAllByIdAndDelete;
 				}
 			}else if(type.equals("template_for")){
-				List<EmailTemplateEntity> findAllByIdAndDelete = emailTemplateRepo.findEtTypeByIdAndDelete(1);
+				List<EmailTemplateEntity> findAllByIdAndDelete = emailTemplateRepo.findEtTypeByIdAndDeleteWithDefaultET(1,"DEFAULT");
 				if(findAllByIdAndDelete.size()<1) {
 					throw new CustomException("No Data Present");
 				}else {
