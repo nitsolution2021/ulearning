@@ -17,7 +17,7 @@
 	<description>Login Module For U-Learn</description>
 	<properties>
 		<java.version>1.8</java.version>
-		<spring-cloud.version>2020.0.3</spring-cloud.version>
+		<!--<spring-cloud.version>2020.0.3</spring-cloud.version>-->
 	</properties>
 	<dependencies>
 		<dependency>
@@ -73,16 +73,16 @@
 			<artifactId>jjwt</artifactId>
 			<version>0.9.1</version>
 		</dependency>
-		<dependency>
+		<!--<dependency>
 		    <groupId>org.springframework.cloud</groupId>
 		    <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-		</dependency>
+		</dependency>-->
 
 
 		<!-- Command from Shantanu -->
 
 	</dependencies>
-	<dependencyManagement>
+	<!--  <dependencyManagement>
 		<dependencies>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
@@ -92,7 +92,7 @@
 				<scope>import</scope>
 			</dependency>
 		</dependencies>
-	</dependencyManagement>
+	</dependencyManagement>-->
 	<build>
 		<plugins>
 			<plugin>

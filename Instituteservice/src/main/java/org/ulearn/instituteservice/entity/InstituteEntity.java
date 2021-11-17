@@ -3,23 +3,19 @@ package org.ulearn.instituteservice.entity;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 
 @Entity
 @Table(name="tbl_institutes")
@@ -31,7 +27,8 @@ public class InstituteEntity {
 	private Long instId;
 	@Column(name = "INST_NAME")
 	private String instName;
-	@Column(name = "INST_EDATE")
+	@JsonFormat(pattern = "yyyy/mm/dd h:i:s")
+	@Column(name = "INST_EDATE")	
 	private Date instEndDate;
 	@Column(name = "INST_WEBSITE")
 	private String instWebsite;
@@ -41,6 +38,7 @@ public class InstituteEntity {
 	private String instCnum;
 	@Column(name = "INST_MNUM")
 	private String instMnum;
+	@JsonFormat(pattern = "yyyy/mm/dd h:i:s")
 	@Column(name = "ISNT_RDATE")
 	private Date isntRegDate;
 	@Column(name = "INST_LOGO")
