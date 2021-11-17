@@ -82,7 +82,7 @@ public class LicenseService {
 						
 						
 						if (!save.equals(null)) {
-							return new GlobalResponse("SUCCESS","License Add successfully",200);
+							return new GlobalResponse("SUCCESS","License Added successfully",200);
 						} else {
 							throw new CustomException("Data not store");
 						}
@@ -222,7 +222,7 @@ public class LicenseService {
 		
 	}
 
-	public GlobalResponse addSuspendLicense(long lcId, LicenseLogEntity licenseLogEntitySuspend) {
+	public GlobalResponse addSuspendLicense(int lcId, LicenseLogEntity licenseLogEntitySuspend) {
 		// TODO Auto-generated method stub
 		
 		try {
@@ -230,7 +230,29 @@ public class LicenseService {
 			if(fieldValidation.isEmpty(licenseLogEntitySuspend.getLlEdate()) 
 					& fieldValidation.isEmpty(licenseLogEntitySuspend.getLlComment())) {
 				
-				licenseLogRepo.findByLcId(lcId,"Add suspend");
+				Optional<LicenseLogEntity> findByLcId = licenseLogRepo.findByLcId(lcId,"Add suspend");
+				if (findByLcId.isPresent()) {
+					throw new CustomException("This license have already suspended..");
+				}
+				else {
+					
+					LicenseLogEntity licenseLogEntityForSuspend = new LicenseLogEntity();
+					licenseLogEntityForSuspend.setLcIdFk(lcId);
+					licenseLogEntityForSuspend.setLlAction("Add suspend");
+					licenseLogEntityForSuspend.setLlEdate(licenseLogEntitySuspend.getLlEdate());
+					licenseLogEntityForSuspend.setLlComment(licenseLogEntitySuspend.getLlComment());
+					licenseLogEntityForSuspend.setLlStatus("Complete");
+					licenseLogEntityForSuspend.setCreatedOn(new Date());
+					
+					LicenseLogEntity save = licenseLogRepo.save(licenseLogEntityForSuspend);
+					
+					if (!save.equals(null)) {
+						return new GlobalResponse("SUCCESS","Suspend date added for this license.",200);
+					}
+					else {
+						throw new CustomException("Suspend date not add.. ");
+					}
+				}
 			}
 			else {
 				throw new CustomException("Some required value are missing, please check..");
@@ -240,7 +262,6 @@ public class LicenseService {
 			// TODO: handle exception
 			throw new CustomException(e.getMessage());
 		}
-		return null;
 	}
 
 }
