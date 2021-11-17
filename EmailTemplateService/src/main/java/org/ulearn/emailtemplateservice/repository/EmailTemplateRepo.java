@@ -13,8 +13,8 @@ public interface EmailTemplateRepo extends JpaRepository<EmailTemplateEntity, Lo
 	@Query(value = "select obj from EmailTemplateEntity obj where obj.isDeleted = ?1 and obj.etId = ?2")
 	public List<EmailTemplateEntity> findByIdAndDelete(int isDeleted, Long etId);
 	
-	@Query(value = "select obj from EmailTemplateEntity obj where obj.isDeleted = ?1")
-	public List<EmailTemplateEntity> findAllByIdAndDelete(int isDeleted);
+	@Query(value = "select obj from EmailTemplateEntity obj where obj.etType = ?1")
+	public List<EmailTemplateEntity> findAllByDefaultTemplate(String etType);
 	
 	public List<EmailTemplateEntity> findByEtAction(String etAction);
 	
@@ -23,4 +23,7 @@ public interface EmailTemplateRepo extends JpaRepository<EmailTemplateEntity, Lo
 	
 	@Query(value = "select obj.etType,obj.etId from EmailTemplateEntity obj where obj.etType = ?1")
 	public List<EmailTemplateEntity> findAllByDefaultET(String etType);
+	
+	@Query(value = "select obj from EmailTemplateEntity obj where obj.etAction = ?1 and obj.isPrimary = ?2")
+	public List<EmailTemplateEntity> getPrimaryETByAction(String etAction, int isPrimary);
 }

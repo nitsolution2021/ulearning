@@ -229,7 +229,7 @@ public class EmailTemplateController {
 		LOGGER.info("Inside - EmailTemplateController.emailTemplateGetAll()");
 		try {
 			if(type.equals("template")) {
-				List<EmailTemplateEntity> findAllByIdAndDelete = emailTemplateRepo.findAllByIdAndDelete(1);
+				List<EmailTemplateEntity> findAllByIdAndDelete = emailTemplateRepo.findAllByDefaultTemplate("DEFAULT");
 				if(findAllByIdAndDelete.size()<1) {
 					throw new CustomException("No Data Present");
 				}else {
@@ -245,6 +245,25 @@ public class EmailTemplateController {
 			}else {
 				throw new CustomException("Type Not Matched");
 			}
+		}catch(Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+		
+	}
+	
+	@GetMapping("/getPrimaryETByAction/{action}")
+	public EmailTemplateEntity getPrimaryETByAction(@PathVariable("action") String action) {
+		
+		LOGGER.info("Inside - EmailTemplateController.emailTemplateGetAll()");
+		try {
+
+				List<EmailTemplateEntity> findAllByIdAndDelete = emailTemplateRepo.getPrimaryETByAction(action,1);
+				if(findAllByIdAndDelete.size()<1) {
+					throw new CustomException("No Data Present");
+				}else {
+					return findAllByIdAndDelete.get(0);
+				}
+			
 		}catch(Exception e) {
 			throw new CustomException(e.getMessage());
 		}

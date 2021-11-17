@@ -87,7 +87,14 @@ public class InstuteController {
 
 		try {					
 			
-					
+			HttpHeaders headerss = new HttpHeaders();
+			headerss.set("Authorization", token);
+			headerss.setContentType(MediaType.APPLICATION_JSON);
+			
+//			HttpEntity<String> entity = new HttpEntity(requestJson, headers);
+			HttpEntity request=new HttpEntity(headerss);
+			ResponseEntity<String> responseEmailTemp=new RestTemplate().exchange("http://localhost:8090/dev/emailTemplate/getAll/template",  HttpMethod.GET, request, String.class);
+			
 			Optional<InstituteEntity> findByInstituteName = instituteRepo.findByInstName(instituteGlobalEntrity.getInstName());
 			Optional<InstituteEntity> findByInstEmail = instituteRepo.findByInstEmail(instituteGlobalEntrity.getInstEmail());
 
@@ -196,6 +203,10 @@ public class InstuteController {
 						HttpHeaders headers = new HttpHeaders();
 						headers.set("Authorization", token);
 						headers.setContentType(MediaType.APPLICATION_JSON);
+						
+//						HttpEntity<String> entity = new HttpEntity(requestJson, headers);
+//						HttpEntity request=new HttpEntity(headers);
+//						ResponseEntity<String> responseEmailTemp=new RestTemplate().exchange("http://localhost:8090/dev/login/sendMail/",  HttpMethod.GET, request, String.class);
 						
 						JSONObject requestJson = new JSONObject();
 						requestJson.put("senderMailId", mailid);
