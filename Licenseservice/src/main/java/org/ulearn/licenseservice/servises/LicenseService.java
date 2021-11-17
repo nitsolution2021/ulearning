@@ -82,7 +82,7 @@ public class LicenseService {
 						
 						
 						if (!save.equals(null)) {
-							return new GlobalResponse("SUCCESS","License Add successfully",200);
+							return new GlobalResponse("SUCCESS","License Added successfully",200);
 						} else {
 							throw new CustomException("Data not store");
 						}

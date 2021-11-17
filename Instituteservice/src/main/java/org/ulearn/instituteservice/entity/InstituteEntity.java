@@ -1,6 +1,8 @@
 package org.ulearn.instituteservice.entity;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -8,6 +10,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -50,17 +56,12 @@ public class InstituteEntity {
 	private Date createdOn;
 	@Column(name = "UPDATED_ON")
 	private Date updatedOn;
-
+	
 	public InstituteEntity() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-
-//	@OneToMany(targetEntity = InstituteAddressEntity.class, cascade = CascadeType.ALL)
-//	@JoinColumn(name = "INST_ID", referencedColumnName = "INST_ID")
-//	private InstituteAddressEntity instituteAddressEntity;
-	
 	public InstituteEntity(Long instId, String instName, Date instEndDate, String instWebsite, String instEmail,
 			String instCnum, String instMnum, Date isntRegDate, String instLogo, String instPanNum, String instGstNum,
 			String instStatus, int isActive, int isDeleted, Date createdOn, Date updatedOn) {
@@ -82,11 +83,10 @@ public class InstituteEntity {
 		this.createdOn = createdOn;
 		this.updatedOn = updatedOn;
 	}
-	
 
 	@Override
 	public String toString() {
-		return "InstituteEntrity [instId=" + instId + ", instName=" + instName + ", instEndDate=" + instEndDate
+		return "InstituteEntity [instId=" + instId + ", instName=" + instName + ", instEndDate=" + instEndDate
 				+ ", instWebsite=" + instWebsite + ", instEmail=" + instEmail + ", instCnum=" + instCnum + ", instMnum="
 				+ instMnum + ", isntRegDate=" + isntRegDate + ", instLogo=" + instLogo + ", instPanNum=" + instPanNum
 				+ ", instGstNum=" + instGstNum + ", instStatus=" + instStatus + ", isActive=" + isActive
@@ -220,5 +220,16 @@ public class InstituteEntity {
 	public void setUpdatedOn(Date updatedOn) {
 		this.updatedOn = updatedOn;
 	}
+	
+//	@OneToMany( mappedBy = "instituteEntity")    
+//	@OneToMany(targetEntity = InstituteAddressEntity.class)
+//	@JsonIgnore
+//    private Set<InstituteAddressEntity> instituteAddressEntity;
 
-}
+
+//	@OneToMany(targetEntity = InstituteAddressEntity.class, cascade = CascadeType.ALL)
+//	@JoinColumn(name = "INST_ID", referencedColumnName = "INST_ID")
+//	private InstituteAddressEntity instituteAddressEntity;
+	
+	
+	}

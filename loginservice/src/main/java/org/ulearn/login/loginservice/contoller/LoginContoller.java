@@ -25,6 +25,7 @@ import org.ulearn.login.loginservice.entity.GlobalResponse;
 import org.ulearn.login.loginservice.entity.LoginEntity;
 import org.ulearn.login.loginservice.entity.LoginResetEntity;
 import org.ulearn.login.loginservice.entity.LoginUserDetails;
+import org.ulearn.login.loginservice.entity.SendMail;
 import org.ulearn.login.loginservice.helper.JwtUtil;
 import org.ulearn.login.loginservice.exception.CustomException;
 import org.ulearn.login.loginservice.repository.LoginRepository;
@@ -75,17 +76,30 @@ public class LoginContoller {
 
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(LoginContoller.class);
+	
+	@PostMapping("/sendMail")
+	public GlobalResponse sendMail(@RequestBody() SendMail senderMailId) {
+		LOGGER.info("Inside - LoginContoller.sendMail()");
+		
+		try {
+			mailService.sendEmail(senderMailId.getSenderMailId(), senderMailId.getSubject(),senderMailId.getBody(),senderMailId.isEnableHtml());
+			return new GlobalResponse("SUCCESS","Mail Send Successfully", 200);
+			
+		}catch(Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+	}
 
 	@GetMapping("/mailForgotPasswordLink/{email}")
 	@Description("Using This API You Can Send The Recovery Link to Email, and Using That Link He/She Can Recover The Password")
 	public GlobalResponse mailForgotPasswordLink(@PathVariable("email") String email) {
 
-		LOGGER.info("Inside - LoginContoller.getInstute()");
+		LOGGER.info("Inside - LoginContoller.mailForgotPasswordLink()");
 
 		try {
 
 			UUID uuid = UUID.randomUUID();
-			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+			SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy-HH:mm:ss");
 			Date date = new Date();
 			String format = formatter.format(date);
 			Calendar calObj = Calendar.getInstance();
@@ -94,7 +108,7 @@ public class LoginContoller {
 			String encodedString = Base64.getEncoder().encodeToString(format.getBytes());
 			byte[] decodedBytes = Base64.getDecoder().decode(encodedString);
 			String decodedString = new String(decodedBytes);
-			String forgotPasswordLink = "https://ulearn.nichetechnosolution.com/forgotpassword/" + uuid.toString() + "/"+ encodedString;
+			String forgotPasswordLink = "https://ulearn.nichetechnosolution.com/resetpassword/" + uuid.toString() + "/"+ format;
 			
 			//** CHECKING THE EMAIL IS PREASENT IN DATABASE **//
 			Optional<LoginEntity> findByUserName = loginRepository.findByUserName(email);
@@ -102,9 +116,11 @@ public class LoginContoller {
 			if (findByUserName.isPresent()) {
 				LoginResetEntity loginResetEntity = new LoginResetEntity();
 				loginResetEntity.setuId(findByUserName.get().getUid());
-				loginResetEntity.setPrToken(uuid.toString() + "/" + encodedString);
+				loginResetEntity.setPrToken(uuid.toString() + "/" + format);
 				loginResetEntity.setStatus("NEW");
-				loginResetEntity.setCreatedOn(new Date());
+				Date dateObjForLinkCreateTime = new SimpleDateFormat("dd-MM-yyyy-HH:mm:ss")
+						.parse(format);
+				loginResetEntity.setCreatedOn(dateObjForLinkCreateTime);
 				//** SAVE THE DETAILS IN DATABASE **//
 				LoginResetEntity save = loginResetRepo.save(loginResetEntity);
 				System.out.println("save "+save.toString());
@@ -112,10 +128,10 @@ public class LoginContoller {
 					throw new CustomException("Data Not Save Try Again");
 				}else {
 					//** SEND MAIL IF DETAILS SAVE IN DATABASE **//
-					mailService.sendEmail("soumendolui077@gmail.com", findByUserName.get().getEmail(),forgotPasswordLink);
+					mailService.sendEmail( findByUserName.get().getEmail(),forgotPasswordLink,"Forgot Password Link",false);
 				}
 				
-				return new GlobalResponse("Mail Send Successfully","SUCCESS");
+				return new GlobalResponse("SUCCESS","Mail Send Successfully", 200);
 
 			}else {
 				throw new CustomException("UserName Not Present");
@@ -140,17 +156,17 @@ public class LoginContoller {
 
 			if (findByPrToken.isPresent()) {
 				//** Create Current Time **//
-				SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+				SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy-HH:mm:ss");
 				Date date = new Date();
 				formatter.format(date);
 				Calendar calObjForCurrentTime = Calendar.getInstance();
 				calObjForCurrentTime.setTime(date);
 				
-				byte[] forgotPasswordLinkCreateTimeByte = Base64.getDecoder().decode(linkTime);
-				String forgotPasswordLinkCreateTimeString = new String(forgotPasswordLinkCreateTimeByte);
+//				byte[] forgotPasswordLinkCreateTimeByte = Base64.getDecoder().decode(linkTime);
+//				String forgotPasswordLinkCreateTimeString = new String(forgotPasswordLinkCreateTimeByte);
 				Calendar calObjForLinkCreateTime = Calendar.getInstance();
-				Date dateObjForLinkCreateTime = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
-                        .parse(forgotPasswordLinkCreateTimeString);
+				Date dateObjForLinkCreateTime = new SimpleDateFormat("dd-MM-yyyy-HH:mm:ss")
+                        .parse(linkTime);
 				calObjForLinkCreateTime.setTime(dateObjForLinkCreateTime);
 				
 				if(calObjForCurrentTime.get(Calendar.YEAR)==calObjForLinkCreateTime.get(Calendar.YEAR) && calObjForCurrentTime.get(Calendar.MONTH)==calObjForLinkCreateTime.get(Calendar.MONTH) && calObjForCurrentTime.get(Calendar.DATE)==calObjForLinkCreateTime.get(Calendar.DATE) && calObjForCurrentTime.get(Calendar.HOUR)==calObjForLinkCreateTime.get(Calendar.HOUR)) {
@@ -174,7 +190,7 @@ public class LoginContoller {
 				throw new CustomException("This URL is Not Valid");
 			}
 
-			return new GlobalResponse("Password Generate Successfully","SUCCESS");
+			return new GlobalResponse("SUCCESS", "Password Generate Successfully", 200);
 			
 		}catch(Exception e) {
 			throw new CustomException(e.getMessage());

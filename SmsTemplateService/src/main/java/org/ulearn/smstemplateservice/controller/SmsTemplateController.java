@@ -5,6 +5,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -58,4 +59,47 @@ public class SmsTemplateController {
 			throw new CustomException(e.getMessage());
 		}
 	}
+	
+	@DeleteMapping("/delete/{stId}")
+	public GlobalResponseEntity deleteSmsTemplate(@PathVariable Long stId) {
+		LOGGER.info("Inside - SmsTemplateController.deleteSmsTemplate()");
+		try {
+			return smsTemplateService.deleteSmsTemplate(stId);
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+	}
+	
+	@GetMapping("/list/{stId}")
+	public SmsTemplateEntity getSmsTemplateById(@PathVariable Long stId) {
+		LOGGER.info("Inside - SmsTemplateController.getSmsTemplateById()");
+		try {
+			return smsTemplateService.getSmsTemplateById(stId);
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+	}
+	
+	@GetMapping("/smsFor/list")
+	public List<SmsTemplateEntity> getSmsTemplateForDropDown() {
+		LOGGER.info("Inside - SmsTemplateController.getSmsTemplateForDropDown()");
+		try {
+			return smsTemplateService.getSmsTemplateForDropDown();
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+	}
+	
+	@PutMapping("/setDefault/{stId}/{stAction}")
+	public GlobalResponseEntity setDefaultSmsTemplate(@PathVariable Long stId, @PathVariable String stAction) {
+		LOGGER.info("Inside - SmsTemplateController.setDefaultSmsTemplate()");
+		try {
+			return smsTemplateService.setDefaultSmsTemplate(stId, stAction);
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+	}
+	
+	
+	
 }

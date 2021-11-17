@@ -3,12 +3,12 @@ package org.ulearn.licenseservice.entity;
 public class GlobalResponse {
 	private String resion;
 	private String message;
-	private int statuss;
+	private int status;
 	
 	
 	@Override
 	public String toString() {
-		return "GlobalResponse [resion=" + resion + ", message=" + message + ", statuss=" + statuss + "]";
+		return "GlobalResponse [resion=" + resion + ", message=" + message + ", statuss=" + status + "]";
 	}
 	public GlobalResponse() {
 		super();
@@ -18,7 +18,7 @@ public class GlobalResponse {
 		super();
 		this.resion = resion;
 		this.message = message;
-		this.statuss = statuss;
+		this.status = statuss;
 	}
 	public String getResion() {
 		return resion;
@@ -33,10 +33,10 @@ public class GlobalResponse {
 		this.message = message;
 	}
 	public int getStatuss() {
-		return statuss;
+		return status;
 	}
 	public void setStatuss(int statuss) {
-		this.statuss = statuss;
+		this.status = statuss;
 	}
 	
 
