@@ -1,5 +1,6 @@
 package org.ulearn.emailtemplateservice.controller;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,28 +45,39 @@ public class EmailTemplateController {
 			if(fieldValidation.isEmpty(emailTemplateEntity.getEtName()) && 
 					fieldValidation.isEmpty(emailTemplateEntity.getEtSubject()) &&
 					fieldValidation.isEmpty(emailTemplateEntity.getEtBody()) &&
-					fieldValidation.isEmpty(emailTemplateEntity.getEtType()) &&
+					fieldValidation.isEmpty(emailTemplateEntity.getEtAction()) &&
 					fieldValidation.isEmpty(emailTemplateEntity.getIsPrimary())
 					){
-				EmailTemplateEntity newEmailTemplateEntity = new EmailTemplateEntity();
-				newEmailTemplateEntity.setEtName(emailTemplateEntity.getEtName());
-				newEmailTemplateEntity.setEtSubject(emailTemplateEntity.getEtSubject());
-				newEmailTemplateEntity.setEtBody(emailTemplateEntity.getEtBody());
-				newEmailTemplateEntity.setEtType(emailTemplateEntity.getEtType());
-				newEmailTemplateEntity.setIsPrimary(emailTemplateEntity.getIsPrimary());
-				newEmailTemplateEntity.setEtAction(emailTemplateEntity.getEtAction());
-				newEmailTemplateEntity.setIsActive(emailTemplateEntity.getIsActive());
-				newEmailTemplateEntity.setIsDeleted(emailTemplateEntity.getIsDeleted());
-				newEmailTemplateEntity.setEtOrder(emailTemplateEntity.getEtOrder());
-				newEmailTemplateEntity.setEtTags(emailTemplateEntity.getEtTags());
-				newEmailTemplateEntity.setCreatedOn(emailTemplateEntity.getCreatedOn());
-				newEmailTemplateEntity.setUpdatedOn(emailTemplateEntity.getUpdatedOn());
-				EmailTemplateEntity save = emailTemplateRepo.save(newEmailTemplateEntity);
-				if(save.equals(null)) {
-					throw new CustomException("Data Not Save Try Again");
+				List<EmailTemplateEntity> findByEtAction = emailTemplateRepo.findByEtAction(emailTemplateEntity.getEtAction());
+				if(findByEtAction.size()>0) {
+					if(emailTemplateEntity.getIsPrimary() == 1) {
+						findByEtAction.forEach(obj->{
+							obj.setIsPrimary(0);
+						});
+						emailTemplateRepo.saveAll(findByEtAction);
+					}
+					EmailTemplateEntity newEmailTemplateEntity = new EmailTemplateEntity();
+					newEmailTemplateEntity.setEtName(emailTemplateEntity.getEtName());
+					newEmailTemplateEntity.setEtSubject(emailTemplateEntity.getEtSubject());
+					newEmailTemplateEntity.setEtBody(emailTemplateEntity.getEtBody());
+					newEmailTemplateEntity.setEtType("CUSTOM");
+					newEmailTemplateEntity.setIsPrimary(emailTemplateEntity.getIsPrimary());
+					newEmailTemplateEntity.setEtAction(emailTemplateEntity.getEtAction());
+					newEmailTemplateEntity.setIsActive(1);
+					newEmailTemplateEntity.setIsDeleted(1);
+					newEmailTemplateEntity.setEtOrder(emailTemplateEntity.getEtOrder());
+					newEmailTemplateEntity.setEtTags(emailTemplateEntity.getEtTags());
+					newEmailTemplateEntity.setCreatedOn(new Date());
+					EmailTemplateEntity save = emailTemplateRepo.save(newEmailTemplateEntity);
+					if(save.equals(null)) {
+						throw new CustomException("Data Not Save Try Again");
+					}else {
+						return new GlobalResponse("Data Save Successfully","SUCCESS");
+					}	
 				}else {
-					return new GlobalResponse("Data Save Successfully","SUCCESS");
-				}	
+					throw new CustomException("The Custome Template Action is Not Present in Default Action");
+				}
+				
 			}else {
 				throw new CustomException("Validation Error");
 			}
@@ -84,7 +96,7 @@ public class EmailTemplateController {
 			if(fieldValidation.isEmpty(emailTemplateEntity.getEtName()) && 
 					fieldValidation.isEmpty(emailTemplateEntity.getEtSubject()) &&
 					fieldValidation.isEmpty(emailTemplateEntity.getEtBody()) &&
-					fieldValidation.isEmpty(emailTemplateEntity.getEtType()) &&
+					fieldValidation.isEmpty(emailTemplateEntity.getEtAction()) &&
 					fieldValidation.isEmpty(emailTemplateEntity.getIsPrimary()) &&
 					fieldValidation.isEmpty(emailTemplateEntity.getEtId())
 					){
@@ -92,26 +104,34 @@ public class EmailTemplateController {
 				if(findById.isPresent()) {
 					List<EmailTemplateEntity> findByIdAndDelete = emailTemplateRepo.findByIdAndDelete(1, id);
 					if(findByIdAndDelete.size()<1) {
-						EmailTemplateEntity newEmailTemplateEntity = new EmailTemplateEntity();
-						newEmailTemplateEntity.setEtId(emailTemplateEntity.getEtId());
-						newEmailTemplateEntity.setEtName(emailTemplateEntity.getEtName());
-						newEmailTemplateEntity.setEtSubject(emailTemplateEntity.getEtSubject());
-						newEmailTemplateEntity.setEtBody(emailTemplateEntity.getEtBody());
-						newEmailTemplateEntity.setEtType(emailTemplateEntity.getEtType());
-						newEmailTemplateEntity.setIsPrimary(emailTemplateEntity.getIsPrimary());
-						newEmailTemplateEntity.setEtAction(emailTemplateEntity.getEtAction());
-						newEmailTemplateEntity.setIsActive(emailTemplateEntity.getIsActive());
-						newEmailTemplateEntity.setIsDeleted(emailTemplateEntity.getIsDeleted());
-						newEmailTemplateEntity.setEtOrder(emailTemplateEntity.getEtOrder());
-						newEmailTemplateEntity.setEtTags(emailTemplateEntity.getEtTags());
-						newEmailTemplateEntity.setCreatedOn(emailTemplateEntity.getCreatedOn());
-						newEmailTemplateEntity.setUpdatedOn(emailTemplateEntity.getUpdatedOn());
-						EmailTemplateEntity save = emailTemplateRepo.save(newEmailTemplateEntity);
-						if(save.equals(null)) {
-							throw new CustomException("Data Not Save Try Again");
+						List<EmailTemplateEntity> findByEtAction = emailTemplateRepo.findByEtAction(emailTemplateEntity.getEtAction());
+						if(findByEtAction.size()>0) {
+							if(emailTemplateEntity.getIsPrimary() == 1) {
+								findByEtAction.forEach(obj->{
+									obj.setIsPrimary(0);
+								});
+								emailTemplateRepo.saveAll(findByEtAction);
+							}
+							EmailTemplateEntity newEmailTemplateEntity = findByIdAndDelete.get(0);
+							newEmailTemplateEntity.setEtId(emailTemplateEntity.getEtId());
+							newEmailTemplateEntity.setEtName(emailTemplateEntity.getEtName());
+							newEmailTemplateEntity.setEtSubject(emailTemplateEntity.getEtSubject());
+							newEmailTemplateEntity.setEtBody(emailTemplateEntity.getEtBody());
+							newEmailTemplateEntity.setIsPrimary(emailTemplateEntity.getIsPrimary());
+							newEmailTemplateEntity.setEtAction(emailTemplateEntity.getEtAction());
+							newEmailTemplateEntity.setEtOrder(emailTemplateEntity.getEtOrder());
+							newEmailTemplateEntity.setEtTags(emailTemplateEntity.getEtTags());
+							newEmailTemplateEntity.setUpdatedOn(emailTemplateEntity.getUpdatedOn());
+							EmailTemplateEntity save = emailTemplateRepo.save(newEmailTemplateEntity);
+							if(save.equals(null)) {
+								throw new CustomException("Data Not Save Try Again");
+							}else {
+								return new GlobalResponse("Data Save Successfully","SUCCESS");
+							}	
+							
 						}else {
-							return new GlobalResponse("Data Save Successfully","SUCCESS");
-						}	
+							throw new CustomException("The Custome Template Action is Not Present in Default Action");
+						}
 					}else {
 						throw new CustomException("Id is Deleted");
 					}
@@ -168,7 +188,7 @@ public class EmailTemplateController {
 					return findAllByIdAndDelete;
 				}
 			}else if(type.equals("template_for")){
-				List<EmailTemplateEntity> findAllByIdAndDelete = emailTemplateRepo.findEtTypeByIdAndDelete(1);
+				List<EmailTemplateEntity> findAllByIdAndDelete = emailTemplateRepo.findEtTypeByIdAndDeleteWithDefaultET(1,"DEFAULT");
 				if(findAllByIdAndDelete.size()<1) {
 					throw new CustomException("No Data Present");
 				}else {
@@ -182,17 +202,19 @@ public class EmailTemplateController {
 		}
 		
 	}
-//	@GetMapping("/viewTemplate/{id}")
-//	public List<EmailTemplateEntity> viewTemplate(@PathVariable("type") String type) {
-//		
-//		LOGGER.info("Inside - EmailTemplateController.viewTemplate()");
-//		try {
-//			
-//		}catch(Exception e) {
-//			throw new CustomException(e.getMessage());
-//		}
-//		
-//	}
+	@GetMapping("/viewTemplate/{id}")
+	public List<EmailTemplateEntity> viewTemplate(@PathVariable("type") Long type) {
+		
+		LOGGER.info("Inside - EmailTemplateController.viewTemplate()");
+		try {
+			emailTemplateRepo.findByIdAndDelete(0, type);
+			return null;
+			
+		}catch(Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+		
+	}
 	
 
 }

@@ -5,21 +5,33 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
 public class InstituteGlobalEntity {
 
 
 	private Long instId;
+	@NotEmpty(message = "The Institute Name is Required")
 	private String instName;
 	private Date instEndDate;
 	private String instWebsite;
+	@Email
 	private String instEmail;
+	@NotEmpty(message = "The Institute Contact Number is Required")
 	private String instCnum;
+	@NotEmpty(message = "The Institute Mobile Number is Required")
 	private String instMnum;
 	private Date isntRegDate;
+	@NotEmpty(message = "The Institute Logo is Required")
 	private String instLogo;
+	@NotEmpty(message = "The Institute Pan is Required")
 	private String instPanNum;
+	@NotEmpty(message = "The Institute GST Number is Required")
 	private String instGstNum;
+	@NotEmpty(message = "The Institute Status is Required")
 	private String instStatus;
 	private int isActive;
 	private int isDeleted;
@@ -29,13 +41,21 @@ public class InstituteGlobalEntity {
 	private Long adrId;
 	private Long admId;
 	private String adrType;
+	@NotEmpty(message = "The Address Line 1 is Required")
 	private String adrLine1;
-	private String adrLine2;
-	private Long adrCountry;
+	@NotEmpty(message = "The Address Line 2 is Required")
+	private String adrLine2;	
+	@Positive(message = "The Country is Required")
+	private Long adrCountry;	
+	@Positive(message = "The State Name is Required")
 	private Long adrState;
-	private Long adrDistrict;
-	private Long adrTaluka;
+	@Positive(message = "The District is Required")
+	private Long adrDistrict;	
+	@Positive(message = "The Taluka is Required")
+	private Long adrTaluka;	
+	@Positive(message = "The City is Required")
 	private Long adrCity;
+	@NotEmpty(message = "The Pincode is Required")
 	private String adrPincode;
 	private String adrStatus;
 	private Long adrOrder;
@@ -43,12 +63,19 @@ public class InstituteGlobalEntity {
 	
 	
 	private Long amdId;
+	@NotEmpty(message = "Owner Frist Name is Required")
 	private String amdFname;
+	@NotEmpty(message = "Owner Last Name is Required")
 	private String amdLname;
+	@NotNull(message = "Owner Date of Birth is Required")
 	private Date amdDob;
+	@NotEmpty(message = "Owner Mobile Number is Required")
 	private String amdMnum;
+	@Email
 	private String amdEmail;
+	@NotEmpty(message = "Owner Username is Required")
 	private String amdUsername;
+	@NotEmpty(message = "Owner Password is Required")
 	private String amdPassword;
 	private String amdPpic;
 	
