@@ -90,5 +90,16 @@ public class SmsTemplateController {
 		}
 	}
 	
+	@PutMapping("/setDefault/{stId}/{stAction}")
+	public GlobalResponseEntity setDefaultSmsTemplate(@PathVariable Long stId, @PathVariable String stAction) {
+		LOGGER.info("Inside - SmsTemplateController.setDefaultSmsTemplate()");
+		try {
+			return smsTemplateService.setDefaultSmsTemplate(stId, stAction);
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+	}
+	
+	
 	
 }

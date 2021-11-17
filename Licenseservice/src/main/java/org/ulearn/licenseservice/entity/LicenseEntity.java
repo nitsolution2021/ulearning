@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 @Entity
 @Table(name = "tbl_inst_license")
 public class LicenseEntity {
@@ -21,6 +23,7 @@ public class LicenseEntity {
 	private Long instId;
 	@Column(name="LC_NAME")
 	private String lcName;
+	@JsonFormat(pattern = "yyyy/mm/dd")
 	@Column(name = "LC_CDATE")
 	private Date lcCreatDate;
 	@Column(name = "LC_TYPE")
@@ -31,6 +34,7 @@ public class LicenseEntity {
 	private String lcValidityType;
 	@Column(name = "LC_VALIDITY_NUM")
 	private int lcValidityNum;
+	@JsonFormat(pattern = "yyyy/mm/dd")
 	@Column(name = "LC_EDATE")
 	private Date lcEndDate;
 	@Column(name = "LC_COMMENT")

@@ -11,4 +11,6 @@ public interface SmsTemplateRepo extends JpaRepository<SmsTemplateEntity, Long> 
 	List<SmsTemplateEntity> findTemplate(int isDeleted);
 	
 	List<SmsTemplateEntity> findByStType(String stType);
+	
+	List<SmsTemplateEntity> findByStAction(String stAction);
 }
