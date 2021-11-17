@@ -79,7 +79,7 @@ public class LicenseController {
 	}
 	
 	@GetMapping("/view/{lcId}")
-	public Optional<LicenseEntity> getLicense(@PathVariable long lcId){
+	public Optional<LicenseEntity> getLicense(@PathVariable() long lcId){
 		
 		LOGGER.info("Inside the LicenseController view License by id");
 		
@@ -95,7 +95,7 @@ public class LicenseController {
 	}
 	
 	@PostMapping("/suspend/{lcId}")
-	public GlobalResponse addSuspend(@PathVariable long lcId, @RequestBody LicenseLogEntity licenseLogEntitySuspend) {
+	public GlobalResponse addSuspend(@PathVariable int lcId, @RequestBody LicenseLogEntity licenseLogEntitySuspend) {
 		
 		LOGGER.info("Inside the suspend License");
 		try {
