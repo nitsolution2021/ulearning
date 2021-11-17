@@ -1,5 +1,6 @@
 package org.ulearn.instituteservice.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -7,10 +8,12 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -57,6 +60,15 @@ public class InstituteEntity {
 	@Column(name = "UPDATED_ON")
 	private Date updatedOn;
 	
+
+	@OneToMany
+	@JoinColumn(name = "INST_ID", referencedColumnName = "INST_ID")
+	private List<InstituteAddressEntity> instituteAddress = new ArrayList<>();
+	
+	@OneToOne
+	@JoinColumn(name = "INST_ID")
+	private InstituteAdminEntity instituteAdmin;
+
 	public InstituteEntity() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -64,7 +76,8 @@ public class InstituteEntity {
 
 	public InstituteEntity(Long instId, String instName, Date instEndDate, String instWebsite, String instEmail,
 			String instCnum, String instMnum, Date isntRegDate, String instLogo, String instPanNum, String instGstNum,
-			String instStatus, int isActive, int isDeleted, Date createdOn, Date updatedOn) {
+			String instStatus, int isActive, int isDeleted, Date createdOn, Date updatedOn,
+			List<InstituteAddressEntity> instituteAddress, InstituteAdminEntity instituteAdmin) {
 		super();
 		this.instId = instId;
 		this.instName = instName;
@@ -82,6 +95,8 @@ public class InstituteEntity {
 		this.isDeleted = isDeleted;
 		this.createdOn = createdOn;
 		this.updatedOn = updatedOn;
+		this.instituteAddress = instituteAddress;
+		this.instituteAdmin = instituteAdmin;
 	}
 
 	@Override
@@ -90,7 +105,8 @@ public class InstituteEntity {
 				+ ", instWebsite=" + instWebsite + ", instEmail=" + instEmail + ", instCnum=" + instCnum + ", instMnum="
 				+ instMnum + ", isntRegDate=" + isntRegDate + ", instLogo=" + instLogo + ", instPanNum=" + instPanNum
 				+ ", instGstNum=" + instGstNum + ", instStatus=" + instStatus + ", isActive=" + isActive
-				+ ", isDeleted=" + isDeleted + ", createdOn=" + createdOn + ", updatedOn=" + updatedOn + "]";
+				+ ", isDeleted=" + isDeleted + ", createdOn=" + createdOn + ", updatedOn=" + updatedOn
+				+ ", instituteAddress=" + instituteAddress + ", instituteAdmin=" + instituteAdmin + "]";
 	}
 
 	public Long getInstId() {
@@ -220,16 +236,24 @@ public class InstituteEntity {
 	public void setUpdatedOn(Date updatedOn) {
 		this.updatedOn = updatedOn;
 	}
-	
-//	@OneToMany( mappedBy = "instituteEntity")    
-//	@OneToMany(targetEntity = InstituteAddressEntity.class)
-//	@JsonIgnore
-//    private Set<InstituteAddressEntity> instituteAddressEntity;
 
-
-//	@OneToMany(targetEntity = InstituteAddressEntity.class, cascade = CascadeType.ALL)
-//	@JoinColumn(name = "INST_ID", referencedColumnName = "INST_ID")
-//	private InstituteAddressEntity instituteAddressEntity;
-	
-	
+	public List<InstituteAddressEntity> getInstituteAddress() {
+		return instituteAddress;
 	}
+
+	public void setInstituteAddress(List<InstituteAddressEntity> instituteAddress) {
+		this.instituteAddress = instituteAddress;
+	}
+
+	public InstituteAdminEntity getInstituteAdmin() {
+		return instituteAdmin;
+	}
+
+	public void setInstituteAdmin(InstituteAdminEntity instituteAdmin) {
+		this.instituteAdmin = instituteAdmin;
+	}
+	
+	
+	
+	
+}
