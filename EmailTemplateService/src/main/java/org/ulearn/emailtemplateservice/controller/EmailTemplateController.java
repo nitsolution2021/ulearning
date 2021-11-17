@@ -1,5 +1,6 @@
 package org.ulearn.emailtemplateservice.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -7,6 +8,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,14 +50,36 @@ public class EmailTemplateController {
 					fieldValidation.isEmpty(emailTemplateEntity.getEtAction()) &&
 					fieldValidation.isEmpty(emailTemplateEntity.getIsPrimary())
 					){
+				List<EmailTemplateEntity> findByEtActionWithDefaultET = emailTemplateRepo.findByEtActionWithDefaultET(emailTemplateEntity.getEtAction(),emailTemplateEntity.getEtType());
+				String[] split = emailTemplateEntity.getEtBody().split(" ");
+				String tags = "";
+				for(int i = 0;i < split.length;i++) {
+					if(split[i].startsWith("<<") && split[i].endsWith(">>")) {
+						LOGGER.info("tags: " + split[i]);
+						tags = tags + split[i] + " ";
+					}
+				}
+				if(findByEtActionWithDefaultET.get(0).getEtTags().split(",").length != tags.split(" ").length) {
+					throw new CustomException("Tags lengths Are not Match");
+				}
+				String[] splitTags = tags.split(" ");
+				String splitTagsFromDB = findByEtActionWithDefaultET.get(0).getEtTags();
+				for(int i = 0;i < splitTags.length;i++) {
+					if(splitTagsFromDB.indexOf(splitTags[i]) == -1){
+						throw new CustomException("Tags Are Not Present in Default Template");
+					}
+				}
 				List<EmailTemplateEntity> findByEtAction = emailTemplateRepo.findByEtAction(emailTemplateEntity.getEtAction());
 				if(findByEtAction.size()>0) {
 					if(emailTemplateEntity.getIsPrimary() == 1) {
+						List<EmailTemplateEntity> findByEtActionNew = new ArrayList<EmailTemplateEntity>();
 						findByEtAction.forEach(obj->{
 							obj.setIsPrimary(0);
+							findByEtActionNew.add(obj);
 						});
-						emailTemplateRepo.saveAll(findByEtAction);
+						emailTemplateRepo.saveAll(findByEtActionNew);
 					}
+					
 					EmailTemplateEntity newEmailTemplateEntity = new EmailTemplateEntity();
 					newEmailTemplateEntity.setEtName(emailTemplateEntity.getEtName());
 					newEmailTemplateEntity.setEtSubject(emailTemplateEntity.getEtSubject());
@@ -92,18 +116,37 @@ public class EmailTemplateController {
 	public GlobalResponse emailTemplateUpdate(@RequestParam("id") Long id, @RequestBody EmailTemplateEntity emailTemplateEntity) {
 		LOGGER.info("Inside - EmailTemplateController.emailTemplateUpdate()");
 		try {
-			
 			if(fieldValidation.isEmpty(emailTemplateEntity.getEtName()) && 
 					fieldValidation.isEmpty(emailTemplateEntity.getEtSubject()) &&
 					fieldValidation.isEmpty(emailTemplateEntity.getEtBody()) &&
 					fieldValidation.isEmpty(emailTemplateEntity.getEtAction()) &&
 					fieldValidation.isEmpty(emailTemplateEntity.getIsPrimary()) &&
 					fieldValidation.isEmpty(emailTemplateEntity.getEtId())
-					){
+					) {
+				
 				Optional<EmailTemplateEntity> findById = emailTemplateRepo.findById(id);
 				if(findById.isPresent()) {
 					List<EmailTemplateEntity> findByIdAndDelete = emailTemplateRepo.findByIdAndDelete(1, id);
 					if(findByIdAndDelete.size()<1) {
+						List<EmailTemplateEntity> findByEtActionWithDefaultET = emailTemplateRepo.findByEtActionWithDefaultET(emailTemplateEntity.getEtAction(),emailTemplateEntity.getEtType());
+						String[] split = emailTemplateEntity.getEtBody().split(" ");
+						String tags = "";
+						for(int i = 0;i < split.length;i++) {
+							if(split[i].startsWith("<<") && split[i].endsWith(">>")) {
+								LOGGER.info("tags: " + split[i]);
+								tags = tags + split[i] + " ";
+							}
+						}
+						if(findByEtActionWithDefaultET.get(0).getEtTags().split(",").length != tags.split(" ").length) {
+							throw new CustomException("Tags lengths Are not Match");
+						}
+						String[] splitTags = tags.split(" ");
+						String splitTagsFromDB = findByEtActionWithDefaultET.get(0).getEtTags();
+						for(int i = 0;i < splitTags.length;i++) {
+							if(splitTagsFromDB.indexOf(splitTags[i]) == -1){
+								throw new CustomException("Tags Are Not Present in Default Template");
+							}
+						}
 						List<EmailTemplateEntity> findByEtAction = emailTemplateRepo.findByEtAction(emailTemplateEntity.getEtAction());
 						if(findByEtAction.size()>0) {
 							if(emailTemplateEntity.getIsPrimary() == 1) {
@@ -156,14 +199,19 @@ public class EmailTemplateController {
 			if(findById.isPresent()) {
 				List<EmailTemplateEntity> findByIdAndDelete = emailTemplateRepo.findByIdAndDelete(1, id);
 				if(findByIdAndDelete.size()<1) {
-					EmailTemplateEntity emailTemplateEntity = findById.get();
-					emailTemplateEntity.setIsDeleted(0);
-					EmailTemplateEntity save = emailTemplateRepo.save(emailTemplateEntity);
-					if(save.equals(null)) {
-						throw new CustomException("Data Not Save Try Again");
+					if(findByIdAndDelete.get(1).getEtType().equals("DEFAULT")) {
+						EmailTemplateEntity emailTemplateEntity = findById.get();
+						emailTemplateEntity.setIsDeleted(0);
+						EmailTemplateEntity save = emailTemplateRepo.save(emailTemplateEntity);
+						if(save.equals(null)) {
+							throw new CustomException("Data Not Save Try Again");
+						}else {
+							return new GlobalResponse("Data Save Successfully","SUCCESS");
+						}	
 					}else {
-						return new GlobalResponse("Data Save Successfully","SUCCESS");
-					}	
+						throw new CustomException("Default Template Can't be Deleted");
+					}
+					
 				}else {
 					throw new CustomException("Id is Deleted");
 				}
@@ -188,7 +236,7 @@ public class EmailTemplateController {
 					return findAllByIdAndDelete;
 				}
 			}else if(type.equals("template_for")){
-				List<EmailTemplateEntity> findAllByIdAndDelete = emailTemplateRepo.findEtTypeByIdAndDeleteWithDefaultET(1,"DEFAULT");
+				List<EmailTemplateEntity> findAllByIdAndDelete = emailTemplateRepo.findAllByDefaultET("DEFAULT");
 				if(findAllByIdAndDelete.size()<1) {
 					throw new CustomException("No Data Present");
 				}else {
@@ -203,12 +251,16 @@ public class EmailTemplateController {
 		
 	}
 	@GetMapping("/viewTemplate/{id}")
-	public List<EmailTemplateEntity> viewTemplate(@PathVariable("type") Long type) {
+	public EmailTemplateEntity viewTemplate(@PathVariable("id") Long id) {
 		
 		LOGGER.info("Inside - EmailTemplateController.viewTemplate()");
 		try {
-			emailTemplateRepo.findByIdAndDelete(0, type);
-			return null;
+			List<EmailTemplateEntity> findByIdAndDelete = emailTemplateRepo.findByIdAndDelete(1, id);
+			if(findByIdAndDelete.size()>0) {
+				return findByIdAndDelete.get(0);
+			}else {
+				throw new CustomException("No Data Found");
+			}
 			
 		}catch(Exception e) {
 			throw new CustomException(e.getMessage());
