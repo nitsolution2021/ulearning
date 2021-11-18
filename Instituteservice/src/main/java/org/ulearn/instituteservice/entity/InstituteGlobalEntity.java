@@ -10,12 +10,15 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class InstituteGlobalEntity {
 
 
 	private Long instId;
 	@NotEmpty(message = "The Institute Name is Required")
 	private String instName;
+	@JsonFormat(pattern = "yyyy/mm/dd HH:mm:ss")
 	private Date instEndDate;
 	private String instWebsite;
 	@Email
@@ -68,6 +71,7 @@ public class InstituteGlobalEntity {
 	@NotEmpty(message = "Owner Last Name is Required")
 	private String amdLname;
 	@NotNull(message = "Owner Date of Birth is Required")
+	@JsonFormat(pattern = "yyyy/mm/dd HH:mm:ss")
 	private Date amdDob;
 	@NotEmpty(message = "Owner Mobile Number is Required")
 	private String amdMnum;

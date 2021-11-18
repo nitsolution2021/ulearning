@@ -1,8 +1,5 @@
 package org.ulearn.instituteservice.controller;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +10,10 @@ import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.ulearn.instituteservice.entity.GlobalResponse;
@@ -39,13 +41,13 @@ import org.ulearn.instituteservice.repository.InstituteAdminRepo;
 import org.ulearn.instituteservice.repository.InstituteRepo;
 import org.ulearn.instituteservice.validation.FieldValidation;
 
-import springfox.documentation.spring.web.json.Json;
 
 @RestController
 @RequestMapping("/institute")
 public class InstuteController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(InstuteController.class);
+
 
 	@Autowired
 	private InstituteRepo instituteRepo;
@@ -64,15 +66,25 @@ public class InstuteController {
 	private BCryptPasswordEncoder passwordEncoder;
 
 	@GetMapping("/list")
-	public List<InstituteEntity> getInstute() {
+	public Page<InstituteEntity> getInstute(@RequestParam Optional<Integer> page, @RequestParam Optional<Integer> limit, @RequestParam Optional<String> sortBy) {
 		LOGGER.info("Inside - InstituteController.getInstute()");
-
+		
+		int Limit =10;
+		int PageLimit = 0;
+		if(page.isPresent()) {
+			 Limit = limit.get();
+			 PageLimit=page.get();
+		}
+		
 		try {
+			LOGGER.info("Inside - InstituteController.getInstute()"+PageLimit+"--"+Limit);
+			Page<InstituteEntity> findAll = instituteRepo.findAll(PageRequest.of(
+					PageLimit,
+					Limit,
+                    Sort.Direction.ASC, sortBy.orElse("instName"))
+					);
 
-
-			List<InstituteEntity> findAll = instituteRepo.findAll();
-
-			if (findAll.size() < 1) {
+			if (findAll.getSize() < 1) {
 				throw new CustomException("Institute Not Found!");
 			} else {
 				return findAll;
@@ -298,16 +310,16 @@ public class InstuteController {
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdUsername()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdPassword()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdPpic()))
-					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdmId()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdId()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstId()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrId()))
 					) {
 				Optional<InstituteEntity> findById = instituteRepo.findById(instId);
-				List<InstituteEntity> findByInstName = instituteRepo.findByInstUnqName(instId,instituteGlobalEntrity.getInstName());
-//				LOGGER.info("Inside - InstituteController.putInstituteDetails()///"+findById);
+				List<InstituteEntity> findByInstName = instituteRepo.findByInstUnqName(instId,instituteGlobalEntrity.getInstName());				
 				List<InstituteEntity> findByInstEmail = instituteRepo.findByInstUnqEmail(instId,instituteGlobalEntrity.getInstEmail());
 				Optional<InstituteAddressEntity> findByAdrId = instituteAddressRepo.findById(instituteGlobalEntrity.getAdrId());
-				Optional<InstituteAdminEntity> findByAdminId = instituteAdminRepo.findById(instituteGlobalEntrity.getAdmId());
+				Optional<InstituteAdminEntity> findByAdminId = instituteAdminRepo.findById(instituteGlobalEntrity.getAmdId());
+				
 				
 				if (findById.isPresent()) {
 
@@ -329,6 +341,7 @@ public class InstuteController {
 							InstEntrity.setInstWebsite(instituteGlobalEntrity.getInstWebsite());
 							InstEntrity.setIsActive(instituteGlobalEntrity.getIsActive());
 							InstEntrity.setIsntRegDate(findById.get().getIsntRegDate());
+							InstEntrity.setCreatedOn(findById.get().getCreatedOn());
 							InstEntrity.setUpdatedOn(new Date());
 							InstituteEntity save = instituteRepo.save(InstEntrity);
 							
@@ -387,7 +400,7 @@ public class InstuteController {
 							
 							if (findByAdminId.isPresent()) {
 								
-							filterInsAmdDetails.setAdmId(instituteGlobalEntrity.getAmdId());
+							filterInsAmdDetails.setAmdId(instituteGlobalEntrity.getAmdId());
 							filterInsAmdDetails.setAmdFname(instituteGlobalEntrity.getAmdFname());
 							filterInsAmdDetails.setAmdLname(instituteGlobalEntrity.getAmdLname());
 							filterInsAmdDetails.setAmdDob(instituteGlobalEntrity.getAmdDob());
@@ -420,6 +433,8 @@ public class InstuteController {
 			throw new CustomException(e.getMessage());
 		}
 	}
+	
+	
 	@GetMapping("/insIdvalidation/{insId}")
 	public String insIdvalidation(@PathVariable long insId)
 	{
