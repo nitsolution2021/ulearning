@@ -39,7 +39,7 @@ public class InstituteEntity {
 	private String instCnum;
 	@Column(name = "INST_MNUM")
 	private String instMnum;
-	@JsonFormat(pattern = "yyyy/mm/dd HH:mm:ss")
+	@JsonFormat(pattern = "yyyy/mm/dd")
 	@Column(name = "ISNT_RDATE")
 	private Date isntRegDate;
 	@Column(name = "INST_LOGO")

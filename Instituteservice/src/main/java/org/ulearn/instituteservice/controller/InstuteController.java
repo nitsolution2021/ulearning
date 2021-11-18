@@ -66,8 +66,35 @@ public class InstuteController {
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 
+//	@GetMapping(value = {"/list", "/list/{page}", "/list/{page}/{limits}", "/list/{page}/{limits}/{sortBy}"})
+//	public Page<InstituteEntity> getInstute(@RequestParam(name="page",required = false) Optional<Integer> page, @RequestParam(name="limits",required = false) Optional<Integer> limits, @RequestParam(name="sortBy",required = false) Optional<String> sortBy) {
+//		LOGGER.info("Inside - InstituteController.getInstute()");
+//		
+//		int Limit =10;
+//		if(page.isPresent()) {
+//			 Limit = page.get();
+//		}
+//		
+//		try {
+//			LOGGER.info("Inside - InstituteController.getInstute()"+Limit);
+//			Page<InstituteEntity> findAll = instituteRepo.findAll(PageRequest.of(
+//                    page.orElse(0),
+//                    Limit,
+//                    Sort.Direction.ASC, sortBy.orElse("instName"))
+//					);
+//
+//			if (findAll.getSize() < 1) {
+//				throw new CustomException("Institute Not Found!");
+//			} else {
+//				return findAll;
+//			}
+//		} catch (Exception e) {
+//			throw new CustomException(e.getMessage());
+//		}
+//
+//	}
 	@GetMapping("/list")
-	public Page<InstituteEntity> getInstute(@RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy) {
+	public List<InstituteEntity> getInstute(@RequestParam(name="page",required = false) Optional<Integer> page, @RequestParam(name="limits",required = false) Optional<Integer> limits, @RequestParam(name="sortBy",required = false) Optional<String> sortBy) {
 		LOGGER.info("Inside - InstituteController.getInstute()");
 		
 		int Limit =10;
@@ -77,13 +104,9 @@ public class InstuteController {
 		
 		try {
 			LOGGER.info("Inside - InstituteController.getInstute()"+Limit);
-			Page<InstituteEntity> findAll = instituteRepo.findAll(PageRequest.of(
-                    page.orElse(0),
-                    Limit,
-                    Sort.Direction.ASC, sortBy.orElse("instName"))
-					);
+			List<InstituteEntity> findAll = instituteRepo.findAll();
 
-			if (findAll.getSize() < 1) {
+			if (findAll.size() < 1) {
 				throw new CustomException("Institute Not Found!");
 			} else {
 				return findAll;
