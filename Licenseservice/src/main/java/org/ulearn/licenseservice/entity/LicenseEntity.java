@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -19,34 +20,49 @@ public class LicenseEntity {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "LC_ID")
 	private Long lcId;
+	
+	
 	@Column(name = "INST_ID")
 	private Long instId;
+	
 	@Column(name="LC_NAME")
 	private String lcName;
+	
 	@JsonFormat(pattern = "yyyy/mm/dd")
 	@Column(name = "LC_CDATE")
 	private Date lcCreatDate;
+	
 	@Column(name = "LC_TYPE")
 	private String lcType;
+	
 	@Column(name = "LC_STYPE")
 	private String lcStype;
+	
 	@Column(name = "LC_VALIDITY_TYPE")
 	private String lcValidityType;
+	
 	@Column(name = "LC_VALIDITY_NUM")
 	private int lcValidityNum;
+	
 	@JsonFormat(pattern = "yyyy/mm/dd")
 	@Column(name = "LC_EDATE")
 	private Date lcEndDate;
+	
 	@Column(name = "LC_COMMENT")
 	private String lcComment;
+	
 	@Column(name = "LC_STATUS")
 	private String lcStatus;
+	
 	@Column(name = "IS_ACTIVE")
 	private int isActive;
+	
 	@Column(name = "IS_DELETED")
 	private int isDeleted;
+	
 	@Column(name = "CREATED_ON")
 	private Date createdOn;
+	
 	@Column(name = "UPDATED_ON")
 	private Date updatedOn;
 
