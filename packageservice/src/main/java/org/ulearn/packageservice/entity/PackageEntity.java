@@ -1,5 +1,6 @@
 package org.ulearn.packageservice.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -8,29 +9,34 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Positive;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties({"hibernateLazyInitializer"})
 @Entity
 @Table(name = "tbl_inst_package")
-public class PackageEntity {
+public class PackageEntity implements Serializable{
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "PK_ID") private Long pkId;
-	@Column(name = "INST_ID") private Long instId;
-	@Column(name = "PK_TYPE") private String pkType;
-	@Column(name = "PK_NAME") private String pkName;
-	@Column(name = "PK_FNAME") private String pkFname;
-	@Column(name = "PK_NUSERS") private Long pkNusers;
+	@Column(name = "INST_ID")@Positive(message = "The Institute Id required") private Long instId;
+	@Column(name = "PK_TYPE") @NotEmpty(message = "Package type is required") String pkType;
+	@Column(name = "PK_NAME") @NotEmpty(message = "Package name is required") String pkName;
+	@Column(name = "PK_FNAME") @NotEmpty(message = "Package Fname is required") String pkFname;
+	@Column(name = "PK_NUSERS")@Positive(message = "Package nusers is required") private Long pkNusers;
 	
-	@Column(name = "PK_VALIDITY_TYPE") private String pkValidityType;
-	@Column(name = "PK_VALIDITY_NUM") private Long pkValidityNum;
-	@Column(name = "PK_CDATE") private Date pkCdate;
+	@Column(name = "PK_VALIDITY_TYPE")@NotEmpty(message = "Package validity type is required") private String pkValidityType;
+	@Column(name = "PK_VALIDITY_NUM") @Positive(message = "Package validity no required") Long pkValidityNum;
+	@Column(name = "PK_CDATE")private Date pkCdate;
 	//@Column(name = "HS_ID") private Long hsId;
-	@Column(name = "PK_COMMENT") private String pkComment;
-	@Column(name = "PARENT_ID") private Long parentId;
+	@Column(name = "PK_COMMENT") @NotEmpty(message = "Write some comment on that package") String pkComment;
+	@Column(name = "PARENT_ID")@Positive(message = "Parent is required") private Long parentId;
 	@Column(name = "IS_ACTIVE") private Long isActive;
 	@Column(name = "IS_DELETED") private Long isDeleted;
-	@Column(name = "PK_STATUS") private String pkStatus;
+	@Column(name = "PK_STATUS")@NotEmpty(message = "Package status is requred") private String pkStatus;
 	@Column(name = "CREATED_ON") private Date createdOn;
 	@Column(name = "UPDATED_ON") private Date updatedOn;
 	public Long getPkId() {

@@ -1,56 +1,53 @@
-package org.ulearn.instituteservice.entity;
+package org.ulearn.packageservice.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @Entity
-@Table(name = "tbl_inst_addr")
-public class InstituteAddressEntity {
-	
+
+public class InstituteAddressEntity implements Serializable{
+
+	//@Column(name = "ADR_ID")
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "ADR_ID")
 	private Long adrId;
 	
-	@Column(name = "INST_ID")
+	//@Column(name = "INST_ID")
 	private Long instId;
 	
-	@Column(name = "ADR_TYPE")
+	//@Column(name = "ADR_TYPE")
 	private String adrType;
 	
-	@Column(name = "ADR_LINE1")
+	//@Column(name = "ADR_LINE1")
 	private String adrLine1;
 	
-	@Column(name = "ADR_LINE2")
+	//@Column(name = "ADR_LINE2")
 	private String adrLine2;
 	
-	@Column(name = "ADR_COUNTRY")
+	//@Column(name = "ADR_COUNTRY")
 	private Long adrCountry;
 	
-	@Column(name = "ADR_STATE")
+	//@Column(name = "ADR_STATE")
 	private Long adrState;
 	
-	@Column(name = "ADR_DISTRICT")
+	//@Column(name = "ADR_DISTRICT")
 	private Long adrDistrict;
 	
-	@Column(name = "ADR_TALUKA")
+	//@Column(name = "ADR_TALUKA")
 	private Long adrTaluka;
 	
-	@Column(name = "ADR_CITY")
+	//@Column(name = "ADR_CITY")
 	private Long adrCity;
 	
 	@Column(name = "ADR_PINCODE")
@@ -77,11 +74,6 @@ public class InstituteAddressEntity {
 	@Column(name = "UPDATED_ON")
 	private Date updatedOn;
 
-	public InstituteAddressEntity() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
 	public InstituteAddressEntity(Long adrId, Long instId, String adrType, String adrLine1, String adrLine2,
 			Long adrCountry, Long adrState, Long adrDistrict, Long adrTaluka, Long adrCity, String adrPincode,
 			String adrStatus, Long adrOrder, int isPrimary, int isActive, int isDeleted, Date createdOn,
@@ -107,14 +99,9 @@ public class InstituteAddressEntity {
 		this.updatedOn = updatedOn;
 	}
 
-	@Override
-	public String toString() {
-		return "InstituteAddressEntity [adrId=" + adrId + ", instId=" + instId + ", adrType=" + adrType + ", adrLine1="
-				+ adrLine1 + ", adrLine2=" + adrLine2 + ", adrCountry=" + adrCountry + ", adrState=" + adrState
-				+ ", adrDistrict=" + adrDistrict + ", adrTaluka=" + adrTaluka + ", adrCity=" + adrCity + ", adrPincode="
-				+ adrPincode + ", adrStatus=" + adrStatus + ", adrOrder=" + adrOrder + ", isPrimary=" + isPrimary
-				+ ", isActive=" + isActive + ", isDeleted=" + isDeleted + ", createdOn=" + createdOn + ", updatedOn="
-				+ updatedOn + "]";
+	public InstituteAddressEntity() {
+		super();
+		// TODO Auto-generated constructor stub
 	}
 
 	public Long getAdrId() {
@@ -260,10 +247,15 @@ public class InstituteAddressEntity {
 	public void setUpdatedOn(Date updatedOn) {
 		this.updatedOn = updatedOn;
 	}
-	
-//	@ManyToOne
-//    @JoinColumn(foreignKey = @ForeignKey(name = "inst_id"), name = "inst_id",insertable = true,updatable = true)
-//	private InstituteEntity instituteEntity;
 
+	@Override
+	public String toString() {
+		return "InstituteAddressEntity [adrId=" + adrId + ", instId=" + instId + ", adrType=" + adrType + ", adrLine1="
+				+ adrLine1 + ", adrLine2=" + adrLine2 + ", adrCountry=" + adrCountry + ", adrState=" + adrState
+				+ ", adrDistrict=" + adrDistrict + ", adrTaluka=" + adrTaluka + ", adrCity=" + adrCity + ", adrPincode="
+				+ adrPincode + ", adrStatus=" + adrStatus + ", adrOrder=" + adrOrder + ", isPrimary=" + isPrimary
+				+ ", isActive=" + isActive + ", isDeleted=" + isDeleted + ", createdOn=" + createdOn + ", updatedOn="
+				+ updatedOn + "]";
+	}
 	
 }
