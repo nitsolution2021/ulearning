@@ -1,5 +1,8 @@
 package org.ulearn.instituteservice.controller;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -85,9 +88,8 @@ public class InstuteController {
 	public GlobalResponse postInstituteDetails(@Valid @RequestBody InstituteGlobalEntity instituteGlobalEntrity,@RequestHeader("Authorization") String token) {
 		LOGGER.info("Inside - InstituteController.postInstituteDetails()");
 
-		try {					
-			
-					
+		try {								
+						
 			Optional<InstituteEntity> findByInstituteName = instituteRepo.findByInstName(instituteGlobalEntrity.getInstName());
 			Optional<InstituteEntity> findByInstEmail = instituteRepo.findByInstEmail(instituteGlobalEntrity.getInstEmail());
 
@@ -163,31 +165,7 @@ public class InstuteController {
 						filterInsAdrDetails.setCreatedOn(new Date());
 						filterInsAdrDetails.setUpdatedOn(new Date());
 
-						InstituteAddressEntity InsAdrDetails = instituteAddressRepo.save(filterInsAdrDetails);
-						
-						
-						String mailid = instituteGlobalEntrity.getAmdEmail();
-						String subject = "Institute Admin Registration from uLearn";
-						String body = "Dear "+instituteGlobalEntrity.getAmdFname()+" "+instituteGlobalEntrity.getAmdLname()+
-									"<br><br> Welcome to uLearn <br><br>"
-									+"Your are successfully register with us.<br><br>"
-									+"You login Credentials is - <br>"
-									+"Username - "+instituteGlobalEntrity.getAmdUsername()+"<br>"
-									+"Password - "+instituteGlobalEntrity.getAmdPassword()+"<br><br>"
-									+"Regards,<br>uLearn.co.in";
-						
-						HttpHeaders headers = new HttpHeaders();
-						headers.set("Authorization", token);
-						headers.setContentType(MediaType.APPLICATION_JSON);
-						
-						JSONObject requestJson = new JSONObject();
-						requestJson.put("senderMailId", mailid);
-						requestJson.put("subject", subject);
-						requestJson.put("body", body);
-						requestJson.put("enableHtml", true);
-
-						HttpEntity<String> entity = new HttpEntity(requestJson, headers);
-						ResponseEntity<String> response=new RestTemplate().postForEntity("http://localhost:8088/dev/login/sendMail/", entity, String.class);						
+						InstituteAddressEntity InsAdrDetails = instituteAddressRepo.save(filterInsAdrDetails);																								
 												
 						
 						InstituteAdminEntity filterInsAmdDetails = new InstituteAdminEntity();
@@ -206,6 +184,54 @@ public class InstuteController {
 						filterInsAmdDetails.setUpdatedOn(new Date());
 
 						InstituteAdminEntity InsAmdDetails = instituteAdminRepo.save(filterInsAmdDetails);
+						
+						
+//						String subject = "Institute Admin Registration from uLearn";
+//						String body = "Dear "+instituteGlobalEntrity.getAmdFname()+" "+instituteGlobalEntrity.getAmdLname()+
+//									"<br><br> Welcome to uLearn <br><br>"
+//									+"Your are successfully register with us.<br><br>"
+//									+"Your login Credentials is - <br>"
+//									+"Username - "+instituteGlobalEntrity.getAmdUsername()+"<br>"
+//									+"Password - "+instituteGlobalEntrity.getAmdPassword()+"<br><br>"
+//									+"Regards,<br>uLearn.co.in";
+						
+						
+						HttpHeaders headers = new HttpHeaders();
+						headers.set("Authorization", token);
+						headers.setContentType(MediaType.APPLICATION_JSON);
+						
+											
+						HttpEntity request=new HttpEntity(headers);
+						ResponseEntity<InstituteGlobalEntity> responseEmailTemp=new RestTemplate().exchange("http://localhost:8090/dev/emailTemplate/getPrimaryETByAction/Institute_Create",  HttpMethod.GET, request, InstituteGlobalEntity.class);
+						String ETSubject = responseEmailTemp.getBody().getEtSubject();
+						String ETBody = responseEmailTemp.getBody().getEtBody();
+						
+						String ETTargetName = "<<_name_>>";
+						String ETTargetUsername = "<<_username_>>";
+						String ETTargetPassword = "<<_password_>>";
+						String ETNameReplacement = instituteGlobalEntrity.getAmdFname()+" "+instituteGlobalEntrity.getAmdLname();
+						String ETUsernameReplacement = instituteGlobalEntrity.getAmdUsername();
+						String ETPasswordReplacement = instituteGlobalEntrity.getAmdPassword();
+						
+						String processedName = ETBody.replace(ETTargetName, ETNameReplacement);
+						String processedUsername = processedName.replace(ETTargetUsername, ETUsernameReplacement);
+						String processedMailBodyContent = processedUsername.replace(ETTargetPassword, ETPasswordReplacement);
+//						assertTrue(processedName.contains(ETNameReplacement));
+//						assertFalse(processedName.contains(ETTargetName));
+						
+//						HttpEntity<String> entity = new HttpEntity(requestJson, headers);
+//						HttpEntity request=new HttpEntity(headers);
+//						ResponseEntity<String> responseEmailTemp=new RestTemplate().exchange("http://localhost:8090/dev/login/sendMail/",  HttpMethod.GET, request, String.class);
+						String mailid = instituteGlobalEntrity.getAmdEmail();
+						
+						JSONObject requestJson = new JSONObject();
+						requestJson.put("senderMailId", mailid);
+						requestJson.put("subject", ETSubject);
+						requestJson.put("body", processedMailBodyContent);
+						requestJson.put("enableHtml", true);
+
+						HttpEntity<String> entity = new HttpEntity(requestJson, headers);
+						ResponseEntity<String> response=new RestTemplate().postForEntity("http://localhost:8088/dev/login/sendMail/", entity, String.class);
 						
 						return new GlobalResponse("SUCCESS", "Institute Added Successfully");
 					} else {
