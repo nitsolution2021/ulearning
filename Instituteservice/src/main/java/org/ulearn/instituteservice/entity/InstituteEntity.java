@@ -15,8 +15,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-
+@JsonIgnoreProperties({"hibernateLazyInitializer"})
 @Entity
 @Table(name="tbl_institutes")
 public class InstituteEntity {
@@ -27,7 +28,7 @@ public class InstituteEntity {
 	private Long instId;
 	@Column(name = "INST_NAME")
 	private String instName;
-	@JsonFormat(pattern = "yyyy/mm/dd h:i:s")
+	@JsonFormat(pattern = "yyyy/mm/dd HH:mm:ss")
 	@Column(name = "INST_EDATE")	
 	private Date instEndDate;
 	@Column(name = "INST_WEBSITE")
@@ -38,7 +39,7 @@ public class InstituteEntity {
 	private String instCnum;
 	@Column(name = "INST_MNUM")
 	private String instMnum;
-	@JsonFormat(pattern = "yyyy/mm/dd h:i:s")
+	@JsonFormat(pattern = "yyyy/mm/dd")
 	@Column(name = "ISNT_RDATE")
 	private Date isntRegDate;
 	@Column(name = "INST_LOGO")

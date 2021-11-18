@@ -97,7 +97,7 @@ public class LicenseController {
 	}
 	
 	@PostMapping("/suspend/{lcId}")
-	public GlobalResponse addSuspend(@PathVariable int lcId, @RequestBody LicenseLogEntity licenseLogEntitySuspend) {
+	public GlobalResponse addSuspend(@PathVariable() int lcId, @RequestBody LicenseLogEntity licenseLogEntitySuspend) {
 		
 		LOGGER.info("Inside the suspend License");
 		try {

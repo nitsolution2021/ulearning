@@ -9,6 +9,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties({"hibernateLazyInitializer"})
 @Entity
 @Table(name = "tbl_inst_admin")
 public class InstituteAdminEntity {
@@ -16,13 +20,14 @@ public class InstituteAdminEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "ADM_ID")
-	private Long admId;
+	private Long amdId;
 	@Column(name = "INST_ID")
 	private Long instId;
 	@Column(name = "ADM_FNAME")
 	private String amdFname;
 	@Column(name = "ADM_LNAME")
 	private String amdLname;
+	@JsonFormat(pattern = "yyyy/mm/dd HH:mm:ss")
 	@Column(name = "ADM_DOB")
 	private Date amdDob;
 	@Column(name = "ADM_MNUM")
@@ -45,10 +50,10 @@ public class InstituteAdminEntity {
 		// TODO Auto-generated constructor stub
 	}
 
-	public InstituteAdminEntity(Long admId, Long instId, String amdFname, String amdLname, Date amdDob, String amdMnum,
+	public InstituteAdminEntity(Long amdId, Long instId, String amdFname, String amdLname, Date amdDob, String amdMnum,
 			String amdEmail, String amdUsername, String amdPassword, String amdPpic, Date createdOn, Date updatedOn) {
 		super();
-		this.admId = admId;
+		this.amdId = amdId;
 		this.instId = instId;
 		this.amdFname = amdFname;
 		this.amdLname = amdLname;
@@ -64,18 +69,18 @@ public class InstituteAdminEntity {
 
 	@Override
 	public String toString() {
-		return "InstituteAdminEntity [admId=" + admId + ", instId=" + instId + ", amdFname=" + amdFname + ", amdLname="
+		return "InstituteAdminEntity [amdId=" + amdId + ", instId=" + instId + ", amdFname=" + amdFname + ", amdLname="
 				+ amdLname + ", amdDob=" + amdDob + ", amdMnum=" + amdMnum + ", amdEmail=" + amdEmail + ", amdUsername="
 				+ amdUsername + ", amdPassword=" + amdPassword + ", amdPpic=" + amdPpic + ", createdOn=" + createdOn
 				+ ", updatedOn=" + updatedOn + "]";
 	}
 
-	public Long getAdmId() {
-		return admId;
+	public Long getAmdId() {
+		return amdId;
 	}
 
-	public void setAdmId(Long admId) {
-		this.admId = admId;
+	public void setAmdId(Long amdId) {
+		this.amdId = amdId;
 	}
 
 	public Long getInstId() {
@@ -165,9 +170,6 @@ public class InstituteAdminEntity {
 	public void setUpdatedOn(Date updatedOn) {
 		this.updatedOn = updatedOn;
 	}
-	
-	
-	
-	
-	
+
+		
 }

@@ -1,8 +1,5 @@
 package org.ulearn.instituteservice.controller;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -13,12 +10,17 @@ import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.ulearn.instituteservice.entity.GlobalResponse;
@@ -39,13 +42,13 @@ import org.ulearn.instituteservice.repository.InstituteAdminRepo;
 import org.ulearn.instituteservice.repository.InstituteRepo;
 import org.ulearn.instituteservice.validation.FieldValidation;
 
-import springfox.documentation.spring.web.json.Json;
-
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/institute")
 public class InstuteController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(InstuteController.class);
+
 
 	@Autowired
 	private InstituteRepo instituteRepo;
@@ -63,13 +66,44 @@ public class InstuteController {
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 
+//	@GetMapping(value = {"/list", "/list/{page}", "/list/{page}/{limits}", "/list/{page}/{limits}/{sortBy}"})
+//	public Page<InstituteEntity> getInstute(@RequestParam(name="page",required = false) Optional<Integer> page, @RequestParam(name="limits",required = false) Optional<Integer> limits, @RequestParam(name="sortBy",required = false) Optional<String> sortBy) {
+//		LOGGER.info("Inside - InstituteController.getInstute()");
+//		
+//		int Limit =10;
+//		if(page.isPresent()) {
+//			 Limit = page.get();
+//		}
+//		
+//		try {
+//			LOGGER.info("Inside - InstituteController.getInstute()"+Limit);
+//			Page<InstituteEntity> findAll = instituteRepo.findAll(PageRequest.of(
+//                    page.orElse(0),
+//                    Limit,
+//                    Sort.Direction.ASC, sortBy.orElse("instName"))
+//					);
+//
+//			if (findAll.getSize() < 1) {
+//				throw new CustomException("Institute Not Found!");
+//			} else {
+//				return findAll;
+//			}
+//		} catch (Exception e) {
+//			throw new CustomException(e.getMessage());
+//		}
+//
+//	}
 	@GetMapping("/list")
-	public List<InstituteEntity> getInstute() {
+	public List<InstituteEntity> getInstute(@RequestParam(name="page",required = false) Optional<Integer> page, @RequestParam(name="limits",required = false) Optional<Integer> limits, @RequestParam(name="sortBy",required = false) Optional<String> sortBy) {
 		LOGGER.info("Inside - InstituteController.getInstute()");
-
+		
+		int Limit =10;
+		if(page.isPresent()) {
+			 Limit = page.get();
+		}
+		
 		try {
-
-
+			LOGGER.info("Inside - InstituteController.getInstute()"+Limit);
 			List<InstituteEntity> findAll = instituteRepo.findAll();
 
 			if (findAll.size() < 1) {
@@ -101,17 +135,18 @@ public class InstuteController {
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstLogo()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstMnum()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstName()))
-					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstStatus()))
-					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstWebsite()))
+//					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstStatus()))
+//					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstWebsite()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstPanNum()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrCountry()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrDistrict()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrLine1()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrLine2()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrPincode()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrState()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrTaluka()))
-					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrType()))
-					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrOrder()))
+//					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrType()))
+//					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrOrder()))
 //					& (fieldValidation.isEmpty(instituteGlobalEntrity.getIsPrimary()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdFname()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdLname()))
@@ -132,12 +167,12 @@ public class InstuteController {
 						filterInsDetails.setInstEmail(instituteGlobalEntrity.getInstEmail());
 						filterInsDetails.setInstCnum(instituteGlobalEntrity.getInstCnum());
 						filterInsDetails.setInstMnum(instituteGlobalEntrity.getInstMnum());
-						filterInsDetails.setIsntRegDate(new Date());
+						filterInsDetails.setIsntRegDate(instituteGlobalEntrity.getIsntRegDate());
 						filterInsDetails.setInstLogo(instituteGlobalEntrity.getInstLogo());
 						filterInsDetails.setInstPanNum(instituteGlobalEntrity.getInstPanNum());
 						filterInsDetails.setInstGstNum(instituteGlobalEntrity.getInstGstNum());
-						filterInsDetails.setInstStatus(instituteGlobalEntrity.getInstStatus());
-						filterInsDetails.setIsActive(0);
+						filterInsDetails.setInstStatus("1");
+						filterInsDetails.setIsActive(1);
 						filterInsDetails.setIsDeleted(0);
 						filterInsDetails.setCreatedOn(new Date());
 						filterInsDetails.setUpdatedOn(new Date());
@@ -152,15 +187,15 @@ public class InstuteController {
 						filterInsAdrDetails.setAdrDistrict(instituteGlobalEntrity.getAdrDistrict());
 						filterInsAdrDetails.setAdrLine1(instituteGlobalEntrity.getAdrLine1());
 						filterInsAdrDetails.setAdrLine2(instituteGlobalEntrity.getAdrLine2());
-						filterInsAdrDetails.setAdrOrder(instituteGlobalEntrity.getAdrOrder());
+//						filterInsAdrDetails.setAdrOrder((long) 0);
 						filterInsAdrDetails.setAdrPincode(instituteGlobalEntrity.getAdrPincode());
 						filterInsAdrDetails.setAdrState(instituteGlobalEntrity.getAdrState());
 						filterInsAdrDetails.setAdrTaluka(instituteGlobalEntrity.getAdrTaluka());
 						filterInsAdrDetails.setAdrType(instituteGlobalEntrity.getAdrType());
 						filterInsAdrDetails.setInstId(save.getInstId());
-						filterInsAdrDetails.setIsPrimary(instituteGlobalEntrity.getIsPrimary());						
-						filterInsAdrDetails.setAdrStatus(instituteGlobalEntrity.getAdrStatus());
-						filterInsAdrDetails.setIsActive(0);
+						filterInsAdrDetails.setIsPrimary(1);						
+						filterInsAdrDetails.setAdrStatus("1");
+						filterInsAdrDetails.setIsActive(1);
 						filterInsAdrDetails.setIsDeleted(0);
 						filterInsAdrDetails.setCreatedOn(new Date());
 						filterInsAdrDetails.setUpdatedOn(new Date());
@@ -233,7 +268,7 @@ public class InstuteController {
 						HttpEntity<String> entity = new HttpEntity(requestJson, headers);
 						ResponseEntity<String> response=new RestTemplate().postForEntity("http://localhost:8088/dev/login/sendMail/", entity, String.class);
 						
-						return new GlobalResponse("SUCCESS", "Institute Added Successfully");
+						return new GlobalResponse("SUCCESS",200, "Institute Added Successfully");
 					} else {
 						throw new CustomException("Institute Email Already Exist!");
 					}
@@ -279,17 +314,18 @@ public class InstuteController {
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstGstNum()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstLogo()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstMnum()))					
-					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstStatus()))
+//					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstStatus()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstWebsite()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstPanNum()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrCountry()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrDistrict()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrLine1()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrLine2()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrPincode()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrState()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrTaluka()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrType()))
-					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrOrder()))
+//					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrOrder()))
 //					& (fieldValidation.isEmpty(instituteGlobalEntrity.getIsPrimary()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdFname()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdLname()))
@@ -298,16 +334,16 @@ public class InstuteController {
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdUsername()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdPassword()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdPpic()))
-					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdmId()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdId()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstId()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrId()))
 					) {
 				Optional<InstituteEntity> findById = instituteRepo.findById(instId);
-				List<InstituteEntity> findByInstName = instituteRepo.findByInstUnqName(instId,instituteGlobalEntrity.getInstName());
-//				LOGGER.info("Inside - InstituteController.putInstituteDetails()///"+findById);
+				List<InstituteEntity> findByInstName = instituteRepo.findByInstUnqName(instId,instituteGlobalEntrity.getInstName());				
 				List<InstituteEntity> findByInstEmail = instituteRepo.findByInstUnqEmail(instId,instituteGlobalEntrity.getInstEmail());
 				Optional<InstituteAddressEntity> findByAdrId = instituteAddressRepo.findById(instituteGlobalEntrity.getAdrId());
-				Optional<InstituteAdminEntity> findByAdminId = instituteAdminRepo.findById(instituteGlobalEntrity.getAdmId());
+				Optional<InstituteAdminEntity> findByAdminId = instituteAdminRepo.findById(instituteGlobalEntrity.getAmdId());
+				
 				
 				if (findById.isPresent()) {
 
@@ -328,7 +364,9 @@ public class InstuteController {
 							InstEntrity.setInstStatus(instituteGlobalEntrity.getInstStatus());
 							InstEntrity.setInstWebsite(instituteGlobalEntrity.getInstWebsite());
 							InstEntrity.setIsActive(instituteGlobalEntrity.getIsActive());
-							InstEntrity.setIsntRegDate(findById.get().getIsntRegDate());
+//							InstEntrity.setIsntRegDate(findById.get().getIsntRegDate());
+							InstEntrity.setIsntRegDate(instituteGlobalEntrity.getIsntRegDate());
+							InstEntrity.setCreatedOn(findById.get().getCreatedOn());
 							InstEntrity.setUpdatedOn(new Date());
 							InstituteEntity save = instituteRepo.save(InstEntrity);
 							
@@ -349,8 +387,8 @@ public class InstuteController {
 							filterInsAdrDetails.setAdrType(instituteGlobalEntrity.getAdrType());
 							filterInsAdrDetails.setInstId(save.getInstId());
 							filterInsAdrDetails.setIsPrimary(instituteGlobalEntrity.getIsPrimary());						
-							filterInsAdrDetails.setAdrStatus(instituteGlobalEntrity.getAdrStatus());
-							filterInsAdrDetails.setIsActive(0);
+							filterInsAdrDetails.setAdrStatus("1");
+							filterInsAdrDetails.setIsActive(1);
 							filterInsAdrDetails.setIsDeleted(0);
 							filterInsAdrDetails.setCreatedOn(new Date());
 							filterInsAdrDetails.setUpdatedOn(new Date());
@@ -387,7 +425,7 @@ public class InstuteController {
 							
 							if (findByAdminId.isPresent()) {
 								
-							filterInsAmdDetails.setAdmId(instituteGlobalEntrity.getAmdId());
+							filterInsAmdDetails.setAmdId(instituteGlobalEntrity.getAmdId());
 							filterInsAmdDetails.setAmdFname(instituteGlobalEntrity.getAmdFname());
 							filterInsAmdDetails.setAmdLname(instituteGlobalEntrity.getAmdLname());
 							filterInsAmdDetails.setAmdDob(instituteGlobalEntrity.getAmdDob());
@@ -402,7 +440,7 @@ public class InstuteController {
 
 							InstituteAdminEntity InsAmdDetails = instituteAdminRepo.save(filterInsAmdDetails);
 							}
-							return new GlobalResponse("SUCCESS", "Institute Updated Successfully");
+							return new GlobalResponse("SUCCESS",200, "Institute Updated Successfully");
 							
 						} else {
 							throw new CustomException("Institute Email Already Exist!");
@@ -420,6 +458,8 @@ public class InstuteController {
 			throw new CustomException(e.getMessage());
 		}
 	}
+	
+	
 	@GetMapping("/insIdvalidation/{insId}")
 	public String insIdvalidation(@PathVariable long insId)
 	{
