@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 @Entity
 @Table(name="tbl_inst_license_log")
 public class LicenseLogEntity {
@@ -17,24 +19,36 @@ public class LicenseLogEntity {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name="LL_ID")
 	private Long llId;
+	
 	@Column(name="LC_ID")
 	private int lcIdFk;
+	
 	@Column(name="LL_ACTION")
 	private String llAction;
+	
 	@Column(name="LL_VALIDITY_TYPE")
 	private String llValidityType;
+	
 	@Column(name="LL_VALIDITY_NUM")
 	private int llValidityNum;
+	
+	@JsonFormat(pattern = "yyyy/mm/dd")
 	@Column(name="LL_SDATE")
 	private Date llSdate;
+	
+	@JsonFormat(pattern = "yyyy/mm/dd")
 	@Column(name="LL_EDATE")
 	private Date llEdate;
+	
 	@Column(name="LL_COMMENT")
 	private String llComment;
+	
 	@Column(name="LL_STATUS")
 	private String llStatus;
+	
 	@Column(name="CREATED_ON")
 	private Date createdOn;
+	
 	@Column(name="UPDATED_ON")
 	private Date updatedOn;
 	
