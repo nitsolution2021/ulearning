@@ -15,13 +15,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-<<<<<<< HEAD
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
-=======
-import com.fasterxml.jackson.annotation.JsonFormat;
-
-
->>>>>>> 4517007e65968e86e56c8fe81c3e36c811e2674d
 @Entity
 @Table(name="tbl_institutes")
 public class InstituteEntity {
