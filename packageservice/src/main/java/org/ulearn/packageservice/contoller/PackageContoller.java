@@ -5,6 +5,9 @@ import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Optional;
+
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -19,7 +22,12 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import org.ulearn.packageservice.entity.AdminEntity;
+import org.ulearn.packageservice.entity.DataResponseEntity;
 import org.ulearn.packageservice.entity.GlobalResponse;
+import org.ulearn.packageservice.entity.InstituteAddressEntity;
+import org.ulearn.packageservice.entity.InstituteEntity;
+import org.ulearn.packageservice.entity.LicenseEntity;
 import org.ulearn.packageservice.entity.PackageEntity;
 import org.ulearn.packageservice.entity.PackageLogEntity;
 import org.ulearn.packageservice.exception.CustomException;
@@ -27,6 +35,8 @@ import org.ulearn.packageservice.repo.LoginRepository;
 import org.ulearn.packageservice.repo.PackageLogRepo;
 import org.ulearn.packageservice.repo.PackageRepo;
 import org.ulearn.packageservice.validation.FieldValidation;
+
+
 
 @RestController
 @RequestMapping("/package")
@@ -59,30 +69,60 @@ public class PackageContoller {
 			throw new CustomException(e.getMessage());
 		}
 	}
-
 	@GetMapping("/view/{pkId}")
-	public Optional<PackageEntity> viewPackagedetails(@PathVariable() long pkId ) {
-		
-		try {
+	public Optional<DataResponseEntity> viewPackagedata(@PathVariable long pkId,@RequestHeader("Authorization") String token)
+	{
+		try
+		{
 			log.info("Inside-PackageController.view");
-			if (pkId != 0) {
-				
-				if (packageRepo.existsById(pkId)) {
-					Optional<PackageEntity> details = this.packageRepo.findById(pkId);
-					return details;
-				} else {
-					throw new CustomException("Record not found");
+			if(pkId!=0)
+			{
+				if(packageRepo.existsById(pkId))
+				{
+					PackageEntity packageData=packageRepo.getById(pkId);
+					System.out.println(packageData);
+					org.springframework.http.HttpHeaders header=new org.springframework.http.HttpHeaders();
+					header.set("Authorization", token); 
+					HttpEntity request=new HttpEntity(header);
+					ResponseEntity<InstituteEntity> instResponse=new RestTemplate().exchange("http://localhost:8089/dev/institute/view/"+packageData.getInstId(), HttpMethod.GET, request, InstituteEntity.class);
+					System.out.println(instResponse.getBody());
+					ResponseEntity<LicenseEntity> lcResponse=new RestTemplate().exchange("http://localhost:8082/dev/license/view/"+packageData.getInstId(), HttpMethod.GET, request, LicenseEntity.class);
+					System.out.println(lcResponse.getBody());
+					ResponseEntity<AdminEntity> AdminResponse=new RestTemplate().exchange("http://localhost:8089/dev/institute/adminData/"+packageData.getInstId(), HttpMethod.GET, request, AdminEntity.class);
+					System.out.println(AdminResponse.getBody());
+					ResponseEntity<InstituteAddressEntity> instAddressResponse=new RestTemplate().exchange("http://localhost:8089/dev/institute/instAddressData/"+packageData.getInstId(), HttpMethod.GET, request, InstituteAddressEntity.class);
+					System.out.println(instAddressResponse.getBody());
+//					InstituteEntity instEntity=instResponse.getBody();
+//					InstituteAddressEntity instAddress=instAddressResponse.getBody();
+//					LicenseEntity LicenseData=lcResponse.getBody();
+//					AdminEntity adminData=AdminResponse.getBody();
+					DataResponseEntity dataResponseEntity=new DataResponseEntity();
+					dataResponseEntity.setAdminEntity(AdminResponse.getBody());
+					dataResponseEntity.setInstituteAddressEntity(instAddressResponse.getBody());
+					dataResponseEntity.setInstituteEntity(instResponse.getBody());
+					dataResponseEntity.setLicenseEntity(lcResponse.getBody());
+					dataResponseEntity.setPackageEntity(packageData);
+					return Optional.of(dataResponseEntity);
+					
+					
 				}
-			} else {
-				throw new CustomException("Please enter the valid Id");
+				else
+				{
+					throw new CustomException("NO RECORD FOUND");
+				}
 			}
-		} catch (Exception e) {
+			else
+			{
+				throw new CustomException("Invalid data input");
+			}
+		}
+		catch(Exception e)
+		{
 			throw new CustomException(e.getMessage());
 		}
 	}
-
 	@PostMapping("/add")
-	public GlobalResponse addPackagedata(@RequestBody PackageEntity newData,@RequestHeader("Authorization") String token)
+	public GlobalResponse addPackagedata(@Valid@RequestBody PackageEntity newData,@RequestHeader("Authorization") String token)
 	{
 		try
 		{
@@ -102,7 +142,8 @@ public class PackageContoller {
 				org.springframework.http.HttpHeaders header=new org.springframework.http.HttpHeaders();
 				header.set("Authorization", token);
 				HttpEntity request=new HttpEntity(header);
-				ResponseEntity<String> response=new RestTemplate().exchange("http://localhost:8088/dev/institute/insIdvalidation/"+newData.getInstId(), HttpMethod.GET, request, String.class);
+				
+				ResponseEntity<String> response=new RestTemplate().exchange("http://localhost:8089/dev/institute/insIdvalidation/"+newData.getInstId(), HttpMethod.GET, request, String.class);
 				System.out.println(response.getBody());
 				//if(response.)
 				
@@ -135,7 +176,7 @@ public class PackageContoller {
 		}
 	}
 	@PutMapping("/update/{pkId}")
-	public GlobalResponse updatePackage(@RequestBody PackageEntity updatePackagedata,@PathVariable long pkId)
+	public GlobalResponse updatePackage(@Valid@RequestBody PackageEntity updatePackagedata,@PathVariable long pkId)
 	{
 		try
 		{
