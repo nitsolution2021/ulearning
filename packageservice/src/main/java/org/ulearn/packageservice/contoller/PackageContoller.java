@@ -65,29 +65,15 @@ public class PackageContoller {
 		
 		try {
 			log.info("Inside-PackageController.view");
-			PackageEntity packageData=packageRepo.getById(pkId);
-			PackageLogEntity loggingData=new PackageLogEntity();
-			loggingData.setPkId(pkId);
-			loggingData.setPlAction("view");
-			loggingData.setPlAdate(new Date());
-			loggingData.setPlCreat(packageData.getCreatedOn());
-			loggingData.setPlUpdate(packageData.getUpdatedOn());
-			loggingData.setPlStatus("Log_running");
 			if (pkId != 0) {
 				
 				if (packageRepo.existsById(pkId)) {
 					Optional<PackageEntity> details = this.packageRepo.findById(pkId);
-					loggingData.setPlComment("Success");
-					packageLogRepo.save(loggingData);
 					return details;
 				} else {
-					loggingData.setPlComment("Not_Found");
-					packageLogRepo.save(loggingData);
 					throw new CustomException("Record not found");
 				}
 			} else {
-				loggingData.setPlComment("Invalid_ID");
-				packageLogRepo.save(loggingData);
 				throw new CustomException("Please enter the valid Id");
 			}
 		} catch (Exception e) {
@@ -135,16 +121,6 @@ public class PackageContoller {
 				newData.setIsDeleted((long) 0);
 				newData.setPkCdate(new Date());
 				packageRepo.save(newData);
-				PackageEntity packageData=packageRepo.getById(newData.getInstId());
-				PackageLogEntity loggingData=new PackageLogEntity();
-				loggingData.setPkId(newData.getPkId());
-				loggingData.setPlAction("add");
-				loggingData.setPlAdate(new Date());
-				loggingData.setPlCreat(packageData.getCreatedOn());
-				loggingData.setPlUpdate(packageData.getUpdatedOn());
-				loggingData.setPlStatus("Log_running");
-				loggingData.setPlComment("Success");
-				packageLogRepo.save(loggingData);
 				return new GlobalResponse("SUCCESSFULL", "Data is strored in database successfull");
 					}
 			}
@@ -163,14 +139,6 @@ public class PackageContoller {
 	{
 		try
 		{
-			PackageEntity packageData=packageRepo.getById(pkId);
-			PackageLogEntity loggingData=new PackageLogEntity();
-			loggingData.setPkId(packageData.getPkId());
-			loggingData.setPlAction("update");
-			loggingData.setPlAdate(new Date());
-			loggingData.setPlCreat(packageData.getCreatedOn());
-			loggingData.setPlUpdate(packageData.getUpdatedOn());
-			loggingData.setPlStatus("Log_running");
 			log.info("Inside-PackageController.update");
 			if(pkId!=0)
 			{
@@ -190,8 +158,6 @@ public class PackageContoller {
 						PackageEntity dbData=packageRepo.getById(pkId);
 						if(dbData.getInstId()!=updatePackagedata.getInstId())
 						{
-							loggingData.setPlComment("Invalid institute Id");
-							packageLogRepo.save(loggingData);
 							throw new CustomException("Please enter valid institute id");
 						}
 						updatePackagedata.setCreatedOn(dbData.getCreatedOn());
@@ -201,29 +167,20 @@ public class PackageContoller {
 						updatePackagedata.setIsDeleted(dbData.getIsDeleted());
 						updatePackagedata.setUpdatedOn(new Date());
 						packageRepo.save(updatePackagedata);
-						loggingData.setPlComment("DB_Updated");
-						packageLogRepo.save(loggingData);
 						return new GlobalResponse("Successfull", "DB is updated");
 					}
 					else
 					{
-						loggingData.setPlComment("Invalid field information");
-						packageLogRepo.save(loggingData);
 						throw new CustomException("Please enter the valid information");
 					}
 				}
 				else
 				{
-					loggingData.setPlComment("Invalid package id");
-					packageLogRepo.save(loggingData);
 					throw new CustomException("Record not found");
 				}
 			}
 			else
 			{
-				loggingData.setPlComment("Invalid input data");
-				packageLogRepo.save(loggingData);
-
 				throw new CustomException("Invalid input data");
 			}
 		}
