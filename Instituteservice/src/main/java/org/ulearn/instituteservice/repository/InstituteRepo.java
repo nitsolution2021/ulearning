@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.ulearn.instituteservice.entity.InstituteEntity;
 import org.ulearn.instituteservice.entity.InstituteAddressEntity;
 import org.ulearn.instituteservice.entity.InstituteGlobalEntity;
+import org.springframework.data.domain.Pageable;
 
 public interface InstituteRepo extends JpaRepository<InstituteEntity, Long> {
 	Optional<InstituteEntity> findByInstName(String instName);

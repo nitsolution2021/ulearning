@@ -52,7 +52,7 @@ spring:
       ddl-auto: none
       use-new-id-generator-mappings: false
 server: 
-  port: 8088
+  port: 8090
   servlet: 
     contextPath: /dev
 name: emailtemplateservice-dev-yml
