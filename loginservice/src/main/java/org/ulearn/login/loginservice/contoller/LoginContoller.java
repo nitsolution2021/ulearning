@@ -117,7 +117,7 @@ public class LoginContoller {
 				LoginResetEntity loginResetEntity = new LoginResetEntity();
 				loginResetEntity.setuId(findByUserName.get().getUid());
 				loginResetEntity.setPrToken(uuid.toString() + "/" + format);
-				loginResetEntity.setStatus("NEW");
+				loginResetEntity.setStatus("ACTIVE");
 				Date dateObjForLinkCreateTime = new SimpleDateFormat("dd-MM-yyyy-HH:mm:ss")
 						.parse(format);
 				loginResetEntity.setCreatedOn(dateObjForLinkCreateTime);
@@ -155,42 +155,52 @@ public class LoginContoller {
 			Optional<LoginResetEntity> findByPrToken = loginResetRepo.findByPrToken(link + "/" + linkTime);
 
 			if (findByPrToken.isPresent()) {
-				//** Create Current Time **//
-				SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy-HH:mm:ss");
-				Date date = new Date();
-				formatter.format(date);
-				Calendar calObjForCurrentTime = Calendar.getInstance();
-				calObjForCurrentTime.setTime(date);
-				
-//				byte[] forgotPasswordLinkCreateTimeByte = Base64.getDecoder().decode(linkTime);
-//				String forgotPasswordLinkCreateTimeString = new String(forgotPasswordLinkCreateTimeByte);
-				Calendar calObjForLinkCreateTime = Calendar.getInstance();
-				Date dateObjForLinkCreateTime = new SimpleDateFormat("dd-MM-yyyy-HH:mm:ss")
-                        .parse(linkTime);
-				calObjForLinkCreateTime.setTime(dateObjForLinkCreateTime);
-				
-				if(calObjForCurrentTime.get(Calendar.YEAR)==calObjForLinkCreateTime.get(Calendar.YEAR) && calObjForCurrentTime.get(Calendar.MONTH)==calObjForLinkCreateTime.get(Calendar.MONTH) && calObjForCurrentTime.get(Calendar.DATE)==calObjForLinkCreateTime.get(Calendar.DATE) && calObjForCurrentTime.get(Calendar.HOUR)==calObjForLinkCreateTime.get(Calendar.HOUR)) {
+				if(findByPrToken.get().getStatus().equals("ACTIVE")) {
+					
+					//** Create Current Time **//
+					SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy-HH:mm:ss");
+					Date date = new Date();
+					formatter.format(date);
+					Calendar calObjForCurrentTime = Calendar.getInstance();
+					calObjForCurrentTime.setTime(date);
+					
+//					byte[] forgotPasswordLinkCreateTimeByte = Base64.getDecoder().decode(linkTime);
+//					String forgotPasswordLinkCreateTimeString = new String(forgotPasswordLinkCreateTimeByte);
+					Calendar calObjForLinkCreateTime = Calendar.getInstance();
+					Date dateObjForLinkCreateTime = new SimpleDateFormat("dd-MM-yyyy-HH:mm:ss")
+	                        .parse(linkTime);
+					calObjForLinkCreateTime.setTime(dateObjForLinkCreateTime);
+					
+					if(calObjForCurrentTime.get(Calendar.YEAR)==calObjForLinkCreateTime.get(Calendar.YEAR) && calObjForCurrentTime.get(Calendar.MONTH)==calObjForLinkCreateTime.get(Calendar.MONTH) && calObjForCurrentTime.get(Calendar.DATE)==calObjForLinkCreateTime.get(Calendar.DATE) && calObjForCurrentTime.get(Calendar.HOUR)==calObjForLinkCreateTime.get(Calendar.HOUR)) {
+						
+					}else {
+						throw new CustomException("This Link is Expier");
+					}
+				//** FIND THE USER CORRESPONDING THE LINK IN LOGIN TABLE **//
+					LoginResetEntity loginResetEntity = findByPrToken.get();
+					Optional<LoginEntity> findById = loginRepository.findById(loginResetEntity.getuId());
+					if (findById.isPresent()) {
+				//** CREATE NEW PASSWORD AND SAVE **//
+						LoginEntity loginEntity = findById.get();
+						loginEntity.setPassword(passwordEncoder.encode(globalEntity.getNewPass()));
+						LoginEntity save = loginRepository.save(loginEntity);
+						if(save.equals(null)) {
+							throw new CustomException("Data Not Save Try Again");
+						}else {
+							loginResetEntity.setStatus("DEACTIVE");
+							loginResetRepo.save(loginResetEntity);
+							return new GlobalResponse("SUCCESS", "Password Generate Successfully", 200);
+						}
+					}else {
+						throw new CustomException("UserName is Not Present");
+					}
 					
 				}else {
-					throw new CustomException("This Link is Expier");
-				}
-			//** FIND THE USER CORRESPONDING THE LINK IN LOGIN TABLE **//
-				LoginResetEntity loginResetEntity = findByPrToken.get();
-				Optional<LoginEntity> findById = loginRepository.findById(loginResetEntity.getuId());
-				if (findById.isPresent()) {
-			//** CREATE NEW PASSWORD AND SAVE **//
-					LoginEntity loginEntity = findById.get();
-					loginEntity.setPassword(passwordEncoder.encode(globalEntity.getNewPass()));
-					LoginEntity save = loginRepository.save(loginEntity);
-					if(save.equals(null)) {
-						throw new CustomException("Data Not Save Try Again");
-					}
+					throw new CustomException("Link is Already Used");
 				}
 			} else {
 				throw new CustomException("This URL is Not Valid");
 			}
-
-			return new GlobalResponse("SUCCESS", "Password Generate Successfully", 200);
 			
 		}catch(Exception e) {
 			throw new CustomException(e.getMessage());
