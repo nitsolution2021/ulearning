@@ -34,6 +34,11 @@ logging:
       
 jwt.secret.key: secret
 jwt.token.validity: 36000000
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
         
         
 ---
@@ -51,7 +56,7 @@ spring:
       ddl-auto: none
       use-new-id-generator-mappings: false
 server: 
-  port: 8089
+  port: 8087
   servlet: 
     contextPath: /dev
 name: institute-dev-yml
@@ -74,7 +79,12 @@ logging:
         
   
 jwt.secret.key: secret
-jwt.token.validity: 36000000        
+jwt.token.validity: 36000000
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka      
 
         
         
@@ -112,3 +122,7 @@ logging:
         org.springframework.web: ERROR
         org.ulearn.*: INFO
         org.hibernate: ERROR
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
