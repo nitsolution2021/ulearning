@@ -1,7 +1,9 @@
 package org.ulearn.packageservice.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,10 +14,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
-@Entity
+//@Entity
 public class InstituteEntity implements Serializable{
 
 	//@Column(name = "INST_ID")
@@ -23,6 +27,7 @@ public class InstituteEntity implements Serializable{
 	private Long instId;
 	//@Column(name = "INST_NAME")
 	private String instName;
+	@JsonFormat(pattern = "yyyy/mm/dd")
 	//@Column(name = "INST_EDATE")
 	private Date instEndDate;
 	//@Column(name = "INST_WEBSITE")
@@ -33,6 +38,7 @@ public class InstituteEntity implements Serializable{
 	private String instCnum;
 	//@Column(name = "INST_MNUM")
 	private String instMnum;
+	@JsonFormat(pattern = "yyyy/mm/dd")
 	//@Column(name = "ISNT_RDATE")
 	private Date isntRegDate;
 	//@Column(name = "INST_LOGO")
@@ -51,9 +57,16 @@ public class InstituteEntity implements Serializable{
 	private Date createdOn;
 	//@Column(name = "UPDATED_ON")
 	private Date updatedOn;
+	private AdminEntity adminEntity;
+	private List<InstituteAddressEntity> instituteAddressEntity;
+	public InstituteEntity() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 	public InstituteEntity(Long instId, String instName, Date instEndDate, String instWebsite, String instEmail,
 			String instCnum, String instMnum, Date isntRegDate, String instLogo, String instPanNum, String instGstNum,
-			String instStatus, int isActive, int isDeleted, Date createdOn, Date updatedOn) {
+			String instStatus, int isActive, int isDeleted, Date createdOn, Date updatedOn, AdminEntity adminEntity,
+			List<InstituteAddressEntity> instituteAddressEntity) {
 		super();
 		this.instId = instId;
 		this.instName = instName;
@@ -71,10 +84,17 @@ public class InstituteEntity implements Serializable{
 		this.isDeleted = isDeleted;
 		this.createdOn = createdOn;
 		this.updatedOn = updatedOn;
+		this.adminEntity = adminEntity;
+		this.instituteAddressEntity = instituteAddressEntity;
 	}
-	public InstituteEntity() {
-		super();
-		// TODO Auto-generated constructor stub
+	@Override
+	public String toString() {
+		return "InstituteEntity [instId=" + instId + ", instName=" + instName + ", instEndDate=" + instEndDate
+				+ ", instWebsite=" + instWebsite + ", instEmail=" + instEmail + ", instCnum=" + instCnum + ", instMnum="
+				+ instMnum + ", isntRegDate=" + isntRegDate + ", instLogo=" + instLogo + ", instPanNum=" + instPanNum
+				+ ", instGstNum=" + instGstNum + ", instStatus=" + instStatus + ", isActive=" + isActive
+				+ ", isDeleted=" + isDeleted + ", createdOn=" + createdOn + ", updatedOn=" + updatedOn
+				+ ", adminEntity=" + adminEntity + ", instituteAddressEntity=" + instituteAddressEntity + "]";
 	}
 	public Long getInstId() {
 		return instId;
@@ -172,13 +192,19 @@ public class InstituteEntity implements Serializable{
 	public void setUpdatedOn(Date updatedOn) {
 		this.updatedOn = updatedOn;
 	}
-	@Override
-	public String toString() {
-		return "InstituteEntity [instId=" + instId + ", instName=" + instName + ", instEndDate=" + instEndDate
-				+ ", instWebsite=" + instWebsite + ", instEmail=" + instEmail + ", instCnum=" + instCnum + ", instMnum="
-				+ instMnum + ", isntRegDate=" + isntRegDate + ", instLogo=" + instLogo + ", instPanNum=" + instPanNum
-				+ ", instGstNum=" + instGstNum + ", instStatus=" + instStatus + ", isActive=" + isActive
-				+ ", isDeleted=" + isDeleted + ", createdOn=" + createdOn + ", updatedOn=" + updatedOn + "]";
+	public AdminEntity getAdminEntity() {
+		return adminEntity;
 	}
+	public void setAdminEntity(AdminEntity adminEntity) {
+		this.adminEntity = adminEntity;
+	}
+	public List<InstituteAddressEntity> getInstituteAddressEntity() {
+		return instituteAddressEntity;
+	}
+	public void setInstituteAddressEntity(List<InstituteAddressEntity> instituteAddressEntity) {
+		this.instituteAddressEntity = instituteAddressEntity;
+	}
+	
+	
 	
 }

@@ -33,6 +33,11 @@ logging:
    
 jwt.secret.key: secret
 jwt.token.validity: 36000000
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
         
 
         
@@ -75,6 +80,11 @@ logging:
        
 jwt.secret.key: secret
 jwt.token.validity: 36000000
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
         
         
         
@@ -116,3 +126,8 @@ logging:
 
 jwt.secret.key: secret
 jwt.token.validity: 36000000
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka

@@ -42,7 +42,11 @@ jwt.token.validity: 1296000000
 spring: 
   profiles: dev
   application: 
-     name: LoginService
+#     name: LoginService
+      name: LOGINSERVICE
+  cloud:
+    discovery:
+      enabled: true
   datasource: 
     url: jdbc:mysql://ulearn-mysql.cdvo6qjmkkri.ap-south-1.rds.amazonaws.com:3306/ulearn_dev_sadmin
     username: ulearn
@@ -53,7 +57,7 @@ spring:
       ddl-auto: none
       use-new-id-generator-mappings: false
 server: 
-  port: 8088
+  port: 8086
   servlet: 
     contextPath: /dev
 name: dev-yml
@@ -78,12 +82,12 @@ logging:
 jwt.secret.key: secret
 jwt.token.validity: 1296000000     
 
-eureka:
-   client:
-      serviceUrl:
-         defaultZone: http://localhost:8761/eureka
-#      instance:
-#      preferIpAddress: true
+#eureka:
+#   client:
+#      serviceUrl:
+#         defaultZone: http://localhost:8761/eureka
+##   instance:
+##    preferIpAddress: true
  
         
         

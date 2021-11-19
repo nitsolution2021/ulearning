@@ -7,11 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
@@ -50,28 +46,28 @@ public class InstituteAddressEntity implements Serializable{
 	//@Column(name = "ADR_CITY")
 	private Long adrCity;
 	
-	@Column(name = "ADR_PINCODE")
+	//@Column(name = "ADR_PINCODE")
 	private String adrPincode;
 	
-	@Column(name = "ADR_STATUS")
+	//@Column(name = "ADR_STATUS")
 	private String adrStatus;
 	
-	@Column(name = "ADR_ORDER")
+	//@Column(name = "ADR_ORDER")
 	private Long adrOrder;
 	
-	@Column(name = "IS_PRIMARY")
+	//@Column(name = "IS_PRIMARY")
 	private int isPrimary;
 	
-	@Column(name = "IS_ACTIVE")
+	//@Column(name = "IS_ACTIVE")
 	private int isActive;
 	
-	@Column(name = "IS_DELETED")
+	//@Column(name = "IS_DELETED")
 	private int isDeleted;
 	
-	@Column(name = "CREATED_ON")
+	//@Column(name = "CREATED_ON")
 	private Date createdOn;
 	
-	@Column(name = "UPDATED_ON")
+	//@Column(name = "UPDATED_ON")
 	private Date updatedOn;
 
 	public InstituteAddressEntity(Long adrId, Long instId, String adrType, String adrLine1, String adrLine2,

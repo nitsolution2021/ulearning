@@ -27,7 +27,7 @@ public class InstituteAdminEntity {
 	private String amdFname;
 	@Column(name = "ADM_LNAME")
 	private String amdLname;
-	@JsonFormat(pattern = "yyyy/mm/dd HH:mm:ss")
+	@JsonFormat(pattern = "yyyy/mm/dd")
 	@Column(name = "ADM_DOB")
 	private Date amdDob;
 	@Column(name = "ADM_MNUM")
