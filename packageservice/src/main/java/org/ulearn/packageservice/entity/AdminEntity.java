@@ -11,6 +11,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
@@ -26,6 +28,7 @@ public class AdminEntity implements Serializable{
 	private String amdFname;
 	//@Column(name = "ADM_LNAME")
 	private String amdLname;
+	@JsonFormat(pattern = "yyyy/mm/dd")
 	//@Column(name = "ADM_DOB")
 	private Date amdDob;
 	//@Column(name = "ADM_MNUM")

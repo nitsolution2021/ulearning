@@ -28,7 +28,7 @@ public class InstituteEntity {
 	private Long instId;
 	@Column(name = "INST_NAME")
 	private String instName;
-	@JsonFormat(pattern = "yyyy/mm/dd HH:mm:ss")
+	@JsonFormat(pattern = "yyyy/mm/dd")
 	@Column(name = "INST_EDATE")	
 	private Date instEndDate;
 	@Column(name = "INST_WEBSITE")
