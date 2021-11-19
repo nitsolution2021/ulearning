@@ -14,11 +14,11 @@ public class GlobalResponse {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	public GlobalResponse(String resion, String message, int statuss) {
+	public GlobalResponse(String resion, String message, int status) {
 		super();
 		this.resion = resion;
 		this.message = message;
-		this.status = statuss;
+		this.status = status;
 	}
 	public String getResion() {
 		return resion;
@@ -35,8 +35,8 @@ public class GlobalResponse {
 	public int getStatuss() {
 		return status;
 	}
-	public void setStatuss(int statuss) {
-		this.status = statuss;
+	public void setStatuss(int status) {
+		this.status = status;
 	}
 	
 

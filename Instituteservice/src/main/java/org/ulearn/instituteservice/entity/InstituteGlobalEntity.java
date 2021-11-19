@@ -18,7 +18,7 @@ public class InstituteGlobalEntity {
 	private Long instId;
 	@NotEmpty(message = "The Institute Name is Required")
 	private String instName;
-	@JsonFormat(pattern = "yyyy/mm/dd HH:mm:ss")
+	@JsonFormat(pattern = "yyyy/mm/dd")
 	private Date instEndDate;
 	private String instWebsite;
 	@Email
@@ -27,6 +27,7 @@ public class InstituteGlobalEntity {
 	private String instCnum;
 	@NotEmpty(message = "The Institute Mobile Number is Required")
 	private String instMnum;
+	@JsonFormat(pattern = "yyyy/mm/dd")
 	private Date isntRegDate;
 	@NotEmpty(message = "The Institute Logo is Required")
 	private String instLogo;
@@ -34,7 +35,6 @@ public class InstituteGlobalEntity {
 	private String instPanNum;
 	@NotEmpty(message = "The Institute GST Number is Required")
 	private String instGstNum;
-	@NotEmpty(message = "The Institute Status is Required")
 	private String instStatus;
 	private int isActive;
 	private int isDeleted;
@@ -71,7 +71,7 @@ public class InstituteGlobalEntity {
 	@NotEmpty(message = "Owner Last Name is Required")
 	private String amdLname;
 	@NotNull(message = "Owner Date of Birth is Required")
-	@JsonFormat(pattern = "yyyy/mm/dd HH:mm:ss")
+	@JsonFormat(pattern = "yyyy/mm/dd")
 	private Date amdDob;
 	@NotEmpty(message = "Owner Mobile Number is Required")
 	private String amdMnum;

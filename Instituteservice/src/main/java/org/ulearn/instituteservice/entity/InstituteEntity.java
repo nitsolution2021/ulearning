@@ -13,6 +13,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
@@ -37,7 +39,7 @@ public class InstituteEntity {
 	private String instCnum;
 	@Column(name = "INST_MNUM")
 	private String instMnum;
-	@JsonFormat(pattern = "yyyy/mm/dd HH:mm:ss")
+	@JsonFormat(pattern = "yyyy/mm/dd")
 	@Column(name = "ISNT_RDATE")
 	private Date isntRegDate;
 	@Column(name = "INST_LOGO")
