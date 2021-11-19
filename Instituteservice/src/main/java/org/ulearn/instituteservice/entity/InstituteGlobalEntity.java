@@ -35,7 +35,6 @@ public class InstituteGlobalEntity {
 	private String instPanNum;
 	@NotEmpty(message = "The Institute GST Number is Required")
 	private String instGstNum;
-	@NotEmpty(message = "The Institute Status is Required")
 	private String instStatus;
 	private int isActive;
 	private int isDeleted;
