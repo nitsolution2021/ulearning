@@ -2,6 +2,8 @@ package org.ulearn.packageservice.contoller;
 
 import java.util.List;
 import java.util.Date;
+
+import org.hibernate.internal.build.AllowSysOut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Optional;
@@ -10,6 +12,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -36,8 +39,6 @@ import org.ulearn.packageservice.repo.PackageLogRepo;
 import org.ulearn.packageservice.repo.PackageRepo;
 import org.ulearn.packageservice.validation.FieldValidation;
 
-
-
 @RestController
 @RequestMapping("/package")
 public class PackageContoller {
@@ -47,13 +48,12 @@ public class PackageContoller {
 
 	@Autowired
 	private FieldValidation fieldValidation;
-	
+
 	@Autowired
 	private PackageLogRepo packageLogRepo;
-	
-	
+
 	private static final Logger log = LoggerFactory.getLogger(PackageContoller.class);
-	
+
 	@GetMapping("/list")
 	public List<PackageEntity> listAlldata() {
 		try {
@@ -69,122 +69,88 @@ public class PackageContoller {
 			throw new CustomException(e.getMessage());
 		}
 	}
+
 	@GetMapping("/view/{pkId}")
-	public Optional<DataResponseEntity> viewPackagedata(@PathVariable long pkId,@RequestHeader("Authorization") String token)
-	{
-		try
-		{
+	public Optional<?> viewPackagedata(@PathVariable long pkId,
+			@RequestHeader("Authorization") String token) {
+		log.info("Hi");
+		log.info("Token is <><><><>  "+token);
+		try {
 			log.info("Inside-PackageController.view");
-			if(pkId!=0)
-			{
-				if(packageRepo.existsById(pkId))
-				{
-					PackageEntity packageData=packageRepo.getById(pkId);
-					System.out.println(packageData);
-					org.springframework.http.HttpHeaders header=new org.springframework.http.HttpHeaders();
-					header.set("Authorization", token); 
-					HttpEntity request=new HttpEntity(header);
-					ResponseEntity<InstituteEntity> instResponse=new RestTemplate().exchange("http://localhost:8089/dev/institute/view/"+packageData.getInstId(), HttpMethod.GET, request, InstituteEntity.class);
-					System.out.println(instResponse.getBody());
-					ResponseEntity<LicenseEntity> lcResponse=new RestTemplate().exchange("http://localhost:8082/dev/license/view/"+packageData.getInstId(), HttpMethod.GET, request, LicenseEntity.class);
-					System.out.println(lcResponse.getBody());
-					ResponseEntity<AdminEntity> AdminResponse=new RestTemplate().exchange("http://localhost:8089/dev/institute/adminData/"+packageData.getInstId(), HttpMethod.GET, request, AdminEntity.class);
-					System.out.println(AdminResponse.getBody());
-					ResponseEntity<InstituteAddressEntity> instAddressResponse=new RestTemplate().exchange("http://localhost:8089/dev/institute/instAddressData/"+packageData.getInstId(), HttpMethod.GET, request, InstituteAddressEntity.class);
-					System.out.println(instAddressResponse.getBody());
-//					InstituteEntity instEntity=instResponse.getBody();
-//					InstituteAddressEntity instAddress=instAddressResponse.getBody();
-//					LicenseEntity LicenseData=lcResponse.getBody();
-//					AdminEntity adminData=AdminResponse.getBody();
-					DataResponseEntity dataResponseEntity=new DataResponseEntity();
-					dataResponseEntity.setAdminEntity(AdminResponse.getBody());
-					dataResponseEntity.setInstituteAddressEntity(instAddressResponse.getBody());
-					dataResponseEntity.setInstituteEntity(instResponse.getBody());
-					dataResponseEntity.setLicenseEntity(lcResponse.getBody());
-					dataResponseEntity.setPackageEntity(packageData);
-					return Optional.of(dataResponseEntity);
+			if (pkId != 0) {
+				if (packageRepo.existsById(pkId)) {
+					PackageEntity packageData = packageRepo.getById(pkId);
+					log.info(packageData.toString());
+					HttpHeaders header = new HttpHeaders();
+					header.set("Authorization", token);
+					HttpEntity request = new HttpEntity(header);
+					ResponseEntity<InstituteEntity> Response = new RestTemplate().exchange(
+							"http://localhost:8089/dev/institute/view/" + packageData.getInstId(), HttpMethod.GET,
+							request, InstituteEntity.class);
 					
-					
-				}
-				else
-				{
+					log.info("DATAAAAAAAAAAA   "+Response.getBody().getInstEmail());
+					return Optional.of(Response);
+
+				} else {
 					throw new CustomException("NO RECORD FOUND");
 				}
-			}
-			else
-			{
+			} else {
 				throw new CustomException("Invalid data input");
 			}
-		}
-		catch(Exception e)
-		{
+		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
 		}
 	}
+
 	@PostMapping("/add")
-	public GlobalResponse addPackagedata(@Valid@RequestBody PackageEntity newData,@RequestHeader("Authorization") String token)
-	{
-		try
-		{
-			
+	public GlobalResponse addPackagedata(@Valid @RequestBody PackageEntity newData,
+			@RequestHeader("Authorization") String token) {
+		try {
+
 			log.info("Inside-PackageController.addPackagedata");
-			if ((fieldValidation.isEmpty(newData.getInstId()))
-					& (fieldValidation.isEmpty(newData.getParentId()))
+			if ((fieldValidation.isEmpty(newData.getInstId())) & (fieldValidation.isEmpty(newData.getParentId()))
 					& (fieldValidation.isEmpty(newData.getPkComment()))
-					& (fieldValidation.isEmpty(newData.getPkFname()))
-					& (fieldValidation.isEmpty(newData.getPkName()))
+					& (fieldValidation.isEmpty(newData.getPkFname())) & (fieldValidation.isEmpty(newData.getPkName()))
 					& (fieldValidation.isEmpty(newData.getPkNusers()))
-					& (fieldValidation.isEmpty(newData.getPkStatus()))
-					& (fieldValidation.isEmpty(newData.getPkType()))
+					& (fieldValidation.isEmpty(newData.getPkStatus())) & (fieldValidation.isEmpty(newData.getPkType()))
 					& (fieldValidation.isEmpty(newData.getPkValidityNum()))
-					& (fieldValidation.isEmpty(newData.getPkValidityType())))
-			{
-				org.springframework.http.HttpHeaders header=new org.springframework.http.HttpHeaders();
+					& (fieldValidation.isEmpty(newData.getPkValidityType()))) {
+				org.springframework.http.HttpHeaders header = new org.springframework.http.HttpHeaders();
 				header.set("Authorization", token);
-				HttpEntity request=new HttpEntity(header);
-				
-				ResponseEntity<String> response=new RestTemplate().exchange("http://localhost:8089/dev/institute/insIdvalidation/"+newData.getInstId(), HttpMethod.GET, request, String.class);
+				HttpEntity request = new HttpEntity(header);
+
+				ResponseEntity<String> response = new RestTemplate().exchange(
+						"http://localhost:8089/dev/institute/insIdvalidation/" + newData.getInstId(), HttpMethod.GET,
+						request, String.class);
 				System.out.println(response.getBody());
-				//if(response.)
-				
-				if(response.getBody().equals("notOk"))
-				{
+				// if(response.)
+
+				if (response.getBody().equals("notOk")) {
 					throw new CustomException("Institute Id does not exist");
-				}
-				else if(response.getBody().equals("Exception"))
-				{
+				} else if (response.getBody().equals("Exception")) {
 					throw new CustomException("Exception");
+				} else {
+					newData.setCreatedOn(new Date());
+					newData.setIsActive((long) 1);
+					newData.setIsDeleted((long) 0);
+					newData.setPkCdate(new Date());
+					packageRepo.save(newData);
+					return new GlobalResponse("SUCCESSFULL", "Data is strored in database successfull");
 				}
-				else
-					{
-				newData.setCreatedOn(new Date());
-				newData.setIsActive((long) 1);
-				newData.setIsDeleted((long) 0);
-				newData.setPkCdate(new Date());
-				packageRepo.save(newData);
-				return new GlobalResponse("SUCCESSFULL", "Data is strored in database successfull");
-					}
-			}
-			else
-			{
+			} else {
 				throw new CustomException("Please enter valid data");
 			}
-		}
-		catch(Exception e)
-		{
+		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
 		}
 	}
+
 	@PutMapping("/update/{pkId}")
-	public GlobalResponse updatePackage(@Valid@RequestBody PackageEntity updatePackagedata,@PathVariable long pkId)
-	{
-		try
-		{
+	public GlobalResponse updatePackage(@Valid @RequestBody PackageEntity updatePackagedata, @PathVariable long pkId) {
+		try {
 			log.info("Inside-PackageController.update");
-			if(pkId!=0)
-			{
-				if(packageRepo.existsById(pkId))
-				{
+			if (pkId != 0) {
+				if (packageRepo.existsById(pkId)) {
 					if ((fieldValidation.isEmpty(updatePackagedata.getInstId()))
 							& (fieldValidation.isEmpty(updatePackagedata.getParentId()))
 							& (fieldValidation.isEmpty(updatePackagedata.getPkComment()))
@@ -194,11 +160,9 @@ public class PackageContoller {
 							& (fieldValidation.isEmpty(updatePackagedata.getPkStatus()))
 							& (fieldValidation.isEmpty(updatePackagedata.getPkType()))
 							& (fieldValidation.isEmpty(updatePackagedata.getPkValidityNum()))
-							& (fieldValidation.isEmpty(updatePackagedata.getPkValidityType())))
-					{
-						PackageEntity dbData=packageRepo.getById(pkId);
-						if(dbData.getInstId()!=updatePackagedata.getInstId())
-						{
+							& (fieldValidation.isEmpty(updatePackagedata.getPkValidityType()))) {
+						PackageEntity dbData = packageRepo.getById(pkId);
+						if (dbData.getInstId() != updatePackagedata.getInstId()) {
 							throw new CustomException("Please enter valid institute id");
 						}
 						updatePackagedata.setCreatedOn(dbData.getCreatedOn());
@@ -209,24 +173,16 @@ public class PackageContoller {
 						updatePackagedata.setUpdatedOn(new Date());
 						packageRepo.save(updatePackagedata);
 						return new GlobalResponse("Successfull", "DB is updated");
-					}
-					else
-					{
+					} else {
 						throw new CustomException("Please enter the valid information");
 					}
-				}
-				else
-				{
+				} else {
 					throw new CustomException("Record not found");
 				}
-			}
-			else
-			{
+			} else {
 				throw new CustomException("Invalid input data");
 			}
-		}
-		catch(Exception e)
-		{
+		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
 		}
 	}
