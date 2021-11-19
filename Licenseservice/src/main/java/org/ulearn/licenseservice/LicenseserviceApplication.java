@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.ComponentScan;
 import org.ulearn.licenseservice.config.YMLConfig;
 
@@ -14,6 +15,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication
 @ComponentScan(basePackages = {"org.ulearn.licenseservice.*"})
 @EnableSwagger2
+@EnableEurekaClient
 public class LicenseserviceApplication implements CommandLineRunner {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(LicenseserviceApplication.class);
