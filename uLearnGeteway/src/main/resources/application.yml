@@ -23,3 +23,13 @@
 ##       uri: lb://login
 ##       predicates:
 ##        - path=/order/**
+#spring:
+#  cloud:
+#    gateway:
+#      globalcors:
+#        corsConfigurations:
+#          '[/**]':
+#            allowedOrigins: "*"
+#            allowedMethods:
+#            - GET
+#            - POST
