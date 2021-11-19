@@ -95,6 +95,7 @@ public class InstuteController {
 //	}
 	@GetMapping("/list")
 	public List<InstituteEntity> getInstute(@RequestParam(name="page",required = false) Optional<Integer> page, @RequestParam(name="limits",required = false) Optional<Integer> limits, @RequestParam(name="sortBy",required = false) Optional<String> sortBy) {
+		
 		LOGGER.info("Inside - InstituteController.getInstute()");
 		
 		int Limit =10;

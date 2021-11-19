@@ -207,7 +207,7 @@ public class InstuteController {
 
 						InstituteAdminEntity InsAmdDetails = instituteAdminRepo.save(filterInsAmdDetails);
 						
-						return new GlobalResponse("SUCCESS", "Institute Added Successfully");
+						return new GlobalResponse("SUCCESS", 200, "Institute Added Successfully");
 					} else {
 						throw new CustomException("Institute Email Already Exist!");
 					}
@@ -376,7 +376,7 @@ public class InstuteController {
 
 							InstituteAdminEntity InsAmdDetails = instituteAdminRepo.save(filterInsAmdDetails);
 							}
-							return new GlobalResponse("SUCCESS", "Institute Updated Successfully");
+							return new GlobalResponse("SUCCESS",200, "Institute Updated Successfully");
 							
 						} else {
 							throw new CustomException("Institute Email Already Exist!");
