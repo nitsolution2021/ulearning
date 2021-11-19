@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -65,19 +66,19 @@ public class InstuteController {
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 
-	@GetMapping("/list")
+	@RequestMapping(value={"/list"} ,method = RequestMethod.GET)
 	public Page<InstituteEntity> getInstute(@RequestParam Optional<Integer> page, @RequestParam Optional<Integer> limit, @RequestParam Optional<String> sortBy) {
 		LOGGER.info("Inside - InstituteController.getInstute()");
 		
 		int Limit =10;
 		int PageLimit = 0;
 		if(page.isPresent()) {
-			 Limit = limit.get();
-			 PageLimit=page.get();
+//			 Limit = limit.get();
+//			 PageLimit=page.get();
 		}
 		
 		try {
-			LOGGER.info("Inside - InstituteController.getInstute()"+PageLimit+"--"+Limit);
+			LOGGER.info("Inside - InstituteController.getInstute()"+page+"--"+limit);
 			Page<InstituteEntity> findAll = instituteRepo.findAll(PageRequest.of(
 					PageLimit,
 					Limit,
