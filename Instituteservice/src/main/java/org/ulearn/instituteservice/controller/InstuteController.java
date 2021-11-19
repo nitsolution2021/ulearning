@@ -244,8 +244,7 @@ public class InstuteController {
 						headers.setContentType(MediaType.APPLICATION_JSON);
 
 						HttpEntity request = new HttpEntity(headers);
-						ResponseEntity<InstituteGlobalEntity> responseEmailTemp = new RestTemplate().exchange(
-								"http://localhost:8090/dev/emailTemplate/getPrimaryETByAction/Institute_Create",
+						ResponseEntity<InstituteGlobalEntity> responseEmailTemp = new RestTemplate().exchange("http://localhost:8090/dev/emailTemplate/getPrimaryETByAction/Institute_Create",
 								HttpMethod.GET, request, InstituteGlobalEntity.class);
 						String ETSubject = responseEmailTemp.getBody().getEtSubject();
 						String ETBody = responseEmailTemp.getBody().getEtBody();
@@ -277,8 +276,7 @@ public class InstuteController {
 						requestJson.put("enableHtml", true);
 
 						HttpEntity<String> entity = new HttpEntity(requestJson, headers);
-						ResponseEntity<String> response = new RestTemplate()
-								.postForEntity("http://localhost:8088/dev/login/sendMail/", entity, String.class);
+						ResponseEntity<String> response = new RestTemplate().postForEntity("http://localhost:8086/dev/login/sendMail/", entity, String.class);
 
 						return new GlobalResponse("SUCCESS", "Institute Added Successfully");
 					} else {
