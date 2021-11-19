@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Description;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -46,7 +47,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 @RequestMapping("/login")
 public class LoginContoller {
 
@@ -250,9 +251,10 @@ public class LoginContoller {
 			if(save.equals(null)) {
 				throw new CustomException("Data Not Save Try Again");
 			}
+//			HttpHeaders responseHeaders = new HttpHeaders();
+//		    responseHeaders.set("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, remember-me");
 
 			return ResponseEntity.ok(new LoginUserDetails(token,findByUserName.get().getUid(),findByUserName.get().getUserName() , findByUserName.get().getPassword()));
-
 		
 		}catch(Exception e) {
 			throw new CustomException(e.getMessage());

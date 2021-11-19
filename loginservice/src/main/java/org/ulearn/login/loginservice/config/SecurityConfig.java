@@ -62,7 +62,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.cors().and()
 				.authorizeRequests()
 				.antMatchers(HttpMethod.POST,"/login/superAdminLogin").permitAll()
-				.antMatchers(HttpMethod.GET,"/swagger-ui.html").permitAll()
+				.antMatchers(HttpMethod.GET,"/login/swagger-ui.html").permitAll()
 				.antMatchers(HttpMethod.GET,"/webjars/**").permitAll()
 				.antMatchers(HttpMethod.GET,"/swagger-resources/**").permitAll()
 				.antMatchers(HttpMethod.GET,"/v2/api-docs").permitAll()
