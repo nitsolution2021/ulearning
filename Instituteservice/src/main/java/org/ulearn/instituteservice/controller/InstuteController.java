@@ -97,7 +97,7 @@ public class InstuteController {
 //	/{sortName}/{sort}
 	@RequestMapping(value = { "/list/{page}/{limit}" }, method = RequestMethod.GET)
 	public Map<String, Object> getInstutePagination(@PathVariable("page") int page, @PathVariable("limit") int limit,
-			@RequestParam Optional<String> sortBy,@RequestParam Optional<String> sortById, @RequestParam Optional<String> sortByIds) {
+			@RequestParam Optional<String> sortBy,@RequestParam(value="sortById",required=false) String sortById, @RequestParam(value="sortByIds",required=false) String sortByIds) {
 		LOGGER.info("Inside - InstituteController.getInstutePagination()**"+sortByIds+"---"+sortById);
 
 		try {
