@@ -67,7 +67,7 @@ public class InstuteController {
 	private BCryptPasswordEncoder passwordEncoder;
 
 	@RequestMapping(value={"/list"} ,method = RequestMethod.GET)
-	public Page<InstituteEntity> getInstute(@RequestParam Optional<Integer> page, @RequestParam Optional<Integer> limit, @RequestParam Optional<String> sortBy) {
+	public Page<InstituteEntity> getInstute(@RequestParam Optional<Integer> page, @RequestParam Optional<String> limit, @RequestParam Optional<String> sortBy) {
 		LOGGER.info("Inside - InstituteController.getInstute()");
 		
 		int Limit =10;
