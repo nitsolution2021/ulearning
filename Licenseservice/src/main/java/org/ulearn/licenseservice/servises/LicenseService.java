@@ -7,10 +7,17 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.ulearn.licenseservice.controller.LicenseController;
 import org.ulearn.licenseservice.entity.GlobalResponse;
 import org.ulearn.licenseservice.entity.LicenseEntity;
+import org.ulearn.licenseservice.entity.LicenseGlobalEntity;
 import org.ulearn.licenseservice.entity.LicenseLogEntity;
 import org.ulearn.licenseservice.exception.CustomException;
 import org.ulearn.licenseservice.repository.LicenseLogRepo;
@@ -31,7 +38,7 @@ public class LicenseService {
 	@Autowired
 	public LicenseLogRepo licenseLogRepo;
 	
-	public GlobalResponse addLicense(LicenseEntity license) {
+	public GlobalResponse addLicense(LicenseEntity license,String token) {
 	
 		try {
 			
@@ -80,6 +87,13 @@ public class LicenseService {
 						
 						LicenseLogEntity save2 = licenseLogRepo.save(licenseLogAdd);
 						
+						HttpHeaders headers = new HttpHeaders();
+						headers.set("Authorization", token);
+						headers.setContentType(MediaType.APPLICATION_JSON);
+						
+						HttpEntity request=new HttpEntity(headers);
+						ResponseEntity<LicenseGlobalEntity> responseEmailTemp=new RestTemplate().exchange("http://localhost:8089/dev/institute/view/"+save.getInstId(),  HttpMethod.GET, request, LicenseGlobalEntity.class);
+						String emailId = responseEmailTemp.getBody().getInstEmail();
 						
 						if (!save.equals(null)) {
 							return new GlobalResponse("SUCCESS","License Added successfully",200);
