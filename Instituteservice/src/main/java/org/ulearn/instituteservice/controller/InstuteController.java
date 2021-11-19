@@ -1,7 +1,9 @@
 package org.ulearn.instituteservice.controller;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -66,29 +68,63 @@ public class InstuteController {
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 
-	@RequestMapping(value={"/list"} ,method = RequestMethod.GET)
-	public Page<InstituteEntity> getInstute(@RequestParam Optional<Integer> page, @RequestParam Optional<String> limit, @RequestParam Optional<String> sortBy) {
+	@GetMapping("/list")
+	public Map<String, Object> getInstute(@RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy) {
 		LOGGER.info("Inside - InstituteController.getInstute()");
 		
 		int Limit =10;
-		int PageLimit = 0;
-		if(page.isPresent()) {
-//			 Limit = limit.get();
-//			 PageLimit=page.get();
-		}
-		
-		try {
-			LOGGER.info("Inside - InstituteController.getInstute()"+page+"--"+limit);
-			Page<InstituteEntity> findAll = instituteRepo.findAll(PageRequest.of(
-					PageLimit,
+
+		try {			
+			Pageable pagingSort=PageRequest.of(
+					page.orElse(0),
 					Limit,
-                    Sort.Direction.ASC, sortBy.orElse("instName"))
-					);
+                    Sort.Direction.DESC, sortBy.orElse("createdOn"));
+			Page<InstituteEntity> findAll = instituteRepo.findAll(pagingSort);
+			
+			Map<String, Object> response = new HashMap<>();
+		      response.put("data", findAll.getContent());
+		      response.put("currentPage", findAll.getNumber());
+		      response.put("total", findAll.getTotalElements());
+		      response.put("totalPage", findAll.getTotalPages());
+		      response.put("perPage", findAll.getSize());
+		      response.put("perPageElement", findAll.getNumberOfElements());
 
 			if (findAll.getSize() < 1) {
 				throw new CustomException("Institute Not Found!");
 			} else {
-				return findAll;
+				return response;
+			}
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+
+	}
+	
+	
+	@RequestMapping(value={"/list/{page}","/list/{page}/{limit}"} ,method = RequestMethod.GET)
+	public Map<String, Object> getInstutePagination(@PathVariable("page") int page, @PathVariable("limit") int limit, @RequestParam Optional<String> sortBy) {
+		LOGGER.info("Inside - InstituteController.getInstutePagination()");
+		
+		try {
+		
+			Pageable pagingSort=PageRequest.of(
+					page,
+					limit,
+					Sort.Direction.DESC, sortBy.orElse("createdOn"));
+			Page<InstituteEntity> findAll = instituteRepo.findAll(pagingSort);
+			
+			Map<String, Object> response = new HashMap<>();
+		      response.put("data", findAll.getContent());
+		      response.put("currentPage", findAll.getNumber());
+		      response.put("total", findAll.getTotalElements());
+		      response.put("totalPage", findAll.getTotalPages());
+		      response.put("perPage", findAll.getSize());
+		      response.put("perPageElement", findAll.getNumberOfElements());
+
+			if (findAll.getSize() < 1) {
+				throw new CustomException("Institute Not Found!");
+			} else {
+				return response;
 			}
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
