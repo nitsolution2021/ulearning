@@ -21,11 +21,11 @@ public class LicenseEntity {
 	@Column(name = "LC_ID")
 	private Long lcId;
 	
-	@NotEmpty(message = "Please select any institute name")
+	//@NotEmpty(message = "Please select any institute name")
 	@Column(name = "INST_ID")
 	private Long instId;
 	
-	@NotEmpty(message = "License name can not be null ")
+	//@NotEmpty(message = "License name can not be null ")
 	@Column(name="LC_NAME")
 	private String lcName;
 	
@@ -33,19 +33,19 @@ public class LicenseEntity {
 	@Column(name = "LC_CDATE")
 	private Date lcCreatDate;
 	
-	@NotEmpty(message = "License type can not be null ")
+	//@NotEmpty(message = "License type can not be null ")
 	@Column(name = "LC_TYPE")
 	private String lcType;
 	
-	@NotEmpty(message = "License status type can not be null ")
+	//@NotEmpty(message = "License status type can not be null ")
 	@Column(name = "LC_STYPE")
 	private String lcStype;
 	
-	@NotEmpty(message = "License validity type can not be null ")
+	//@NotEmpty(message = "License validity type can not be null ")
 	@Column(name = "LC_VALIDITY_TYPE")
 	private String lcValidityType;
 	
-	@NotEmpty(message = "License validity number can not be null ")
+	//@NotEmpty(message = "License validity number can not be null ")
 	@Column(name = "LC_VALIDITY_NUM")
 	private int lcValidityNum;
 	
@@ -53,7 +53,7 @@ public class LicenseEntity {
 	@Column(name = "LC_EDATE")
 	private Date lcEndDate;
 	
-	@NotEmpty(message = "License comment can not be null ")
+	//@NotEmpty(message = "License comment can not be null ")
 	@Column(name = "LC_COMMENT")
 	private String lcComment;
 	
