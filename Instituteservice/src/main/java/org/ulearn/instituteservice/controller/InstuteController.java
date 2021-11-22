@@ -470,17 +470,4 @@ public class InstuteController {
 		}
 	}
 
-	@GetMapping("/insIdvalidation/{insId}")
-	public String insIdvalidation(@PathVariable long insId) {
-		try {
-			LOGGER.info("Inside-InstituteController.insIdvalidation");
-			if (instituteRepo.existsById(insId)) {
-				return "Ok";
-			} else {
-				return "notOk";
-			}
-		} catch (Exception e) {
-			return "Exception";
-		}
-	}
 }
