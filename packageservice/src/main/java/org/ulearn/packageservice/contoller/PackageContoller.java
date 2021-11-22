@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-import org.ulearn.packageservice.entity.AdminEntity;
+import org.ulearn.packageservice.entity.InstituteAdminEntity;
 import org.ulearn.packageservice.entity.DataResponseEntity;
 import org.ulearn.packageservice.entity.GlobalResponse;
 import org.ulearn.packageservice.entity.InstituteAddressEntity;
@@ -85,7 +85,7 @@ public class PackageContoller {
 					header.set("Authorization", token);
 					HttpEntity request = new HttpEntity(header);
 					ResponseEntity<InstituteEntity> Response = new RestTemplate().exchange(
-							"http://localhost:8089/dev/institute/view/" + packageData.getInstId(), HttpMethod.GET,
+							"http://localhost:8087/dev/institute/view/" + packageData.getInstId(), HttpMethod.GET,
 							request, InstituteEntity.class);
 					
 					log.info("DATAAAAAAAAAAA   "+Response.getBody().getInstEmail());
@@ -120,7 +120,7 @@ public class PackageContoller {
 				HttpEntity request = new HttpEntity(header);
 
 				ResponseEntity<String> response = new RestTemplate().exchange(
-						"http://localhost:8089/dev/institute/insIdvalidation/" + newData.getInstId(), HttpMethod.GET,
+						"http://localhost:8087/dev/institute/insIdvalidation/" + newData.getInstId(), HttpMethod.GET,
 						request, String.class);
 				System.out.println(response.getBody());
 				// if(response.)

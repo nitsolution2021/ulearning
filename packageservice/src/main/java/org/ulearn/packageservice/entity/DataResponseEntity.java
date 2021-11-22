@@ -13,11 +13,11 @@ public class DataResponseEntity implements Serializable{
 
 	@Id
 	private PackageEntity packageEntity;
-	private AdminEntity adminEntity;
+	private InstituteAdminEntity adminEntity;
 	private InstituteAddressEntity instituteAddressEntity;
 	private LicenseEntity licenseEntity;
 	private InstituteEntity instituteEntity;
-	public DataResponseEntity(long instId, PackageEntity packageEntity, AdminEntity adminEntity,
+	public DataResponseEntity(long instId, PackageEntity packageEntity, InstituteAdminEntity adminEntity,
 			InstituteAddressEntity instituteAddressEntity, LicenseEntity licenseEntity,
 			InstituteEntity instituteEntity) {
 		super();
@@ -37,10 +37,10 @@ public class DataResponseEntity implements Serializable{
 	public void setPackageEntity(PackageEntity packageEntity) {
 		this.packageEntity = packageEntity;
 	}
-	public AdminEntity getAdminEntity() {
+	public InstituteAdminEntity getAdminEntity() {
 		return adminEntity;
 	}
-	public void setAdminEntity(AdminEntity adminEntity) {
+	public void setAdminEntity(InstituteAdminEntity adminEntity) {
 		this.adminEntity = adminEntity;
 	}
 	public InstituteAddressEntity getInstituteAddressEntity() {
