@@ -57,7 +57,7 @@ spring:
       ddl-auto: none
       use-new-id-generator-mappings: false
 server: 
-  port: 8088
+  port: 8086
   servlet: 
     contextPath: /dev
 name: dev-yml

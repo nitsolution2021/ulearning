@@ -33,3 +33,47 @@
 #            allowedMethods:
 #            - GET
 #            - POST
+
+
+spring:
+  cloud:
+    gateway:
+      routes[2]:
+        uri: http://localhost:8088/dev/license
+        id: LicenseService
+        predicates[0]: Path=/dev/license/**
+      routes[0]:
+        id: login
+        predicates[0]: Path=/dev/login/**
+        uri: http://localhost:8086/dev/login
+      routes[5]:
+        uri: http://localhost:8091/dev/smsTemplate
+        id: SMSTemplateService
+        predicates[0]: Path=/dev/smsTemplate/**
+      routes[3]:
+        predicates[0]: Path=/dev/package/**
+        id: PackageService
+        uri: http://localhost:8089/dev/package
+      routes[1]:
+        id: InstituteService
+        uri: http://localhost:8087/dev/institute
+        predicates[0]: Path=/dev/institute/**
+      routes[4]:
+        uri: http://localhost:8090/dev/emailTemplate
+        id: EmailTemplateService
+        predicates[0]: Path=/dev/emailTemplate/**
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowed-headers: '*'
+            allowedMethods: GET, POST
+            max-age: '3600'
+            allowed-origins: '*'
+  application:
+    name: ApiGatway
+server:
+  port: '8085'
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka

@@ -4,25 +4,34 @@ package org.ulearn.licenseservice.controller;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 import org.ulearn.licenseservice.entity.GlobalResponse;
 import org.ulearn.licenseservice.entity.LicenseEntity;
+import org.ulearn.licenseservice.entity.LicenseGlobalEntity;
 import org.ulearn.licenseservice.entity.LicenseLogEntity;
 import org.ulearn.licenseservice.exception.CustomException;
 import org.ulearn.licenseservice.servises.LicenseService;
 
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping("/license")
 public class LicenseController {
 
@@ -33,12 +42,12 @@ public class LicenseController {
 	
 	
 	@PostMapping("/add")
-	public GlobalResponse addLicense(@RequestBody LicenseEntity licenseEntity ) {
+	public GlobalResponse addLicense(@Valid @RequestBody LicenseEntity licenseEntity, @RequestHeader("Authorization") String token ) {
 		
 		LOGGER.info("Inside the LicenseController Add License");
 		try {
 			
-			return this.licenseService.addLicense(licenseEntity);
+			return this.licenseService.addLicense(licenseEntity,token);
 			
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -108,4 +117,24 @@ public class LicenseController {
 			throw new CustomException(e.getMessage());
 		}
 	}
+//	@GetMapping("/test")
+//	public GlobalResponse test(@RequestHeader("Authorization") String token) {
+//		try {
+//			long instId =  2;
+//			HttpHeaders headers = new HttpHeaders();
+//			headers.set("Authorization", token);
+//			headers.setContentType(MediaType.APPLICATION_JSON);
+//			
+//			HttpEntity request=new HttpEntity(headers);
+//			ResponseEntity<LicenseGlobalEntity> responseEmailTemp=new RestTemplate().exchange("http://localhost:8089/dev/institute/view/"+instId,  HttpMethod.GET, request, LicenseGlobalEntity.class);
+//			String emailId = responseEmailTemp.getBody().getInstEmail();
+//			LOGGER.info("Inside the suspend License"+emailId);
+//			return new GlobalResponse("Success","good",200);
+//			
+//		} catch (Exception e) {
+//			// TODO: handle exception
+//			throw new CustomException(e.getMessage());
+//		}
+//		
+//	}
 }
