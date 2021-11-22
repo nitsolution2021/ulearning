@@ -21,11 +21,11 @@ public class LicenseEntity {
 	@Column(name = "LC_ID")
 	private Long lcId;
 	
-	@NotEmpty(message = "Please select any institute name")
+	//@NotEmpty(message = "Please select any institute name")
 	@Column(name = "INST_ID")
 	private Long instId;
 	
-	@NotEmpty(message = "License name can not be null ")
+	//@NotEmpty(message = "License name can not be null ")
 	@Column(name="LC_NAME")
 	private String lcName;
 	
@@ -33,27 +33,27 @@ public class LicenseEntity {
 	@Column(name = "LC_CDATE")
 	private Date lcCreatDate;
 	
-	@NotEmpty(message = "License type can not be null ")
+	//@NotEmpty(message = "License type can not be null ")
 	@Column(name = "LC_TYPE")
 	private String lcType;
 	
-	@NotEmpty(message = "License status type can not be null ")
+	//@NotEmpty(message = "License status type can not be null ")
 	@Column(name = "LC_STYPE")
 	private String lcStype;
 	
-	@NotEmpty(message = "License validity type can not be null ")
+	//@NotEmpty(message = "License validity type can not be null ")
 	@Column(name = "LC_VALIDITY_TYPE")
 	private String lcValidityType;
 	
-	@NotEmpty(message = "License validity number can not be null ")
+	//@NotEmpty(message = "License validity number can not be null ")
 	@Column(name = "LC_VALIDITY_NUM")
-	private int lcValidityNum;
+	private Long lcValidityNum;
 	
 	@JsonFormat(pattern = "yyyy/mm/dd")
 	@Column(name = "LC_EDATE")
 	private Date lcEndDate;
 	
-	@NotEmpty(message = "License comment can not be null ")
+	//@NotEmpty(message = "License comment can not be null ")
 	@Column(name = "LC_COMMENT")
 	private String lcComment;
 	
@@ -83,7 +83,7 @@ public class LicenseEntity {
 	}
 
 	public LicenseEntity(Long lcId, Long instId, String lcName, Date lcCreatDate, String lcType, String lcStype,
-			String lcValidityType, int lcValidityNum, Date lcEndDate, String lcComment, String lcStatus,
+			String lcValidityType, Long lcValidityNum, Date lcEndDate, String lcComment, String lcStatus,
 			int isActive, int isDeleted, Date createdOn, Date updatedOn) {
 		super();
 		this.lcId = lcId;
@@ -176,11 +176,11 @@ public class LicenseEntity {
 		this.lcValidityType = lcValidityType;
 	}
 
-	public int getLcValidityNum() {
+	public Long getLcValidityNum() {
 		return lcValidityNum;
 	}
 
-	public void setLcValidityNum(int lcValidityNum) {
+	public void setLcValidityNum(Long lcValidityNum) {
 		this.lcValidityNum = lcValidityNum;
 	}
 
