@@ -32,7 +32,6 @@ import org.ulearn.licenseservice.exception.CustomException;
 import org.ulearn.licenseservice.servises.LicenseService;
 
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping("/license")
 public class LicenseController {
 

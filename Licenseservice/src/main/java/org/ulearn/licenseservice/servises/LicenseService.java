@@ -43,10 +43,13 @@ public class LicenseService {
 		try {
 			
 			
-			if(fieldValidation.isEmpty(license.getInstId()) & fieldValidation.isEmpty(license.getLcName()) & 
+			if(
+					fieldValidation.isEmpty(license.getInstId()) & 
+					fieldValidation.isEmpty(license.getLcName()) & 
 					fieldValidation.isEmpty(license.getLcCreatDate()) & fieldValidation.isEmpty(license.getLcType()) & 
 					fieldValidation.isEmpty(license.getLcStype()) & fieldValidation.isEmpty(license.getLcValidityType()) & 
-					fieldValidation.isEmpty(license.getLcValidityNum()) & fieldValidation.isEmpty(license.getLcEndDate())) {
+					fieldValidation.isEmpty(license.getLcValidityNum()) & 
+					fieldValidation.isEmpty(license.getLcEndDate())) {
 					
 					Optional<LicenseEntity> findByInstId = LicenseRepo.findByInstId(license.getInstId());
 					if(!findByInstId.isPresent()) {
@@ -80,20 +83,20 @@ public class LicenseService {
 						licenseLogAdd.setLcIdFk(save.getLcId().intValue());
 						licenseLogAdd.setLlAction("Add license");
 						licenseLogAdd.setLlValidityType(save.getLcValidityType());
-						licenseLogAdd.setLlValidityNum(save.getLcValidityNum());
+						licenseLogAdd.setLlValidityNum(Integer.parseInt(save.getLcValidityNum()+""));
 						licenseLogAdd.setLlComment(save.getLcComment());
 						licenseLogAdd.setLlStatus("Complete");
 						licenseLogAdd.setCreatedOn(new Date());
 						
 						LicenseLogEntity save2 = licenseLogRepo.save(licenseLogAdd);
 						
-						HttpHeaders headers = new HttpHeaders();
-						headers.set("Authorization", token);
-						headers.setContentType(MediaType.APPLICATION_JSON);
-						
-						HttpEntity request=new HttpEntity(headers);
-						ResponseEntity<LicenseGlobalEntity> responseEmailTemp=new RestTemplate().exchange("http://localhost:8089/dev/institute/view/"+save.getInstId(),  HttpMethod.GET, request, LicenseGlobalEntity.class);
-						String emailId = responseEmailTemp.getBody().getInstEmail();
+//						HttpHeaders headers = new HttpHeaders();
+//						headers.set("Authorization", token);
+//						headers.setContentType(MediaType.APPLICATION_JSON);
+//						
+//						HttpEntity request=new HttpEntity(headers);
+//						ResponseEntity<LicenseGlobalEntity> responseEmailTemp=new RestTemplate().exchange("http://localhost:8089/dev/institute/view/"+save.getInstId(),  HttpMethod.GET, request, LicenseGlobalEntity.class);
+//						String emailId = responseEmailTemp.getBody().getInstEmail();
 						
 						if (!save.equals(null)) {
 							return new GlobalResponse("SUCCESS","License Added successfully",200);
@@ -159,7 +162,7 @@ public class LicenseService {
 							licenseLogAdd.setLcIdFk(save.getLcId().intValue());
 							licenseLogAdd.setLlAction("Update license");
 							licenseLogAdd.setLlValidityType(save.getLcValidityType());
-							licenseLogAdd.setLlValidityNum(save.getLcValidityNum());
+							licenseLogAdd.setLlValidityNum(Integer.parseInt(save.getLcValidityNum()+""));
 							licenseLogAdd.setLlComment(save.getLcComment());
 							licenseLogAdd.setLlStatus("Complete");
 							licenseLogAdd.setCreatedOn(new Date());

@@ -32,10 +32,10 @@ public class GlobalResponse {
 	public void setMessage(String message) {
 		this.message = message;
 	}
-	public int getStatuss() {
+	public int getStatus() {
 		return status;
 	}
-	public void setStatuss(int status) {
+	public void setStatus(int status) {
 		this.status = status;
 	}
 	
