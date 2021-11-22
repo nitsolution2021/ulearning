@@ -2,89 +2,36 @@ package org.ulearn.licenseservice.entity;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotEmpty;
+public class LicenseGlobalEntity {
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
-@Entity
-@Table(name = "tbl_inst_license")
-public class LicenseEntity {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "LC_ID")
 	private Long lcId;
-	
-	@NotEmpty(message = "Please select any institute name")
-	@Column(name = "INST_ID")
 	private Long instId;
-	
-	@NotEmpty(message = "License name can not be null ")
-	@Column(name="LC_NAME")
 	private String lcName;
-	
-	@JsonFormat(pattern = "yyyy/mm/dd")
-	@Column(name = "LC_CDATE")
 	private Date lcCreatDate;
-	
-	@NotEmpty(message = "License type can not be null ")
-	@Column(name = "LC_TYPE")
 	private String lcType;
-	
-	@NotEmpty(message = "License status type can not be null ")
-	@Column(name = "LC_STYPE")
 	private String lcStype;
-	
-	@NotEmpty(message = "License validity type can not be null ")
-	@Column(name = "LC_VALIDITY_TYPE")
 	private String lcValidityType;
-	
-	@NotEmpty(message = "License validity number can not be null ")
-	@Column(name = "LC_VALIDITY_NUM")
 	private int lcValidityNum;
-	
-	@JsonFormat(pattern = "yyyy/mm/dd")
-	@Column(name = "LC_EDATE")
 	private Date lcEndDate;
-	
-	@NotEmpty(message = "License comment can not be null ")
-	@Column(name = "LC_COMMENT")
 	private String lcComment;
-	
-	@Column(name = "LC_STATUS")
 	private String lcStatus;
-	
-	@Column(name = "IS_ACTIVE")
 	private int isActive;
-	
-	@Column(name = "IS_DELETED")
 	private int isDeleted;
-	
-	@Column(name = "CREATED_ON")
 	private Date createdOn;
-	
-	@Column(name = "UPDATED_ON")
 	private Date updatedOn;
-
+	
+	private String instEmail;
+	
 	
 
-	
-
-	
-	public LicenseEntity() {
+	public LicenseGlobalEntity() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public LicenseEntity(Long lcId, Long instId, String lcName, Date lcCreatDate, String lcType, String lcStype,
-			String lcValidityType, int lcValidityNum, Date lcEndDate, String lcComment, String lcStatus,
-			int isActive, int isDeleted, Date createdOn, Date updatedOn) {
+	public LicenseGlobalEntity(Long lcId, Long instId, String lcName, Date lcCreatDate, String lcType, String lcStype,
+			String lcValidityType, int lcValidityNum, Date lcEndDate, String lcComment, String lcStatus, int isActive,
+			int isDeleted, Date createdOn, Date updatedOn, String instEmail) {
 		super();
 		this.lcId = lcId;
 		this.instId = instId;
@@ -101,31 +48,16 @@ public class LicenseEntity {
 		this.isDeleted = isDeleted;
 		this.createdOn = createdOn;
 		this.updatedOn = updatedOn;
+		this.instEmail = instEmail;
 	}
 
 	@Override
 	public String toString() {
-		return "LicenseEntity [lcId=" + lcId + ", instId=" + instId + ", lcName=" + lcName + ", lcCreatDate="
+		return "LicenseGlobalEntity [lcId=" + lcId + ", instId=" + instId + ", lcName=" + lcName + ", lcCreatDate="
 				+ lcCreatDate + ", lcType=" + lcType + ", lcStype=" + lcStype + ", lcValidityType=" + lcValidityType
-				+ ", lcValidityNum=" + lcValidityNum + ", lcEndDate=" + lcEndDate + ", lcComment="
-				+ lcComment + ", lcStatus=" + lcStatus + ", isActive=" + isActive + ", isDeleted=" + isDeleted
-				+ ", createdOn=" + createdOn + ", updatedOn=" + updatedOn + ", getLcName()=" + getLcName()
-				+ ", getLcId()=" + getLcId() + ", getInstId()=" + getInstId() + ", getLcCreatDate()=" + getLcCreatDate()
-				+ ", getLcType()=" + getLcType() + ", getLcStype()=" + getLcStype() + ", getLcValidityType()="
-				+ getLcValidityType() + ", getLcValidityNum()=" + getLcValidityNum() + ", getLcEndDate()="
-				+ getLcEndDate() + ", getLcComment()=" + getLcComment()
-				+ ", getLcStatus()=" + getLcStatus() + ", getIsActive()=" + getIsActive() + ", getIsDeleted()="
-				+ getIsDeleted() + ", getCreatedOn()=" + getCreatedOn() + ", getUpdatedOn()=" + getUpdatedOn()
-				+ ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + ", toString()=" + super.toString()
-				+ "]";
-	}
-
-	public String getLcName() {
-		return lcName;
-	}
-
-	public void setLcName(String lcName) {
-		this.lcName = lcName;
+				+ ", lcValidityNum=" + lcValidityNum + ", lcEndDate=" + lcEndDate + ", lcComment=" + lcComment
+				+ ", lcStatus=" + lcStatus + ", isActive=" + isActive + ", isDeleted=" + isDeleted + ", createdOn="
+				+ createdOn + ", updatedOn=" + updatedOn + ", instEmail=" + instEmail + "]";
 	}
 
 	public Long getLcId() {
@@ -142,6 +74,14 @@ public class LicenseEntity {
 
 	public void setInstId(Long instId) {
 		this.instId = instId;
+	}
+
+	public String getLcName() {
+		return lcName;
+	}
+
+	public void setLcName(String lcName) {
+		this.lcName = lcName;
 	}
 
 	public Date getLcCreatDate() {
@@ -240,4 +180,13 @@ public class LicenseEntity {
 		this.updatedOn = updatedOn;
 	}
 
+	public String getInstEmail() {
+		return instEmail;
+	}
+
+	public void setInstEmail(String instEmail) {
+		this.instEmail = instEmail;
+	}
+	
+	
 }
