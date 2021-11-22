@@ -47,7 +47,7 @@ public class LicenseEntity {
 	
 	//@NotEmpty(message = "License validity number can not be null ")
 	@Column(name = "LC_VALIDITY_NUM")
-	private int lcValidityNum;
+	private Long lcValidityNum;
 	
 	@JsonFormat(pattern = "yyyy/mm/dd")
 	@Column(name = "LC_EDATE")
@@ -83,7 +83,7 @@ public class LicenseEntity {
 	}
 
 	public LicenseEntity(Long lcId, Long instId, String lcName, Date lcCreatDate, String lcType, String lcStype,
-			String lcValidityType, int lcValidityNum, Date lcEndDate, String lcComment, String lcStatus,
+			String lcValidityType, Long lcValidityNum, Date lcEndDate, String lcComment, String lcStatus,
 			int isActive, int isDeleted, Date createdOn, Date updatedOn) {
 		super();
 		this.lcId = lcId;
@@ -176,11 +176,11 @@ public class LicenseEntity {
 		this.lcValidityType = lcValidityType;
 	}
 
-	public int getLcValidityNum() {
+	public Long getLcValidityNum() {
 		return lcValidityNum;
 	}
 
-	public void setLcValidityNum(int lcValidityNum) {
+	public void setLcValidityNum(Long lcValidityNum) {
 		this.lcValidityNum = lcValidityNum;
 	}
 
