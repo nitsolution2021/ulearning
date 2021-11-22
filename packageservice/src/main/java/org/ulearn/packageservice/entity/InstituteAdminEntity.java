@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @Entity
 
-public class AdminEntity implements Serializable{
+public class InstituteAdminEntity implements Serializable{
 
 	@Id
 	private Long admId;
@@ -45,7 +45,7 @@ public class AdminEntity implements Serializable{
 	private Date createdOn;	
 	//@Column(name = "UPDATED_ON")
 	private Date updatedOn;
-	public AdminEntity(Long admId, Long instId, String amdFname, String amdLname, Date amdDob, String amdMnum,
+	public InstituteAdminEntity(Long admId, Long instId, String amdFname, String amdLname, Date amdDob, String amdMnum,
 			String amdEmail, String amdUsername, String amdPassword, String amdPpic, Date createdOn, Date updatedOn) {
 		super();
 		this.admId = admId;
@@ -61,7 +61,7 @@ public class AdminEntity implements Serializable{
 		this.createdOn = createdOn;
 		this.updatedOn = updatedOn;
 	}
-	public AdminEntity() {
+	public InstituteAdminEntity() {
 		super();
 		// TODO Auto-generated constructor stub
 	}

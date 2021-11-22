@@ -57,7 +57,7 @@ public class InstituteEntity implements Serializable{
 	private Date createdOn;
 	//@Column(name = "UPDATED_ON")
 	private Date updatedOn;
-	private AdminEntity adminEntity;
+	private InstituteAdminEntity adminEntity;
 	private List<InstituteAddressEntity> instituteAddressEntity;
 	public InstituteEntity() {
 		super();
@@ -65,7 +65,7 @@ public class InstituteEntity implements Serializable{
 	}
 	public InstituteEntity(Long instId, String instName, Date instEndDate, String instWebsite, String instEmail,
 			String instCnum, String instMnum, Date isntRegDate, String instLogo, String instPanNum, String instGstNum,
-			String instStatus, int isActive, int isDeleted, Date createdOn, Date updatedOn, AdminEntity adminEntity,
+			String instStatus, int isActive, int isDeleted, Date createdOn, Date updatedOn, InstituteAdminEntity adminEntity,
 			List<InstituteAddressEntity> instituteAddressEntity) {
 		super();
 		this.instId = instId;
@@ -192,10 +192,10 @@ public class InstituteEntity implements Serializable{
 	public void setUpdatedOn(Date updatedOn) {
 		this.updatedOn = updatedOn;
 	}
-	public AdminEntity getAdminEntity() {
+	public InstituteAdminEntity getAdminEntity() {
 		return adminEntity;
 	}
-	public void setAdminEntity(AdminEntity adminEntity) {
+	public void setAdminEntity(InstituteAdminEntity adminEntity) {
 		this.adminEntity = adminEntity;
 	}
 	public List<InstituteAddressEntity> getInstituteAddressEntity() {
