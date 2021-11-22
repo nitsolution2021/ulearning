@@ -18,7 +18,7 @@ public class InstituteGlobalEntity {
 	private Long instId;
 	@NotEmpty(message = "The Institute Name is Required")
 	private String instName;
-	@JsonFormat(pattern = "yyyy/mm/dd")
+	@JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy/mm/dd")
 	private Date instEndDate;
 	private String instWebsite;
 	@Email
@@ -27,7 +27,7 @@ public class InstituteGlobalEntity {
 	private String instCnum;
 	@NotEmpty(message = "The Institute Mobile Number is Required")
 	private String instMnum;
-	@JsonFormat(pattern = "yyyy/mm/dd")
+	@JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "YYYY/MM/dd")
 	private Date isntRegDate;
 	@NotEmpty(message = "The Institute Logo is Required")
 	private String instLogo;
