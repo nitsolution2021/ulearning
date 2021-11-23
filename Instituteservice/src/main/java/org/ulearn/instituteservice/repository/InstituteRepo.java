@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.ulearn.instituteservice.entity.InstituteEntity;
 import org.ulearn.instituteservice.entity.InstituteAddressEntity;
 import org.ulearn.instituteservice.entity.InstituteGlobalEntity;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface InstituteRepo extends JpaRepository<InstituteEntity, Long> {
@@ -38,6 +39,13 @@ public interface InstituteRepo extends JpaRepository<InstituteEntity, Long> {
 		//select * from tbl_institutes INNER JOIN tbl_inst_addr on tbl_institutes.INST_ID = tbl_inst_addr.INST_ID;
 //	@Query(value = "select * from tbl_institutes",nativeQuery = true)
 //	List<InstituteGlobalEntity> findByInstUnq();
-
 	
+//	@Query("SELECT instObj FROM InstituteEntity instObj WHERE CONCAT(instObj.INST_ID,instObj.instName)" LIKE %?1%)
+	
+	@Query("SELECT instObj FROM InstituteEntity instObj WHERE instObj.instName LIKE CONCAT('%',:sortKey,'%')")
+	Page<InstituteEntity> Search(Optional<String> sortKey,Pageable pageable);
+	
+	
+
+		
 }

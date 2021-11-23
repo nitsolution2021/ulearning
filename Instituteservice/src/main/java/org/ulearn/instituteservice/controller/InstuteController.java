@@ -1,5 +1,6 @@
 package org.ulearn.instituteservice.controller;
 
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort; 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -97,8 +98,8 @@ public class InstuteController {
 
 	@RequestMapping(value = { "/list/{page}/{limit}/{sortName}/{sort}" }, method = RequestMethod.GET)
 	public Map<String, Object> getInstutePagination(@PathVariable("page") int page, @PathVariable("limit") int limit,
-			@RequestParam Optional<String> sortBy,@PathVariable("sortName") String sortName, @PathVariable("sort") String sort) {
-		LOGGER.info("Inside - InstituteController.getInstutePagination()");
+			@RequestParam Optional<String> sortBy,@RequestParam Optional<String> sortKey,@PathVariable("sortName") String sortName) {
+		LOGGER.info("Inside - InstituteController.getInstutePagination()"+sortKey);
 
 		try {
 			Pageable pagingSort=null;
@@ -109,8 +110,10 @@ public class InstuteController {
 				 pagingSort = PageRequest.of(page, limit, Sort.Direction.DESC, sortBy.orElse(sortName));
 			}
 			
-			
-			Page<InstituteEntity> findAll = instituteRepo.findAll(pagingSort);
+			if(!sortKey.isEmpty()) {
+				Page<InstituteEntity> findAll = instituteRepo.Search(sortKey,pagingSort);
+			}
+				Page<InstituteEntity> findAll = instituteRepo.findAll(pagingSort);
 
 			Map<String, Object> response = new HashMap<>();
 			response.put("data", findAll.getContent());
@@ -130,6 +133,7 @@ public class InstuteController {
 		}
 
 	}
+
 
 	@PostMapping("/add")
 	public GlobalResponse postInstituteDetails(@Valid @RequestBody InstituteGlobalEntity instituteGlobalEntrity,
@@ -171,6 +175,8 @@ public class InstuteController {
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdPpic()))) {
 				if (!findByInstituteName.isPresent()) {
 					if (!findByInstEmail.isPresent()) {
+						
+					
 
 						InstituteEntity filterInsDetails = new InstituteEntity();
 
@@ -467,17 +473,4 @@ public class InstuteController {
 		}
 	}
 
-	@GetMapping("/insIdvalidation/{insId}")
-	public String insIdvalidation(@PathVariable long insId) {
-		try {
-			LOGGER.info("Inside-InstituteController.insIdvalidation");
-			if (instituteRepo.existsById(insId)) {
-				return "Ok";
-			} else {
-				return "notOk";
-			}
-		} catch (Exception e) {
-			return "Exception";
-		}
-	}
 }

@@ -11,6 +11,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @Entity
@@ -27,7 +28,7 @@ public class InstituteAdminEntity {
 	private String amdFname;
 	@Column(name = "ADM_LNAME")
 	private String amdLname;
-	@JsonFormat(pattern = "yyyy/mm/dd")
+	@JsonFormat(shape = Shape.STRING,pattern = "yyyy/MM/dd",timezone = "Asia/Kolkata")
 	@Column(name = "ADM_DOB")
 	private Date amdDob;
 	@Column(name = "ADM_MNUM")
