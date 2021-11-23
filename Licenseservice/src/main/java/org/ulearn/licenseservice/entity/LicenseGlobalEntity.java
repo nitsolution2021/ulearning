@@ -21,6 +21,14 @@ public class LicenseGlobalEntity {
 	private Date updatedOn;
 	
 	private String instEmail;
+	private String instName;
+	private String amdFname;
+	private String amdLname;
+	private String amdEmail;
+	private InstituteAdminEntity instituteAdmin;
+	
+	private String etSubject;
+	private String etBody;
 	
 	
 
@@ -29,9 +37,13 @@ public class LicenseGlobalEntity {
 		// TODO Auto-generated constructor stub
 	}
 
+
+
+
 	public LicenseGlobalEntity(Long lcId, Long instId, String lcName, Date lcCreatDate, String lcType, String lcStype,
 			String lcValidityType, int lcValidityNum, Date lcEndDate, String lcComment, String lcStatus, int isActive,
-			int isDeleted, Date createdOn, Date updatedOn, String instEmail) {
+			int isDeleted, Date createdOn, Date updatedOn, String instEmail, String instName, String amdFname,
+			String amdLname, String amdEmail, InstituteAdminEntity instituteAdmin, String etSubject, String etBody) {
 		super();
 		this.lcId = lcId;
 		this.instId = instId;
@@ -49,7 +61,17 @@ public class LicenseGlobalEntity {
 		this.createdOn = createdOn;
 		this.updatedOn = updatedOn;
 		this.instEmail = instEmail;
+		this.instName = instName;
+		this.amdFname = amdFname;
+		this.amdLname = amdLname;
+		this.amdEmail = amdEmail;
+		this.instituteAdmin = instituteAdmin;
+		this.etSubject = etSubject;
+		this.etBody = etBody;
 	}
+
+
+
 
 	@Override
 	public String toString() {
@@ -57,7 +79,73 @@ public class LicenseGlobalEntity {
 				+ lcCreatDate + ", lcType=" + lcType + ", lcStype=" + lcStype + ", lcValidityType=" + lcValidityType
 				+ ", lcValidityNum=" + lcValidityNum + ", lcEndDate=" + lcEndDate + ", lcComment=" + lcComment
 				+ ", lcStatus=" + lcStatus + ", isActive=" + isActive + ", isDeleted=" + isDeleted + ", createdOn="
-				+ createdOn + ", updatedOn=" + updatedOn + ", instEmail=" + instEmail + "]";
+				+ createdOn + ", updatedOn=" + updatedOn + ", instEmail=" + instEmail + ", instName=" + instName
+				+ ", amdFname=" + amdFname + ", amdLname=" + amdLname + ", amdEmail=" + amdEmail + ", instituteAdmin="
+				+ instituteAdmin + ", etSubject=" + etSubject + ", etBody=" + etBody + "]";
+	}
+
+
+
+
+	public InstituteAdminEntity getInstituteAdmin() {
+		return instituteAdmin;
+	}
+
+	public void setInstituteAdmin(InstituteAdminEntity instituteAdmin) {
+		this.instituteAdmin = instituteAdmin;
+	}
+
+
+
+
+
+	public String getAmdFname() {
+		return amdFname;
+	}
+	
+	public void setAmdFname(String amdFname) {
+		this.amdFname = amdFname;
+	}
+	
+	public String getAmdLname() {
+		return amdLname;
+	}
+
+	public void setAmdLname(String amdLname) {
+		this.amdLname = amdLname;
+	}
+
+
+	public String getAmdEmail() {
+		return amdEmail;
+	}
+
+	public void setAmdEmail(String amdEmail) {
+		this.amdEmail = amdEmail;
+	}
+
+	public String getEtSubject() {
+		return etSubject;
+	}
+
+	public void setEtSubject(String etSubject) {
+		this.etSubject = etSubject;
+	}
+
+	public String getEtBody() {
+		return etBody;
+	}
+
+	public void setEtBody(String etBody) {
+		this.etBody = etBody;
+	}
+
+	public String getInstName() {
+		return instName;
+	}
+
+	public void setInstName(String instName) {
+		this.instName = instName;
 	}
 
 	public Long getLcId() {

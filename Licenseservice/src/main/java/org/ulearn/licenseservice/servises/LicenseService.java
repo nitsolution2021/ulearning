@@ -1,19 +1,28 @@
 package org.ulearn.licenseservice.servises;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
+
 import org.ulearn.licenseservice.controller.LicenseController;
 import org.ulearn.licenseservice.entity.GlobalResponse;
 import org.ulearn.licenseservice.entity.LicenseEntity;
@@ -90,13 +99,39 @@ public class LicenseService {
 						
 						LicenseLogEntity save2 = licenseLogRepo.save(licenseLogAdd);
 						
-//						HttpHeaders headers = new HttpHeaders();
-//						headers.set("Authorization", token);
-//						headers.setContentType(MediaType.APPLICATION_JSON);
-//						
-//						HttpEntity request=new HttpEntity(headers);
-//						ResponseEntity<LicenseGlobalEntity> responseEmailTemp=new RestTemplate().exchange("http://localhost:8089/dev/institute/view/"+save.getInstId(),  HttpMethod.GET, request, LicenseGlobalEntity.class);
-//						String emailId = responseEmailTemp.getBody().getInstEmail();
+						HttpHeaders headers = new HttpHeaders();
+						headers.set("Authorization", token);
+						headers.setContentType(MediaType.APPLICATION_JSON);
+						
+						HttpEntity request=new HttpEntity(headers);
+						ResponseEntity<LicenseGlobalEntity> responseEmailTempForInstNameEmail=new RestTemplate().exchange("http://localhost:8087/dev/institute/view/"+save.getInstId(),  HttpMethod.GET, request, LicenseGlobalEntity.class);
+						String emailId = responseEmailTempForInstNameEmail.getBody().getInstituteAdmin().getAmdEmail();
+						String amdFname = responseEmailTempForInstNameEmail.getBody().getInstituteAdmin().getAmdFname();
+						String amdLname = responseEmailTempForInstNameEmail.getBody().getInstituteAdmin().getAmdLname();
+						
+						
+						//HttpEntity request = new HttpEntity(headers);
+						ResponseEntity<LicenseGlobalEntity> responseEmailTemp = new RestTemplate().exchange("http://localhost:8090/dev/emailTemplate/getPrimaryETByAction/License_Create",
+								HttpMethod.GET, request, LicenseGlobalEntity.class);
+						String ETSubject = responseEmailTemp.getBody().getEtSubject();
+						String ETBody = responseEmailTemp.getBody().getEtBody();
+
+						String ETTargetName = "<<_name_>>";
+						
+						String ETNameReplacement = amdFname +" "+ amdLname;
+
+						String processedName = ETBody.replace(ETTargetName, ETNameReplacement);
+
+						JSONObject requestJson = new JSONObject();
+						requestJson.put("senderMailId", emailId);
+						requestJson.put("subject", ETSubject);
+						requestJson.put("body", processedName);
+						requestJson.put("enableHtml", true);
+
+						HttpEntity<String> entity = new HttpEntity(requestJson, headers);
+						ResponseEntity<String> response = new RestTemplate().postForEntity("http://localhost:8086/dev/login/sendMail/", entity, String.class);
+						
+						
 
 						if (!save.equals(null)) {
 							return new GlobalResponse("SUCCESS","License Added successfully",200);
@@ -118,7 +153,7 @@ public class LicenseService {
 		
 	}
 
-	public GlobalResponse updateLicense(long licenseId, LicenseEntity licenseForUpdate) {
+	public GlobalResponse updateLicense(long licenseId, LicenseEntity licenseForUpdate, String token) {
 		// TODO Auto-generated method stub
 		
 		try {
@@ -170,6 +205,39 @@ public class LicenseService {
 							
 							LicenseLogEntity save2 = licenseLogRepo.save(licenseLogAdd);
 							
+							HttpHeaders headers = new HttpHeaders();
+							headers.set("Authorization", token);
+							headers.setContentType(MediaType.APPLICATION_JSON);
+							
+							HttpEntity request=new HttpEntity(headers);
+							ResponseEntity<LicenseGlobalEntity> responseEmailTempForInstNameEmail=new RestTemplate().exchange("http://localhost:8087/dev/institute/view/"+save.getInstId(),  HttpMethod.GET, request, LicenseGlobalEntity.class);
+							String emailId = responseEmailTempForInstNameEmail.getBody().getInstituteAdmin().getAmdEmail();
+							String amdFname = responseEmailTempForInstNameEmail.getBody().getInstituteAdmin().getAmdFname();
+							String amdLname = responseEmailTempForInstNameEmail.getBody().getInstituteAdmin().getAmdLname();
+							
+							
+							//HttpEntity request = new HttpEntity(headers);
+							ResponseEntity<LicenseGlobalEntity> responseEmailTemp = new RestTemplate().exchange("http://localhost:8090/dev/emailTemplate/getPrimaryETByAction/License_Update",
+									HttpMethod.GET, request, LicenseGlobalEntity.class);
+							String ETSubject = responseEmailTemp.getBody().getEtSubject();
+							String ETBody = responseEmailTemp.getBody().getEtBody();
+
+							String ETTargetName = "<<_name_>>";
+							
+							String ETNameReplacement = amdFname +" "+ amdLname;
+
+							String processedName = ETBody.replace(ETTargetName, ETNameReplacement);
+
+							JSONObject requestJson = new JSONObject();
+							requestJson.put("senderMailId", emailId);
+							requestJson.put("subject", ETSubject);
+							requestJson.put("body", processedName);
+							requestJson.put("enableHtml", true);
+
+							HttpEntity<String> entity = new HttpEntity(requestJson, headers);
+							ResponseEntity<String> response = new RestTemplate().postForEntity("http://localhost:8086/dev/login/sendMail/", entity, String.class);
+							
+							
 							
 							if(!save.equals(null)) {
 								return new GlobalResponse("SUCCESS","Update Successfull",200);
@@ -201,22 +269,75 @@ public class LicenseService {
 		}
 	}
 
-	public List<LicenseEntity> getAllLicenseList() {
+	public Map<String, Object> getAllLicenseList(Optional<Integer> page,@RequestParam Optional<String> sortBy) {
 		// TODO Auto-generated method stub
 		
+		int Limit = 10;
 		try {
 			
-			List<LicenseEntity> findAll = LicenseRepo.findAllIsNotDeleted();
-			if(findAll.size()<1) {
-				throw new CustomException("No license found");
+			Pageable pagingSort = PageRequest.of(page.orElse(0), Limit, Sort.Direction.DESC,
+					sortBy.orElse("createdOn"));
+			Page<LicenseEntity> findAll = LicenseRepo.findAll(pagingSort);
+
+			Map<String, Object> response = new HashMap<>();
+			response.put("data", findAll.getContent());
+			response.put("currentPage", findAll.getNumber());
+			response.put("total", findAll.getTotalElements());
+			response.put("totalPage", findAll.getTotalPages());
+			response.put("perPage", findAll.getSize());
+			response.put("perPageElement", findAll.getNumberOfElements());
+
+			if (findAll.getSize() < 1) {
+				throw new CustomException("License Not Found!");
+			} else {
+				return response;
 			}
-			else {
-				return findAll;
-			}
+//			
+//			List<LicenseEntity> findAll = LicenseRepo.findAllIsNotDeleted();
+//			if(findAll.size()<1) {
+//				throw new CustomException("No license found");
+//			}
+//			else {
+//				return findAll;
+//			}
 		} catch (Exception e) {
 			// TODO: handle exception
 			throw new CustomException(e.getMessage());
 		}
+	}
+	
+	public Map<String, Object> forGetLicensePagination(int page, int limit, Optional<String> sortBy, String sortName,
+			String sort) {
+		// TODO Auto-generated method stub
+		try {
+				Pageable pagingSort=null;
+				
+				if(sortName=="ASC") {						
+					 pagingSort = PageRequest.of(page, limit, Sort.Direction.ASC, sortBy.orElse(sortName));
+				}else {
+					 pagingSort = PageRequest.of(page, limit, Sort.Direction.DESC, sortBy.orElse(sortName));
+				}
+				
+				
+				Page<LicenseEntity> findAll = LicenseRepo.findAll(pagingSort);
+	
+				Map<String, Object> response = new HashMap<>();
+				response.put("data", findAll.getContent());
+				response.put("currentPage", findAll.getNumber());
+				response.put("total", findAll.getTotalElements());
+				response.put("totalPage", findAll.getTotalPages());
+				response.put("perPage", findAll.getSize());
+				response.put("perPageElement", findAll.getNumberOfElements());
+	
+				if (findAll.getSize() < 1) {
+					throw new CustomException("License Not Found!");
+				} else {
+					return response;
+				}
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+
 	}
 
 	public Optional<LicenseEntity> getLicense(long lcId) {
@@ -280,5 +401,7 @@ public class LicenseService {
 			throw new CustomException(e.getMessage());
 		}
 	}
+
+	
 
 }
