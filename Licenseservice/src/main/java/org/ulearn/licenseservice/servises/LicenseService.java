@@ -97,7 +97,7 @@ public class LicenseService {
 //						HttpEntity request=new HttpEntity(headers);
 //						ResponseEntity<LicenseGlobalEntity> responseEmailTemp=new RestTemplate().exchange("http://localhost:8089/dev/institute/view/"+save.getInstId(),  HttpMethod.GET, request, LicenseGlobalEntity.class);
 //						String emailId = responseEmailTemp.getBody().getInstEmail();
-						
+
 						if (!save.equals(null)) {
 							return new GlobalResponse("SUCCESS","License Added successfully",200);
 						} else {

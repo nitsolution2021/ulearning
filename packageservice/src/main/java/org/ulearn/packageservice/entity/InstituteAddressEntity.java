@@ -6,68 +6,69 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @Entity
-
+@Table(name="tbl_inst_addr")
 public class InstituteAddressEntity implements Serializable{
 
-	//@Column(name = "ADR_ID")
 	@Id
+	@Column(name = "ADR_ID")
+
 	private Long adrId;
 	
-	//@Column(name = "INST_ID")
+	@Column(name = "INST_ID")
 	private Long instId;
 	
-	//@Column(name = "ADR_TYPE")
+	@Column(name = "ADR_TYPE")
 	private String adrType;
 	
-	//@Column(name = "ADR_LINE1")
+	@Column(name = "ADR_LINE1")
 	private String adrLine1;
 	
-	//@Column(name = "ADR_LINE2")
+	@Column(name = "ADR_LINE2")
 	private String adrLine2;
 	
-	//@Column(name = "ADR_COUNTRY")
+	@Column(name = "ADR_COUNTRY")
 	private Long adrCountry;
 	
-	//@Column(name = "ADR_STATE")
+	@Column(name = "ADR_STATE")
 	private Long adrState;
 	
-	//@Column(name = "ADR_DISTRICT")
+	@Column(name = "ADR_DISTRICT")
 	private Long adrDistrict;
 	
-	//@Column(name = "ADR_TALUKA")
+	@Column(name = "ADR_TALUKA")
 	private Long adrTaluka;
 	
-	//@Column(name = "ADR_CITY")
+	@Column(name = "ADR_CITY")
 	private Long adrCity;
 	
-	//@Column(name = "ADR_PINCODE")
+	@Column(name = "ADR_PINCODE")
 	private String adrPincode;
 	
-	//@Column(name = "ADR_STATUS")
+	@Column(name = "ADR_STATUS")
 	private String adrStatus;
 	
-	//@Column(name = "ADR_ORDER")
+	@Column(name = "ADR_ORDER")
 	private Long adrOrder;
 	
-	//@Column(name = "IS_PRIMARY")
+	@Column(name = "IS_PRIMARY")
 	private int isPrimary;
 	
-	//@Column(name = "IS_ACTIVE")
+	@Column(name = "IS_ACTIVE")
 	private int isActive;
 	
-	//@Column(name = "IS_DELETED")
+	@Column(name = "IS_DELETED")
 	private int isDeleted;
 	
-	//@Column(name = "CREATED_ON")
+	@Column(name = "CREATED_ON")
 	private Date createdOn;
 	
-	//@Column(name = "UPDATED_ON")
+	@Column(name = "UPDATED_ON")
 	private Date updatedOn;
 
 	public InstituteAddressEntity(Long adrId, Long instId, String adrType, String adrLine1, String adrLine2,

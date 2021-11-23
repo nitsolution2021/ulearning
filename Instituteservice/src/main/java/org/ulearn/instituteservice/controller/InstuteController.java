@@ -1,5 +1,6 @@
 package org.ulearn.instituteservice.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -97,8 +98,8 @@ public class InstuteController {
 
 	@RequestMapping(value = { "/list/{page}/{limit}/{sortName}/{sort}" }, method = RequestMethod.GET)
 	public Map<String, Object> getInstutePagination(@PathVariable("page") int page, @PathVariable("limit") int limit,
-			@RequestParam Optional<String> sortBy,@PathVariable("sortName") String sortName, @PathVariable("sort") String sort) {
-		LOGGER.info("Inside - InstituteController.getInstutePagination()");
+			@RequestParam Optional<String> sortBy,@RequestParam Optional<String> sortBys,@RequestParam Optional<String> sortByds,@PathVariable("sortName") String sortName, @PathVariable("sort") String sort) {
+		LOGGER.info("Inside - InstituteController.getInstutePagination()"+sortBys+""+sortByds);
 
 		try {
 			Pageable pagingSort=null;
@@ -171,6 +172,8 @@ public class InstuteController {
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdPpic()))) {
 				if (!findByInstituteName.isPresent()) {
 					if (!findByInstEmail.isPresent()) {
+						
+					
 
 						InstituteEntity filterInsDetails = new InstituteEntity();
 
@@ -467,17 +470,4 @@ public class InstuteController {
 		}
 	}
 
-	@GetMapping("/insIdvalidation/{insId}")
-	public String insIdvalidation(@PathVariable long insId) {
-		try {
-			LOGGER.info("Inside-InstituteController.insIdvalidation");
-			if (instituteRepo.existsById(insId)) {
-				return "Ok";
-			} else {
-				return "notOk";
-			}
-		} catch (Exception e) {
-			return "Exception";
-		}
-	}
 }

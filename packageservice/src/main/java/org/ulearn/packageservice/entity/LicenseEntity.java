@@ -6,8 +6,10 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,41 +20,41 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @Entity
-
+@Table(name="tbl_inst_license")
 public class LicenseEntity implements Serializable{
 
-	//@Column(name = "LC_ID")
 	@Id
+	@Column(name = "LC_ID")
 	private Long lcId;
-	//@Column(name = "INST_ID")
+	@Column(name = "INST_ID")
 	private Long instId;
-	//@Column(name="LC_NAME")
+	@Column(name="LC_NAME")
 	private String lcName;
-	@JsonFormat(pattern = "yyyy/mm/dd")
-	//@Column(name = "LC_CDATE")
+	@JsonFormat(shape = Shape.STRING,pattern = "yyyy/MM/dd")
+	@Column(name = "LC_CDATE")
 	private Date lcCreatDate;
-	//@Column(name = "LC_TYPE")
+	@Column(name = "LC_TYPE")
 	private String lcType;
-	//@Column(name = "LC_STYPE")
+	@Column(name = "LC_STYPE")
 	private String lcStype;
-	//@Column(name = "LC_VALIDITY_TYPE")
+	@Column(name = "LC_VALIDITY_TYPE")
 	private String lcValidityType;
-	//@Column(name = "LC_VALIDITY_NUM")
+	@Column(name = "LC_VALIDITY_NUM")
 	private int lcValidityNum;
 	@JsonFormat(pattern = "yyyy/mm/dd")
-	//@Column(name = "LC_EDATE")
+	@Column(name = "LC_EDATE")
 	private Date lcEndDate;
-	//@Column(name = "LC_COMMENT")
+	@Column(name = "LC_COMMENT")
 	private String lcComment;
-	//@Column(name = "LC_STATUS")
+	@Column(name = "LC_STATUS")
 	private String lcStatus;
-	//@Column(name = "IS_ACTIVE")
+	@Column(name = "IS_ACTIVE")
 	private int isActive;
-	//@Column(name = "IS_DELETED")
+	@Column(name = "IS_DELETED")
 	private int isDeleted;
-	//@Column(name = "CREATED_ON")
+	@Column(name = "CREATED_ON")
 	private Date createdOn;
-	//@Column(name = "UPDATED_ON")
+	@Column(name = "UPDATED_ON")
 	private Date updatedOn;
 	public LicenseEntity(Long lcId, Long instId, String lcName, Date lcCreatDate, String lcType, String lcStype,
 			String lcValidityType, int lcValidityNum, Date lcEndDate, String lcComment, String lcStatus, int isActive,
