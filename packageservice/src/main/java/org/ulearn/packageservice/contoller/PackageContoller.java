@@ -1,9 +1,11 @@
 package org.ulearn.packageservice.contoller;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Date;
 
 import org.hibernate.internal.build.AllowSysOut;
+import org.hibernate.type.descriptor.sql.TinyIntTypeDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Optional;
@@ -34,6 +36,7 @@ import org.ulearn.packageservice.entity.LicenseEntity;
 import org.ulearn.packageservice.entity.PackageEntity;
 import org.ulearn.packageservice.entity.PackageLogEntity;
 import org.ulearn.packageservice.exception.CustomException;
+import org.ulearn.packageservice.repo.InstituteRepo;
 import org.ulearn.packageservice.repo.LoginRepository;
 import org.ulearn.packageservice.repo.PackageLogRepo;
 import org.ulearn.packageservice.repo.PackageRepo;
@@ -52,16 +55,17 @@ public class PackageContoller {
 	@Autowired
 	private PackageLogRepo packageLogRepo;
 
+	@Autowired
+	private InstituteRepo instituteRepo;
 	private static final Logger log = LoggerFactory.getLogger(PackageContoller.class);
 
 	@GetMapping("/list")
-	public List<PackageEntity> listAlldata() {
+	public List<?> listAlldata(@RequestHeader("Authorization") String token ) {
 		try {
 			log.info("Inside-PackageController.list");
-			List<PackageEntity> allPackagedata = packageRepo.findAll();
+			List<InstituteEntity> allPackagedata =instituteRepo.findAll();
 			if (allPackagedata != null) {
 				return allPackagedata;
-				// return (Optional<PackageEntity>) allPackagedata;
 			} else {
 				throw new CustomException("No data found");
 			}
@@ -73,23 +77,26 @@ public class PackageContoller {
 	@GetMapping("/view/{pkId}")
 	public Optional<?> viewPackagedata(@PathVariable long pkId,
 			@RequestHeader("Authorization") String token) {
-		log.info("Hi");
-		log.info("Token is <><><><>  "+token);
+//		log.info("Hi");
+//		log.info("Token is <><><><>  "+token);
 		try {
 			log.info("Inside-PackageController.view");
 			if (pkId != 0) {
 				if (packageRepo.existsById(pkId)) {
 					PackageEntity packageData = packageRepo.getById(pkId);
-					log.info(packageData.toString());
+					//log.info(packageData.toString());
 					HttpHeaders header = new HttpHeaders();
 					header.set("Authorization", token);
 					HttpEntity request = new HttpEntity(header);
-					ResponseEntity<InstituteEntity> Response = new RestTemplate().exchange(
+					ResponseEntity<InstituteEntity> instituteData = new RestTemplate().exchange(
 							"http://localhost:8087/dev/institute/view/" + packageData.getInstId(), HttpMethod.GET,
 							request, InstituteEntity.class);
 					
-					log.info("DATAAAAAAAAAAA   "+Response.getBody().getInstEmail());
-					return Optional.of(Response);
+					//log.info("DATAAAAAAAAAAA   "+Response.getBody().getInstEmail());
+					DataResponseEntity dataResponseEntity=new DataResponseEntity();
+					dataResponseEntity.setPackageData(packageData);
+					dataResponseEntity.setInstituteData(instituteData.getBody());
+					return Optional.of(dataResponseEntity);
 
 				} else {
 					throw new CustomException("NO RECORD FOUND");
@@ -183,6 +190,55 @@ public class PackageContoller {
 				throw new CustomException("Invalid input data");
 			}
 		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+	}
+	@PutMapping("/suspended/{pkId}")
+	public GlobalResponse suspend(@PathVariable long pkId,@RequestBody PackageLogEntity packageLogEntity)
+	{
+		try
+		{
+			log.info("Inside-packageController.suspend()");
+				if(packageRepo.existsById(pkId))
+				{
+					PackageEntity suspendedPackageData=packageRepo.getById(pkId);
+					long isActive=0; 
+					if(suspendedPackageData.getIsActive()!=isActive)
+					{
+						if((fieldValidation.isEmpty(packageLogEntity.getPlAdate()))
+								& (fieldValidation.isEmpty(packageLogEntity.getPlComment())))
+						{
+							
+							PackageLogEntity logData=new PackageLogEntity();
+							logData.setPkId(pkId);
+							logData.setPlAction("Suspended");
+							logData.setPlAdate(packageLogEntity.getPlAdate());
+							logData.setPlComment(packageLogEntity.getPlComment());
+							logData.setPlCreat(new Date());
+							logData.setPlStatus("Running");
+							logData.setPlUpdate(null);
+							packageLogRepo.save(logData);
+							suspendedPackageData.setIsActive(isActive);
+							packageRepo.save(suspendedPackageData);
+							return new GlobalResponse("Success", "PackageId is Suspended");
+						}
+						else
+						{
+							throw new CustomException("Invalid field data");
+						}
+					}
+					else
+					{
+						throw new CustomException("Id allready suspended");
+					}
+				}
+				else
+				{
+					throw new CustomException("No record found");
+				}
+		}
+		catch(Exception e)
+		{
 			throw new CustomException(e.getMessage());
 		}
 	}

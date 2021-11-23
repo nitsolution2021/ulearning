@@ -3,8 +3,10 @@ package org.ulearn.packageservice.entity;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,37 +15,39 @@ import lombok.Setter;
 import lombok.ToString;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @Entity
-
+@Table(name = "tbl_inst_admin")
 public class InstituteAdminEntity implements Serializable{
 
 	@Id
+	@Column(name="ADM_ID")
 	private Long admId;
-	//@Column(name = "INST_ID")
+	@Column(name = "INST_ID")
 	private Long instId;
-	//@Column(name = "ADM_FNAME")
+	@Column(name = "ADM_FNAME")
 	private String amdFname;
-	//@Column(name = "ADM_LNAME")
+	@Column(name = "ADM_LNAME")
 	private String amdLname;
-	@JsonFormat(pattern = "yyyy/mm/dd")
-	//@Column(name = "ADM_DOB")
+	@JsonFormat(shape = Shape.STRING,pattern = "yyyy/MM/dd")
+	@Column(name = "ADM_DOB")
 	private Date amdDob;
-	//@Column(name = "ADM_MNUM")
+	@Column(name = "ADM_MNUM")
 	private String amdMnum;
-	//@Column(name = "ADM_EMAIL")
+	@Column(name = "ADM_EMAIL")
 	private String amdEmail;
-	//@Column(name = "ADM_USERNAME")
+	@Column(name = "ADM_USERNAME")
 	private String amdUsername;
-	//@Column(name = "ADM_PASSWORD")
+	@Column(name = "ADM_PASSWORD")
 	private String amdPassword;
-	//@Column(name = "ADM_PPIC")
+	@Column(name = "ADM_PPIC")
 	private String amdPpic;
-	//@Column(name = "CREATED_ON")
+	@Column(name = "CREATED_ON")
 	private Date createdOn;	
-	//@Column(name = "UPDATED_ON")
+	@Column(name = "UPDATED_ON")
 	private Date updatedOn;
 	public InstituteAdminEntity(Long admId, Long instId, String amdFname, String amdLname, Date amdDob, String amdMnum,
 			String amdEmail, String amdUsername, String amdPassword, String amdPpic, Date createdOn, Date updatedOn) {

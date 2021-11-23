@@ -8,6 +8,10 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,57 +20,63 @@ import lombok.Setter;
 import lombok.ToString;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
-//@Entity
+@Entity
+@Table(name="tbl_institutes")
 public class InstituteEntity implements Serializable{
 
-	//@Column(name = "INST_ID")
 	@Id
+	@Column(name = "INST_ID")
 	private Long instId;
-	//@Column(name = "INST_NAME")
+	@Column(name = "INST_NAME")
 	private String instName;
-	@JsonFormat(pattern = "yyyy/mm/dd")
-	//@Column(name = "INST_EDATE")
+	@JsonFormat(shape = Shape.STRING,pattern = "yyyy/MM/dd")
+	@Column(name = "INST_EDATE")
 	private Date instEndDate;
-	//@Column(name = "INST_WEBSITE")
+	@Column(name = "INST_WEBSITE")
 	private String instWebsite;
-	//@Column(name = "INST_EMAIL")
+	@Column(name = "INST_EMAIL")
 	private String instEmail;
-	//@Column(name = "INST_CNUM")
+	@Column(name = "INST_CNUM")
 	private String instCnum;
-	//@Column(name = "INST_MNUM")
+	@Column(name = "INST_MNUM")
 	private String instMnum;
-	@JsonFormat(pattern = "yyyy/mm/dd")
-	//@Column(name = "ISNT_RDATE")
+	@JsonFormat(shape = Shape.STRING,pattern = "yyyy/MM/dd")
+	@Column(name = "ISNT_RDATE")
 	private Date isntRegDate;
-	//@Column(name = "INST_LOGO")
+	@Column(name = "INST_LOGO")
 	private String instLogo;
-	//@Column(name = "INST_PAN_NUM")
+	@Column(name = "INST_PAN_NUM")
 	private String instPanNum;
-	//@Column(name = "INST_GST_NUM")
+	@Column(name = "INST_GST_NUM")
 	private String instGstNum;
-	//@Column(name = "INST_STATUS")
+	@Column(name = "INST_STATUS")
 	private String instStatus;
-	//@Column(name = "IS_ACTIVE")
+	@Column(name = "IS_ACTIVE")
 	private int isActive;
-	//@Column(name = "IS_DELETED")
+	@Column(name = "IS_DELETED")
 	private int isDeleted;
-	//@Column(name = "CREATED_ON")
+	@Column(name = "CREATED_ON")
 	private Date createdOn;
-	//@Column(name = "UPDATED_ON")
+	@Column(name = "UPDATED_ON")
 	private Date updatedOn;
-	private InstituteAdminEntity adminEntity;
-	private List<InstituteAddressEntity> instituteAddressEntity;
-	public InstituteEntity() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+	@OneToOne
+	@JoinColumn(name = "INST_ID")
+	private InstituteAdminEntity instituteAdmin;
+	@OneToMany
+	@JoinColumn(name = "INST_ID", referencedColumnName = "INST_ID")
+	private List<InstituteAddressEntity> instituteAddress = new ArrayList<>();
+	@OneToMany
+	@JoinColumn(name = "INST_ID")
+	private PackageEntity packageEntity;
 	public InstituteEntity(Long instId, String instName, Date instEndDate, String instWebsite, String instEmail,
 			String instCnum, String instMnum, Date isntRegDate, String instLogo, String instPanNum, String instGstNum,
-			String instStatus, int isActive, int isDeleted, Date createdOn, Date updatedOn, InstituteAdminEntity adminEntity,
-			List<InstituteAddressEntity> instituteAddressEntity) {
+			String instStatus, int isActive, int isDeleted, Date createdOn, Date updatedOn,
+			InstituteAdminEntity instituteAdmin, List<InstituteAddressEntity> instituteAddress,
+			PackageEntity packageEntity) {
 		super();
 		this.instId = instId;
 		this.instName = instName;
@@ -84,17 +94,13 @@ public class InstituteEntity implements Serializable{
 		this.isDeleted = isDeleted;
 		this.createdOn = createdOn;
 		this.updatedOn = updatedOn;
-		this.adminEntity = adminEntity;
-		this.instituteAddressEntity = instituteAddressEntity;
+		this.instituteAdmin = instituteAdmin;
+		this.instituteAddress = instituteAddress;
+		this.packageEntity = packageEntity;
 	}
-	@Override
-	public String toString() {
-		return "InstituteEntity [instId=" + instId + ", instName=" + instName + ", instEndDate=" + instEndDate
-				+ ", instWebsite=" + instWebsite + ", instEmail=" + instEmail + ", instCnum=" + instCnum + ", instMnum="
-				+ instMnum + ", isntRegDate=" + isntRegDate + ", instLogo=" + instLogo + ", instPanNum=" + instPanNum
-				+ ", instGstNum=" + instGstNum + ", instStatus=" + instStatus + ", isActive=" + isActive
-				+ ", isDeleted=" + isDeleted + ", createdOn=" + createdOn + ", updatedOn=" + updatedOn
-				+ ", adminEntity=" + adminEntity + ", instituteAddressEntity=" + instituteAddressEntity + "]";
+	public InstituteEntity() {
+		super();
+		// TODO Auto-generated constructor stub
 	}
 	public Long getInstId() {
 		return instId;
@@ -192,19 +198,33 @@ public class InstituteEntity implements Serializable{
 	public void setUpdatedOn(Date updatedOn) {
 		this.updatedOn = updatedOn;
 	}
-	public InstituteAdminEntity getAdminEntity() {
-		return adminEntity;
+	public InstituteAdminEntity getInstituteAdmin() {
+		return instituteAdmin;
 	}
-	public void setAdminEntity(InstituteAdminEntity adminEntity) {
-		this.adminEntity = adminEntity;
+	public void setInstituteAdmin(InstituteAdminEntity instituteAdmin) {
+		this.instituteAdmin = instituteAdmin;
 	}
-	public List<InstituteAddressEntity> getInstituteAddressEntity() {
-		return instituteAddressEntity;
+	public List<InstituteAddressEntity> getInstituteAddress() {
+		return instituteAddress;
 	}
-	public void setInstituteAddressEntity(List<InstituteAddressEntity> instituteAddressEntity) {
-		this.instituteAddressEntity = instituteAddressEntity;
+	public void setInstituteAddress(List<InstituteAddressEntity> instituteAddress) {
+		this.instituteAddress = instituteAddress;
 	}
-	
-	
+	public PackageEntity getPackageEntity() {
+		return packageEntity;
+	}
+	public void setPackageEntity(PackageEntity packageEntity) {
+		this.packageEntity = packageEntity;
+	}
+	@Override
+	public String toString() {
+		return "InstituteEntity [instId=" + instId + ", instName=" + instName + ", instEndDate=" + instEndDate
+				+ ", instWebsite=" + instWebsite + ", instEmail=" + instEmail + ", instCnum=" + instCnum + ", instMnum="
+				+ instMnum + ", isntRegDate=" + isntRegDate + ", instLogo=" + instLogo + ", instPanNum=" + instPanNum
+				+ ", instGstNum=" + instGstNum + ", instStatus=" + instStatus + ", isActive=" + isActive
+				+ ", isDeleted=" + isDeleted + ", createdOn=" + createdOn + ", updatedOn=" + updatedOn
+				+ ", instituteAdmin=" + instituteAdmin + ", instituteAddress=" + instituteAddress + ", packageEntity="
+				+ packageEntity + "]";
+	}
 	
 }
