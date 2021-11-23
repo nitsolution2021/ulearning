@@ -152,8 +152,9 @@ public class SmsTemplateService {
 		} else if (!fieldValidation.isEmpty(globalEntity.getStAction())) {
 			// SMS StAction represent Template For
 			throw new CustomException("Template For required");
-		} else if (!fieldValidation.isEmpty(globalEntity.getIsPrimary())) {
+		} else if (fieldValidation.isEmpty(globalEntity.getIsPrimary())) {
 			// SMS template is_Primary represent Set Default
+			LOGGER.info(globalEntity.getIsPrimary()+"");
 			throw new CustomException("Set Default required");
 		} else {
 			return true;

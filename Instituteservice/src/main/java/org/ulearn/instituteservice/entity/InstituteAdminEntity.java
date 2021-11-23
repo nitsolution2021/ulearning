@@ -28,7 +28,7 @@ public class InstituteAdminEntity {
 	private String amdFname;
 	@Column(name = "ADM_LNAME")
 	private String amdLname;
-	@JsonFormat(shape = Shape.STRING,pattern = "yyyy/MM/dd")
+	@JsonFormat(shape = Shape.STRING,pattern = "yyyy/MM/dd",timezone = "Asia/Kolkata")
 	@Column(name = "ADM_DOB")
 	private Date amdDob;
 	@Column(name = "ADM_MNUM")
