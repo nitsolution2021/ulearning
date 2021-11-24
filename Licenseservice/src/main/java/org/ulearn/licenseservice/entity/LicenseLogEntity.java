@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 
 @Entity
 @Table(name="tbl_inst_license_log")
@@ -32,11 +33,11 @@ public class LicenseLogEntity {
 	@Column(name="LL_VALIDITY_NUM")
 	private int llValidityNum;
 	
-	@JsonFormat(pattern = "yyyy/mm/dd")
+	@JsonFormat(shape = Shape.STRING, pattern = "yyyy/MM/dd")
 	@Column(name="LL_SDATE")
 	private Date llSdate;
 	
-	@JsonFormat(pattern = "yyyy/mm/dd")
+	@JsonFormat(shape = Shape.STRING, pattern = "yyyy/MM/dd")
 	@Column(name="LL_EDATE")
 	private Date llEdate;
 	
