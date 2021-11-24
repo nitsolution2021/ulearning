@@ -52,25 +52,28 @@ public class EmailTemplateController {
 					fieldValidation.isEmpty(emailTemplateEntity.getEtAction()) &&
 					fieldValidation.isEmpty(emailTemplateEntity.getIsPrimary())
 					){
-				List<EmailTemplateEntity> findByEtActionWithDefaultET = emailTemplateRepo.findByEtActionWithDefaultET(emailTemplateEntity.getEtAction(),emailTemplateEntity.getEtType());
-//				String[] split = emailTemplateEntity.getEtBody().split(" ");
-//				String tags = "";
-//				for(int i = 0;i < split.length;i++) {
-//					if(split[i].startsWith("<<") && split[i].endsWith(">>")) {
-//						LOGGER.info("tags: " + split[i]);
-//						tags = tags + split[i] + " ";
-//					}
-//				}
-//				if(findByEtActionWithDefaultET.get(0).getEtTags().split(",").length != tags.split(" ").length) {
-//					throw new CustomException("Tags lengths Are not Match");
-//				}
-//				String[] splitTags = tags.split(" ");
-//				String splitTagsFromDB = findByEtActionWithDefaultET.get(0).getEtTags();
-//				for(int i = 0;i < splitTags.length;i++) {
-//					if(splitTagsFromDB.indexOf(splitTags[i]) == -1){
-//						throw new CustomException("Tags Are Not Present in Default Template");
-//					}
-//				}
+				List<EmailTemplateEntity> findByEtActionWithDefaultET = emailTemplateRepo.findByEtActionWithDefaultET(emailTemplateEntity.getEtAction(),"DEFAULT");
+				String[] split = emailTemplateEntity.getEtBody().split(" ");
+				String tags = "";
+				for(int i = 0;i < split.length;i++) {
+					if(split[i].startsWith("<<") && split[i].endsWith(">>")) {
+						LOGGER.info("tags: " + split[i]);
+						tags = tags + split[i] + " ";
+					}
+				}
+				if(findByEtActionWithDefaultET.size()<1) {
+					throw new CustomException("The Custome Template Action is Not Present in Default Action");
+				}
+				if(findByEtActionWithDefaultET.get(0).getEtTags().split(",").length < tags.split(" ").length) {
+					throw new CustomException("Tags lengths Are not Match");
+				}
+				String[] splitTags = tags.split(" ");
+				String splitTagsFromDB = findByEtActionWithDefaultET.get(0).getEtTags();
+				for(int i = 0;i < splitTags.length;i++) {
+					if(splitTagsFromDB.indexOf(splitTags[i]) == -1){
+						throw new CustomException("Tags Are Not Present in Default Template");
+					}
+				}
 				List<EmailTemplateEntity> findByEtAction = emailTemplateRepo.findByEtAction(emailTemplateEntity.getEtAction());
 				if(findByEtAction.size()>0) {
 					if(emailTemplateEntity.getIsPrimary() == 1) {
@@ -132,7 +135,7 @@ public class EmailTemplateController {
 				if(findById.isPresent()) {
 					List<EmailTemplateEntity> findByIdAndDelete = emailTemplateRepo.findByIdAndDelete(1, id);
 					if(findByIdAndDelete.size()<1) {
-						List<EmailTemplateEntity> findByEtActionWithDefaultET = emailTemplateRepo.findByEtActionWithDefaultET(emailTemplateEntity.getEtAction(),emailTemplateEntity.getEtType());
+						List<EmailTemplateEntity> findByEtActionWithDefaultET = emailTemplateRepo.findByEtActionWithDefaultET(emailTemplateEntity.getEtAction(),"DEFAULT");
 						String[] split = emailTemplateEntity.getEtBody().split(" ");
 						String tags = "";
 						for(int i = 0;i < split.length;i++) {
@@ -141,7 +144,7 @@ public class EmailTemplateController {
 								tags = tags + split[i] + " ";
 							}
 						}
-						if(findByEtActionWithDefaultET.get(0).getEtTags().split(",").length != tags.split(" ").length) {
+						if(findByEtActionWithDefaultET.get(0).getEtTags().split(",").length < tags.split(" ").length) {
 							throw new CustomException("Tags lengths Are not Match");
 						}
 						String[] splitTags = tags.split(" ");
