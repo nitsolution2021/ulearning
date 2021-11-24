@@ -21,7 +21,7 @@ public interface EmailTemplateRepo extends JpaRepository<EmailTemplateEntity, Lo
 	
 	public List<EmailTemplateEntity> findByEtAction(String etAction);
 	
-	@Query(value = "select obj.etType,obj.etId from EmailTemplateEntity obj where obj.etAction = ?1 and obj.etType = ?2")
+	@Query(value = "select obj from EmailTemplateEntity obj where obj.etAction = ?1 and obj.etType = ?2")
 	public List<EmailTemplateEntity> findByEtActionWithDefaultET(String etAction,String etType);
 	
 	@Query(value = "select obj.etId,obj.etAction from EmailTemplateEntity obj where obj.etType = ?1")
