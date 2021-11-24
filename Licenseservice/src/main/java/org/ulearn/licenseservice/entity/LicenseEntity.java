@@ -11,6 +11,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 
 @Entity
 @Table(name = "tbl_inst_license")
@@ -29,7 +30,7 @@ public class LicenseEntity {
 	@Column(name="LC_NAME")
 	private String lcName;
 	
-	@JsonFormat(pattern = "yyyy/mm/dd")
+	@JsonFormat(shape = Shape.STRING, pattern = "yyyy/MM/dd")
 	@Column(name = "LC_CDATE")
 	private Date lcCreatDate;
 	
@@ -49,7 +50,7 @@ public class LicenseEntity {
 	@Column(name = "LC_VALIDITY_NUM")
 	private Long lcValidityNum;
 	
-	@JsonFormat(pattern = "yyyy/mm/dd")
+	@JsonFormat(shape = Shape.STRING, pattern = "yyyy/MM/dd")
 	@Column(name = "LC_EDATE")
 	private Date lcEndDate;
 	
