@@ -98,13 +98,15 @@ public class InstuteController {
 
 	@RequestMapping(value = { "/list/{page}/{limit}/{sortName}/{sort}" }, method = RequestMethod.GET)
 	public Map<String, Object> getInstutePagination(@PathVariable("page") int page, @PathVariable("limit") int limit,
-			@RequestParam Optional<String> sortBy,@RequestParam Optional<String> sortKey,@PathVariable("sortName") String sortName) {
-		LOGGER.info("Inside - InstituteController.getInstutePagination()"+sortKey);
+			@PathVariable("sort") String sort,@PathVariable("sortName") String sortName,
+			@RequestParam Optional<String> sortKey,@RequestParam Optional<String> sortBy) {
+		
+		LOGGER.info("Inside - InstituteController.getInstutePagination()");
 
 		try {
 			Pageable pagingSort=null;
 			
-			if(sortName=="ASC") {						
+			if(sort.equals("ASC")) {						
 				 pagingSort = PageRequest.of(page, limit, Sort.Direction.ASC, sortBy.orElse(sortName));
 			}else {
 				 pagingSort = PageRequest.of(page, limit, Sort.Direction.DESC, sortBy.orElse(sortName));
