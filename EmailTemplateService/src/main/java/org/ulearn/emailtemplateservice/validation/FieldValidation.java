@@ -29,7 +29,7 @@ public class FieldValidation {
 	}
 
 	public boolean isEmpty(int val) {
-		if (val <= 0) {
+		if (val < 0) {
 			return false;
 		} else {
 			return true;

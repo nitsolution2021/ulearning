@@ -116,16 +116,14 @@ public class EmailTemplateController {
 	}
 	
 	@PutMapping("/update/{id}")
-	public GlobalResponse emailTemplateUpdate(@RequestParam("id") Long id, @RequestBody EmailTemplateEntity emailTemplateEntity) {
+	public GlobalResponse emailTemplateUpdate(@PathVariable Long id, @RequestBody EmailTemplateEntity emailTemplateEntity) {
 		LOGGER.info("Inside - EmailTemplateController.emailTemplateUpdate()");
 		try {
 			if(fieldValidation.isEmpty(emailTemplateEntity.getEtName()) && 
 					fieldValidation.isEmpty(emailTemplateEntity.getEtSubject()) &&
 					fieldValidation.isEmpty(emailTemplateEntity.getEtBody()) &&
 					fieldValidation.isEmpty(emailTemplateEntity.getEtAction()) &&
-					fieldValidation.isEmpty(emailTemplateEntity.getIsPrimary()) &&
-					fieldValidation.isEmpty(emailTemplateEntity.getEtId())
-					) {
+					fieldValidation.isEmpty(emailTemplateEntity.getIsPrimary())) {
 				
 				Optional<EmailTemplateEntity> findById = emailTemplateRepo.findById(id);
 				if(findById.isPresent()) {
@@ -159,7 +157,7 @@ public class EmailTemplateController {
 								emailTemplateRepo.saveAll(findByEtAction);
 							}
 							EmailTemplateEntity newEmailTemplateEntity = findByIdAndDelete.get(0);
-							newEmailTemplateEntity.setEtId(emailTemplateEntity.getEtId());
+							newEmailTemplateEntity.setEtId(id);
 							newEmailTemplateEntity.setEtName(emailTemplateEntity.getEtName());
 							newEmailTemplateEntity.setEtSubject(emailTemplateEntity.getEtSubject());
 							newEmailTemplateEntity.setEtBody(emailTemplateEntity.getEtBody());
