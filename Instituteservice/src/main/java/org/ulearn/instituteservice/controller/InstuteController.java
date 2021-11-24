@@ -110,10 +110,13 @@ public class InstuteController {
 				 pagingSort = PageRequest.of(page, limit, Sort.Direction.DESC, sortBy.orElse(sortName));
 			}
 			
-			if(!sortKey.isEmpty()) {
-				Page<InstituteEntity> findAll = instituteRepo.Search(sortKey,pagingSort);
+			Page<InstituteEntity> findAll=null;
+			if(sortKey.isPresent()) {
+				LOGGER.info("Inside - InstituteController.getInstutePagination()--------"+sortKey.get());
+				 findAll = instituteRepo.Search(sortKey,pagingSort);				
+			}else {
+				 findAll = instituteRepo.findAll(pagingSort);
 			}
-				Page<InstituteEntity> findAll = instituteRepo.findAll(pagingSort);
 
 			Map<String, Object> response = new HashMap<>();
 			response.put("data", findAll.getContent());
