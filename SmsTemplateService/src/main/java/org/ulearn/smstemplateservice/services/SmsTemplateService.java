@@ -37,7 +37,7 @@ public class SmsTemplateService {
 				smsTemplateEntity.setIsDeleted(0);
 				if (globalEntity.getIsPrimary() == 1) {
 					List<SmsTemplateEntity> items = new ArrayList<SmsTemplateEntity>();
-					List<SmsTemplateEntity> findAll = smsTemplateRepo.findAll();
+					List<SmsTemplateEntity> findAll = smsTemplateRepo.findByStAction(globalEntity.getStAction());
 					findAll.forEach(item -> {
 						item.setIsPrimary(0);
 						items.add(item);
@@ -56,6 +56,7 @@ public class SmsTemplateService {
 				smsTemplateEntity.setStTags(globalEntity.getStTags());
 				////End
 				smsTemplateEntity.setStTempId(globalEntity.getStTempId());
+				smsTemplateEntity.setStSubject(globalEntity.getStSubject());
 				smsTemplateEntity.setStType("CUSTOM");
 				SmsTemplateEntity save = smsTemplateRepo.save(smsTemplateEntity);
 				if (!save.equals(null)) {
@@ -100,7 +101,7 @@ public class SmsTemplateService {
 					
 					if (globalEntity.getIsPrimary() == 1) {
 						List<SmsTemplateEntity> items = new ArrayList<SmsTemplateEntity>();
-						List<SmsTemplateEntity> findAll = smsTemplateRepo.findAll();
+						List<SmsTemplateEntity> findAll = smsTemplateRepo.findByStAction(globalEntity.getStAction());
 						findAll.forEach(item -> {
 							item.setIsPrimary(0);
 							items.add(item);
@@ -116,6 +117,7 @@ public class SmsTemplateService {
 					smsTemplateEntity.setStAction(globalEntity.getStAction());
 					smsTemplateEntity.setCreatedOn(findById.get().getCreatedOn());
 					smsTemplateEntity.setStBody(globalEntity.getStBody());
+					smsTemplateEntity.setStSubject(globalEntity.getStSubject());
 					smsTemplateEntity.setStName(globalEntity.getStName());
 					smsTemplateEntity.setStOrder(findById.get().getStOrder());
 					smsTemplateEntity.setStTags(findById.get().getStTags());
@@ -152,7 +154,7 @@ public class SmsTemplateService {
 		} else if (!fieldValidation.isEmpty(globalEntity.getStAction())) {
 			// SMS StAction represent Template For
 			throw new CustomException("Template For required");
-		} else if (fieldValidation.isEmpty(globalEntity.getIsPrimary())) {
+		} else if (!fieldValidation.isEmpty(globalEntity.getIsPrimary())) {
 			// SMS template is_Primary represent Set Default
 			LOGGER.info(globalEntity.getIsPrimary()+"");
 			throw new CustomException("Set Default required");
