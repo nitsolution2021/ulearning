@@ -1,6 +1,5 @@
 package org.ulearn.instituteservice.controller;
 
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort; 
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -98,25 +97,25 @@ public class InstuteController {
 
 	@RequestMapping(value = { "/list/{page}/{limit}/{sortName}/{sort}" }, method = RequestMethod.GET)
 	public Map<String, Object> getInstutePagination(@PathVariable("page") int page, @PathVariable("limit") int limit,
-			@PathVariable("sort") String sort,@PathVariable("sortName") String sortName,
-			@RequestParam Optional<String> sortKey,@RequestParam Optional<String> sortBy) {
-		
+			@PathVariable("sort") String sort, @PathVariable("sortName") String sortName,
+			@RequestParam Optional<String> sortKey, @RequestParam Optional<String> sortBy) {
+
 		LOGGER.info("Inside - InstituteController.getInstutePagination()");
 
 		try {
-			Pageable pagingSort=null;
-			
-			if(sort.equals("ASC")) {						
-				 pagingSort = PageRequest.of(page, limit, Sort.Direction.ASC, sortBy.orElse(sortName));
-			}else {
-				 pagingSort = PageRequest.of(page, limit, Sort.Direction.DESC, sortBy.orElse(sortName));
+			Pageable pagingSort = null;
+
+			if (sort.equals("ASC")) {
+				pagingSort = PageRequest.of(page, limit, Sort.Direction.ASC, sortBy.orElse(sortName));
+			} else {
+				pagingSort = PageRequest.of(page, limit, Sort.Direction.DESC, sortBy.orElse(sortName));
 			}
-			
-			Page<InstituteEntity> findAll=null;
-			if(sortKey.isPresent()) {
-				 findAll = instituteRepo.Search(sortKey,pagingSort);				
-			}else {
-				 findAll = instituteRepo.findAll(pagingSort);
+
+			Page<InstituteEntity> findAll = null;
+			if (sortKey.isPresent()) {
+				findAll = instituteRepo.Search(sortKey, pagingSort);
+			} else {
+				findAll = instituteRepo.findAll(pagingSort);
 			}
 
 			Map<String, Object> response = new HashMap<>();
@@ -138,7 +137,23 @@ public class InstuteController {
 
 	}
 
+	@GetMapping("/getlist")
+	public List<InstituteEntity> getListInstute() {
+		LOGGER.info("Inside - InstituteController.getListInstute()");
 
+		try {			
+			List<InstituteEntity> findAll = instituteRepo.findAll();
+			if (findAll.size() < 1) {
+				throw new CustomException("Institute Not Found!");
+			} else {
+				return findAll;
+			}
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+
+	}
+	
 	@PostMapping("/add")
 	public GlobalResponse postInstituteDetails(@Valid @RequestBody InstituteGlobalEntity instituteGlobalEntrity,
 			@RequestHeader("Authorization") String token) {
@@ -179,8 +194,6 @@ public class InstuteController {
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdPpic()))) {
 				if (!findByInstituteName.isPresent()) {
 					if (!findByInstEmail.isPresent()) {
-						
-					
 
 						InstituteEntity filterInsDetails = new InstituteEntity();
 
@@ -232,7 +245,8 @@ public class InstuteController {
 						filterInsAmdDetails.setAmdMnum(instituteGlobalEntrity.getAmdMnum());
 						filterInsAmdDetails.setAmdEmail(instituteGlobalEntrity.getAmdEmail());
 						filterInsAmdDetails.setAmdUsername(instituteGlobalEntrity.getAmdUsername());
-						filterInsAmdDetails.setAmdPassword(passwordEncoder.encode(instituteGlobalEntrity.getAmdPassword()));
+						filterInsAmdDetails
+								.setAmdPassword(passwordEncoder.encode(instituteGlobalEntrity.getAmdPassword()));
 						filterInsAmdDetails.setAmdPpic(instituteGlobalEntrity.getAmdPpic());
 						filterInsAmdDetails.setInstId(save.getInstId());
 						filterInsAmdDetails.setCreatedOn(new Date());
@@ -254,7 +268,8 @@ public class InstuteController {
 						headers.setContentType(MediaType.APPLICATION_JSON);
 
 						HttpEntity request = new HttpEntity(headers);
-						ResponseEntity<InstituteGlobalEntity> responseEmailTemp = new RestTemplate().exchange("http://localhost:8090/dev/emailTemplate/getPrimaryETByAction/Institute_Create",
+						ResponseEntity<InstituteGlobalEntity> responseEmailTemp = new RestTemplate().exchange(
+								"http://localhost:8090/dev/emailTemplate/getPrimaryETByAction/Institute_Create",
 								HttpMethod.GET, request, InstituteGlobalEntity.class);
 						String ETSubject = responseEmailTemp.getBody().getEtSubject();
 						String ETBody = responseEmailTemp.getBody().getEtBody();
@@ -286,7 +301,8 @@ public class InstuteController {
 						requestJson.put("enableHtml", true);
 
 						HttpEntity<String> entity = new HttpEntity(requestJson, headers);
-						ResponseEntity<String> response = new RestTemplate().postForEntity("http://localhost:8086/dev/login/sendMail/", entity, String.class);
+						ResponseEntity<String> response = new RestTemplate()
+								.postForEntity("http://localhost:8086/dev/login/sendMail/", entity, String.class);
 
 						return new GlobalResponse("SUCCESS", "Institute Added Successfully");
 					} else {
@@ -303,6 +319,7 @@ public class InstuteController {
 		}
 
 	}
+		
 
 	@GetMapping("/view/{instId}")
 	public Optional<InstituteEntity> viewInstituteDetails(@PathVariable() long instId) {
@@ -319,6 +336,7 @@ public class InstuteController {
 			throw new CustomException(e.getMessage());
 		}
 	}
+	
 
 	@PutMapping("/update/{instId}")
 	public GlobalResponse putInstituteDetails(@Valid @RequestBody InstituteGlobalEntity instituteGlobalEntrity,
