@@ -112,7 +112,6 @@ public class InstuteController {
 			
 			Page<InstituteEntity> findAll=null;
 			if(sortKey.isPresent()) {
-				LOGGER.info("Inside - InstituteController.getInstutePagination()--------"+sortKey.get());
 				 findAll = instituteRepo.Search(sortKey,pagingSort);				
 			}else {
 				 findAll = instituteRepo.findAll(pagingSort);
