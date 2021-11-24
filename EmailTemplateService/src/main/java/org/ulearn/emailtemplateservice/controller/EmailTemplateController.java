@@ -28,7 +28,6 @@ import org.ulearn.emailtemplateservice.validation.FieldValidation;
 
 @RestController
 @RequestMapping("/emailTemplate")
-@CrossOrigin(origins = "*")
 public class EmailTemplateController {
 	
 	@Autowired
