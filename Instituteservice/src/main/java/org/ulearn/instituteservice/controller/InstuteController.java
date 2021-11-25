@@ -5,9 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.hibernate.annotations.Where;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,12 +77,16 @@ public class InstuteController {
 			Pageable pagingSort = PageRequest.of(page.orElse(0), Limit, Sort.Direction.DESC,
 					sortBy.orElse("createdOn"));
 			Page<InstituteEntity> findAll = instituteRepo.findAll(pagingSort);
-
+			
+			int totalPage=findAll.getTotalPages()-1;
+			if(totalPage < 0) {
+				totalPage=0;
+			}
 			Map<String, Object> response = new HashMap<>();
 			response.put("data", findAll.getContent());
 			response.put("currentPage", findAll.getNumber());
 			response.put("total", findAll.getTotalElements());
-			response.put("totalPage", findAll.getTotalPages());
+			response.put("totalPage", totalPage);
 			response.put("perPage", findAll.getSize());
 			response.put("perPageElement", findAll.getNumberOfElements());
 
@@ -100,8 +106,8 @@ public class InstuteController {
 			@PathVariable("sort") String sort, @PathVariable("sortName") String sortName,
 			@RequestParam(defaultValue = "") Optional<String>keyword, @RequestParam Optional<String> sortBy) {
 
-		LOGGER.info("Inside - InstituteController.getInstutePagination()"+keyword);
-
+		LOGGER.info("Inside - InstituteController.getInstutePagination()");
+		
 		try {
 			Pageable pagingSort = null;
 
@@ -117,12 +123,16 @@ public class InstuteController {
 			} else {
 				findAll = instituteRepo.findAll(pagingSort);
 			}
-
+			int totalPage=findAll.getTotalPages()-1;
+			if(totalPage < 0) {
+				totalPage=0;
+			}
+			
 			Map<String, Object> response = new HashMap<>();
 			response.put("data", findAll.getContent());
 			response.put("currentPage", findAll.getNumber());
 			response.put("total", findAll.getTotalElements());
-			response.put("totalPage", findAll.getTotalPages());
+			response.put("totalPage", totalPage);
 			response.put("perPage", findAll.getSize());
 			response.put("perPageElement", findAll.getNumberOfElements());
 
@@ -142,7 +152,11 @@ public class InstuteController {
 		LOGGER.info("Inside - InstituteController.getListInstute()");
 
 		try {			
-			List<InstituteEntity> findAll = instituteRepo.findAll();
+			List<InstituteEntity> findAll = instituteRepo.findAll()
+			.stream()
+            .filter(Inst -> Inst.getIsDeleted() == 0)
+            .filter(Inst -> Inst.getIsActive() == 1)
+            .collect(Collectors.toList());
 			if (findAll.size() < 1) {
 				throw new CustomException("Institute Not Found!");
 			} else {
