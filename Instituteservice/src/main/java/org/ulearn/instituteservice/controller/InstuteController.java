@@ -98,9 +98,9 @@ public class InstuteController {
 	@RequestMapping(value = { "/list/{page}/{limit}/{sortName}/{sort}" }, method = RequestMethod.GET)
 	public Map<String, Object> getInstutePagination(@PathVariable("page") int page, @PathVariable("limit") int limit,
 			@PathVariable("sort") String sort, @PathVariable("sortName") String sortName,
-			@RequestParam Optional<String>keyword, @RequestParam Optional<String> sortBy) {
+			@RequestParam(defaultValue = "") Optional<String>keyword, @RequestParam Optional<String> sortBy) {
 
-		LOGGER.info("Inside - InstituteController.getInstutePagination()");
+		LOGGER.info("Inside - InstituteController.getInstutePagination()"+keyword);
 
 		try {
 			Pageable pagingSort = null;
