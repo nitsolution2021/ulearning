@@ -98,7 +98,7 @@ public class InstuteController {
 	@RequestMapping(value = { "/list/{page}/{limit}/{sortName}/{sort}" }, method = RequestMethod.GET)
 	public Map<String, Object> getInstutePagination(@PathVariable("page") int page, @PathVariable("limit") int limit,
 			@PathVariable("sort") String sort, @PathVariable("sortName") String sortName,
-			@RequestParam Optional<String> sortKey, @RequestParam Optional<String> sortBy) {
+			@RequestParam Optional<String>keyword, @RequestParam Optional<String> sortBy) {
 
 		LOGGER.info("Inside - InstituteController.getInstutePagination()");
 
@@ -112,8 +112,8 @@ public class InstuteController {
 			}
 
 			Page<InstituteEntity> findAll = null;
-			if (sortKey.isPresent()) {
-				findAll = instituteRepo.Search(sortKey, pagingSort);
+			if (keyword.isPresent()) {
+				findAll = instituteRepo.Search(keyword, pagingSort);
 			} else {
 				findAll = instituteRepo.findAll(pagingSort);
 			}
