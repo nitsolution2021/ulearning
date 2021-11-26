@@ -310,7 +310,7 @@ public class EmailTemplateController {
 			response.put("perPageElement", findAll.getNumberOfElements());
 
 			if (findAll.getSize() < 1) {
-				throw new CustomException("Institute Not Found!");
+				throw new CustomException("Template Not Found!");
 			} else {
 				return response;
 			}
