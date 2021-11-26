@@ -67,7 +67,7 @@ public class EmailTemplateController {
 						tags = tags + split[i] + " ";
 					}
 				}
-				if(findByEtActionWithDefaultET.size()<1) {
+				if(findByEtActionWithDefaultET.size() > 0) {
 					throw new CustomException("The Custome Template Action is Not Present in Default Action");
 				}
 				if(findByEtActionWithDefaultET.get(0).getEtTags().split(",").length < tags.split(" ").length) {
@@ -138,7 +138,7 @@ public class EmailTemplateController {
 				Optional<EmailTemplateEntity> findById = emailTemplateRepo.findById(id);
 				if(findById.isPresent()) {
 					List<EmailTemplateEntity> findByIdAndDelete = emailTemplateRepo.findByIdAndDelete(0, id);
-					if(findByIdAndDelete.size()<1) {
+					if(findByIdAndDelete.size()>0) {
 						List<EmailTemplateEntity> findByEtActionWithDefaultET = emailTemplateRepo.findByEtActionWithDefaultET(emailTemplateEntity.getEtAction(),"DEFAULT");
 						String[] split = emailTemplateEntity.getEtBody().split(" ");
 						String tags = "";
@@ -310,7 +310,7 @@ public class EmailTemplateController {
 			response.put("perPageElement", findAll.getNumberOfElements());
 
 			if (findAll.getSize() < 1) {
-				throw new CustomException("Institute Not Found!");
+				throw new CustomException("Template Not Found!");
 			} else {
 				return response;
 			}
