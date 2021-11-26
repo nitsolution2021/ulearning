@@ -76,7 +76,7 @@ public class InstuteController {
 		try {
 			Pageable pagingSort = PageRequest.of(page.orElse(0), Limit, Sort.Direction.DESC,
 					sortBy.orElse("createdOn"));
-			Page<InstituteEntity> findAll = instituteRepo.findAll(pagingSort);
+			Page<InstituteEntity> findAll = instituteRepo.findByAllInst(pagingSort);
 			
 			int totalPage=findAll.getTotalPages()-1;
 			if(totalPage < 0) {
@@ -121,7 +121,7 @@ public class InstuteController {
 			if (keyword.isPresent()) {
 				findAll = instituteRepo.Search(keyword.get(), pagingSort);
 			} else {
-				findAll = instituteRepo.findAll(pagingSort);
+				findAll = instituteRepo.findByAllInst(pagingSort);
 			}
 			int totalPage=findAll.getTotalPages()-1;
 			if(totalPage < 0) {
@@ -152,7 +152,7 @@ public class InstuteController {
 		LOGGER.info("Inside - InstituteController.getListInstute()");
 
 		try {			
-			List<InstituteEntity> findAll = instituteRepo.findAll()
+			List<InstituteEntity> findAll = instituteRepo.findByListInst()
 			.stream()
             .filter(Inst -> Inst.getIsDeleted() == 0)
             .filter(Inst -> Inst.getIsActive() == 1)
