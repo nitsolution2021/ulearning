@@ -2,12 +2,18 @@ package org.ulearn.emailtemplateservice.controller;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,6 +30,7 @@ import org.ulearn.emailtemplateservice.entity.GlobalResponse;
 import org.ulearn.emailtemplateservice.exception.CustomException;
 import org.ulearn.emailtemplateservice.repository.EmailTemplateRepo;
 import org.ulearn.emailtemplateservice.validation.FieldValidation;
+
 
 
 @RestController
@@ -227,33 +234,107 @@ public class EmailTemplateController {
 		}
 	}
 	
-	@GetMapping("/getAll/{type}")
-	public List<EmailTemplateEntity> emailTemplateGetAll(@PathVariable("type") String type) {
+	@GetMapping("/getAll/template")
+	public Map<String, Object> emailTemplateGetAll(@RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy) {
 		
 		LOGGER.info("Inside - EmailTemplateController.emailTemplateGetAll()");
 		try {
-			if(type.equals("template")) {
-				List<EmailTemplateEntity> findAllByIdAndDelete = emailTemplateRepo.findAllAndDelete(1);
-				if(findAllByIdAndDelete.size()<1) {
-					throw new CustomException("No Data Present");
-				}else {
-					return findAllByIdAndDelete;
+			int Limit = 10;
+				Pageable pagingSort = PageRequest.of(page.orElse(0), Limit, Sort.Direction.DESC,
+						sortBy.orElse("createdOn"));
+				Page<EmailTemplateEntity> findAll = emailTemplateRepo.findAllAndDelete(0,pagingSort);
+				
+				int totalPage=findAll.getTotalPages()-1;
+				if(totalPage < 0) {
+					totalPage=0;
 				}
-			}else if(type.equals("template_for")){
-				List<EmailTemplateEntity> findAllByIdAndDelete = emailTemplateRepo.findAllByDefaultTemplate("DEFAULT");
-				if(findAllByIdAndDelete.size()<1) {
-					throw new CustomException("No Data Present");
-				}else {
-					return findAllByIdAndDelete;
+				Map<String, Object> response = new HashMap<>();
+				response.put("data", findAll.getContent());
+				response.put("currentPage", findAll.getNumber());
+				response.put("total", findAll.getTotalElements());
+				response.put("totalPage", totalPage);
+				response.put("perPage", findAll.getSize());
+				response.put("perPageElement", findAll.getNumberOfElements());
+
+				if (findAll.getSize() < 1) {
+					throw new CustomException("Template Not Found!");
+				} else {
+					return response;
 				}
-			}else {
-				throw new CustomException("Type Not Matched");
-			}
+
+//				List<EmailTemplateEntity> findAllByIdAndDelete = emailTemplateRepo.findAllAndDelete(1);
+//				if(findAllByIdAndDelete.size()<1) {
+//					throw new CustomException("No Data Present");
+//				}else {
+//					return findAllByIdAndDelete;
+//				}
+				
 		}catch(Exception e) {
 			throw new CustomException(e.getMessage());
 		}
 		
 	}
+	
+	@GetMapping(value = { "/getAll/template/{page}/{limit}/{sortName}/{sort}" })
+	public Map<String, Object> emailTemplateGetAllPagination(@PathVariable("page") int page, @PathVariable("limit") int limit,
+			@PathVariable("sort") String sort, @PathVariable("sortName") String sortName,
+			@RequestParam(defaultValue = "") Optional<String>keyword, @RequestParam Optional<String> sortBy) {
+		
+		LOGGER.info("Inside - EmailTemplateController.emailTemplateGetAllPagination()");
+		try {
+			Pageable pagingSort = null;
+
+			if (sort.equals("ASC")) {
+				pagingSort = PageRequest.of(page, limit, Sort.Direction.ASC, sortBy.orElse(sortName));
+			} else {
+				pagingSort = PageRequest.of(page, limit, Sort.Direction.DESC, sortBy.orElse(sortName));
+			}
+
+			Page<EmailTemplateEntity> findAll = null;
+			if (keyword.isPresent()) {
+				findAll = emailTemplateRepo.Search(keyword.get(), pagingSort);
+			} else {
+				findAll = emailTemplateRepo.findAll(pagingSort);
+			}
+			int totalPage=findAll.getTotalPages()-1;
+			if(totalPage < 0) {
+				totalPage=0;
+			}
+			
+			Map<String, Object> response = new HashMap<>();
+			response.put("data", findAll.getContent());
+			response.put("currentPage", findAll.getNumber());
+			response.put("total", findAll.getTotalElements());
+			response.put("totalPage", totalPage);
+			response.put("perPage", findAll.getSize());
+			response.put("perPageElement", findAll.getNumberOfElements());
+
+			if (findAll.getSize() < 1) {
+				throw new CustomException("Template Not Found!");
+			} else {
+				return response;
+			}
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+		
+	}
+	
+	@GetMapping("/getAll/template_for")
+	public List<EmailTemplateEntity> defaultEmailTemplateGetAll() {
+		LOGGER.info("Inside - EmailTemplateController.emailTemplateGetAll()");
+		try {
+			List<EmailTemplateEntity> findAllByIdAndDelete = emailTemplateRepo.findAllByDefaultTemplate("DEFAULT");
+			if(findAllByIdAndDelete.size()<1) {
+				throw new CustomException("No Data Present");
+			}else {
+				return findAllByIdAndDelete;
+			}
+		}catch(Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+	}
+	
 	
 	@GetMapping("/getPrimaryETByAction/{action}")
 	public EmailTemplateEntity getPrimaryETByAction(@PathVariable("action") String action) {
