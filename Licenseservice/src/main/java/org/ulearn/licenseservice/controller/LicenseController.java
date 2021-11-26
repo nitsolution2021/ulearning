@@ -97,11 +97,12 @@ public class LicenseController {
 	
 	@RequestMapping(value = { "/list/{page}/{limit}/{sortName}/{sort}" }, method = RequestMethod.GET)
 	public Map<String, Object> getLicensePagination(@PathVariable("page") int page, @PathVariable("limit") int limit,
-			@RequestParam Optional<String> sortBy,@PathVariable("sortName") String sortName, @PathVariable("sort") String sort) {
+			@PathVariable("sort") String sort, @PathVariable("sortName") String sortName,
+			@RequestParam(defaultValue = "") Optional<String>keyword, @RequestParam Optional<String> sortBy) {
 		LOGGER.info("Inside - InstituteController.getInstutePagination()");
 		
 		try {
-			return licenseService.forGetLicensePagination(page,limit,sortBy,sortName,sort);
+			return licenseService.forGetLicensePagination(page,limit,sortBy,sortName,sort,keyword);
 			
 		} catch (Exception e) {
 			// TODO: handle exception

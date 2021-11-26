@@ -22,7 +22,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
-
 import org.ulearn.licenseservice.controller.LicenseController;
 import org.ulearn.licenseservice.entity.GlobalResponse;
 import org.ulearn.licenseservice.entity.LicenseEntity;
@@ -278,12 +277,17 @@ public class LicenseService {
 			Pageable pagingSort = PageRequest.of(page.orElse(0), Limit, Sort.Direction.DESC,
 					sortBy.orElse("createdOn"));
 			Page<LicenseEntity> findAll = LicenseRepo.findAll(pagingSort);
-
+			
+			int totalPage=findAll.getTotalPages()-1;
+			if(totalPage < 0) {
+				totalPage=0;
+			}
+			
 			Map<String, Object> response = new HashMap<>();
 			response.put("data", findAll.getContent());
 			response.put("currentPage", findAll.getNumber());
 			response.put("total", findAll.getTotalElements());
-			response.put("totalPage", findAll.getTotalPages());
+			response.put("totalPage", totalPage);
 			response.put("perPage", findAll.getSize());
 			response.put("perPageElement", findAll.getNumberOfElements());
 
@@ -307,25 +311,33 @@ public class LicenseService {
 	}
 	
 	public Map<String, Object> forGetLicensePagination(int page, int limit, Optional<String> sortBy, String sortName,
-			String sort) {
+			String sort, Optional<String> keyword) {
 		// TODO Auto-generated method stub
 		try {
-				Pageable pagingSort=null;
-				
-				if(sortName=="ASC") {						
-					 pagingSort = PageRequest.of(page, limit, Sort.Direction.ASC, sortBy.orElse(sortName));
-				}else {
-					 pagingSort = PageRequest.of(page, limit, Sort.Direction.DESC, sortBy.orElse(sortName));
+				Pageable pagingSort = null;
+	
+				if (sort.equals("ASC")) {
+					pagingSort = PageRequest.of(page, limit, Sort.Direction.ASC, sortBy.orElse(sortName));
+				} else {
+					pagingSort = PageRequest.of(page, limit, Sort.Direction.DESC, sortBy.orElse(sortName));
+				}
+	
+				Page<LicenseEntity> findAll = null;
+				if (keyword.isPresent()) {
+					findAll = LicenseRepo.Search(keyword.get(), pagingSort);
+				} else {
+					findAll = LicenseRepo.findByAllLicense(pagingSort);
+				}
+				int totalPage=findAll.getTotalPages()-1;
+				if(totalPage < 0) {
+					totalPage=0;
 				}
 				
-				
-				Page<LicenseEntity> findAll = LicenseRepo.findAll(pagingSort);
-	
 				Map<String, Object> response = new HashMap<>();
 				response.put("data", findAll.getContent());
 				response.put("currentPage", findAll.getNumber());
 				response.put("total", findAll.getTotalElements());
-				response.put("totalPage", findAll.getTotalPages());
+				response.put("totalPage", totalPage);
 				response.put("perPage", findAll.getSize());
 				response.put("perPageElement", findAll.getNumberOfElements());
 	
