@@ -92,7 +92,7 @@ public class EmailTemplateController {
 					newEmailTemplateEntity.setIsPrimary(emailTemplateEntity.getIsPrimary());
 					newEmailTemplateEntity.setEtAction(emailTemplateEntity.getEtAction());
 					newEmailTemplateEntity.setIsActive(1);
-					newEmailTemplateEntity.setIsDeleted(1);
+					newEmailTemplateEntity.setIsDeleted(0);
 					newEmailTemplateEntity.setEtOrder(emailTemplateEntity.getEtOrder());
 					newEmailTemplateEntity.setEtTags(emailTemplateEntity.getEtTags());
 					newEmailTemplateEntity.setCreatedOn(new Date());
@@ -130,7 +130,7 @@ public class EmailTemplateController {
 				
 				Optional<EmailTemplateEntity> findById = emailTemplateRepo.findById(id);
 				if(findById.isPresent()) {
-					List<EmailTemplateEntity> findByIdAndDelete = emailTemplateRepo.findByIdAndDelete(1, id);
+					List<EmailTemplateEntity> findByIdAndDelete = emailTemplateRepo.findByIdAndDelete(0, id);
 					if(findByIdAndDelete.size()<1) {
 						List<EmailTemplateEntity> findByEtActionWithDefaultET = emailTemplateRepo.findByEtActionWithDefaultET(emailTemplateEntity.getEtAction(),"DEFAULT");
 						String[] split = emailTemplateEntity.getEtBody().split(" ");
@@ -201,7 +201,7 @@ public class EmailTemplateController {
 		try {
 			Optional<EmailTemplateEntity> findById = emailTemplateRepo.findById(id);
 			if(findById.isPresent()) {
-				List<EmailTemplateEntity> findByIdAndDelete = emailTemplateRepo.findByIdAndDelete(1, id);
+				List<EmailTemplateEntity> findByIdAndDelete = emailTemplateRepo.findByIdAndDelete(0, id);
 				if(findByIdAndDelete.size()<1) {
 					if(findByIdAndDelete.get(1).getEtType().equals("DEFAULT")) {
 						EmailTemplateEntity emailTemplateEntity = findById.get();
@@ -278,7 +278,7 @@ public class EmailTemplateController {
 		
 		LOGGER.info("Inside - EmailTemplateController.viewTemplate()");
 		try {
-			List<EmailTemplateEntity> findByIdAndDelete = emailTemplateRepo.findByIdAndDelete(1, id);
+			List<EmailTemplateEntity> findByIdAndDelete = emailTemplateRepo.findByIdAndDelete(0, id);
 			if(findByIdAndDelete.size()>0) {
 				return findByIdAndDelete.get(0);
 			}else {
