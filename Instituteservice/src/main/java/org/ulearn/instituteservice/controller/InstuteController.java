@@ -119,7 +119,7 @@ public class InstuteController {
 
 			Page<InstituteEntity> findAll = null;
 			if (keyword.isPresent()) {
-				findAll = instituteRepo.Search(keyword, pagingSort);
+				findAll = instituteRepo.Search(keyword.get(), pagingSort);
 			} else {
 				findAll = instituteRepo.findAll(pagingSort);
 			}
