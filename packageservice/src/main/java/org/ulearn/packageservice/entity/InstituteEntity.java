@@ -71,12 +71,23 @@ public class InstituteEntity implements Serializable{
 	private List<InstituteAddressEntity> instituteAddress = new ArrayList<>();
 	@OneToMany
 	@JoinColumn(name = "INST_ID")
-	private PackageEntity packageEntity;
+	
+	private List<PackageEntity> packageEntity = new ArrayList<>();
+	@Override
+	public String toString() {
+		return "InstituteEntity [instId=" + instId + ", instName=" + instName + ", instEndDate=" + instEndDate
+				+ ", instWebsite=" + instWebsite + ", instEmail=" + instEmail + ", instCnum=" + instCnum + ", instMnum="
+				+ instMnum + ", isntRegDate=" + isntRegDate + ", instLogo=" + instLogo + ", instPanNum=" + instPanNum
+				+ ", instGstNum=" + instGstNum + ", instStatus=" + instStatus + ", isActive=" + isActive
+				+ ", isDeleted=" + isDeleted + ", createdOn=" + createdOn + ", updatedOn=" + updatedOn
+				+ ", instituteAdmin=" + instituteAdmin + ", instituteAddress=" + instituteAddress + ", packageEntity="
+				+ packageEntity + "]";
+	}
 	public InstituteEntity(Long instId, String instName, Date instEndDate, String instWebsite, String instEmail,
 			String instCnum, String instMnum, Date isntRegDate, String instLogo, String instPanNum, String instGstNum,
 			String instStatus, int isActive, int isDeleted, Date createdOn, Date updatedOn,
 			InstituteAdminEntity instituteAdmin, List<InstituteAddressEntity> instituteAddress,
-			PackageEntity packageEntity) {
+			List<PackageEntity> packageEntity) {
 		super();
 		this.instId = instId;
 		this.instName = instName;
@@ -210,21 +221,12 @@ public class InstituteEntity implements Serializable{
 	public void setInstituteAddress(List<InstituteAddressEntity> instituteAddress) {
 		this.instituteAddress = instituteAddress;
 	}
-	public PackageEntity getPackageEntity() {
+	public List<PackageEntity> getPackageEntity() {
 		return packageEntity;
 	}
-	public void setPackageEntity(PackageEntity packageEntity) {
+	public void setPackageEntity(List<PackageEntity> packageEntity) {
 		this.packageEntity = packageEntity;
 	}
-	@Override
-	public String toString() {
-		return "InstituteEntity [instId=" + instId + ", instName=" + instName + ", instEndDate=" + instEndDate
-				+ ", instWebsite=" + instWebsite + ", instEmail=" + instEmail + ", instCnum=" + instCnum + ", instMnum="
-				+ instMnum + ", isntRegDate=" + isntRegDate + ", instLogo=" + instLogo + ", instPanNum=" + instPanNum
-				+ ", instGstNum=" + instGstNum + ", instStatus=" + instStatus + ", isActive=" + isActive
-				+ ", isDeleted=" + isDeleted + ", createdOn=" + createdOn + ", updatedOn=" + updatedOn
-				+ ", instituteAdmin=" + instituteAdmin + ", instituteAddress=" + instituteAddress + ", packageEntity="
-				+ packageEntity + "]";
-	}
 	
+		
 }
