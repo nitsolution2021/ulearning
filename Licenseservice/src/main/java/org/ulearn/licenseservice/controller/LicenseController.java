@@ -99,7 +99,7 @@ public class LicenseController {
 	public Map<String, Object> getLicensePagination(@PathVariable("page") int page, @PathVariable("limit") int limit,
 			@PathVariable("sort") String sort, @PathVariable("sortName") String sortName,
 			@RequestParam(defaultValue = "") Optional<String>keyword, @RequestParam Optional<String> sortBy) {
-		LOGGER.info("Inside - InstituteController.getInstutePagination()");
+		LOGGER.info("Inside - LicenseController.getLicensePagination()");
 		
 		try {
 			return licenseService.forGetLicensePagination(page,limit,sortBy,sortName,sort,keyword);
