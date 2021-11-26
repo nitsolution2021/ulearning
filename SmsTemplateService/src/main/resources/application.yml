@@ -8,7 +8,9 @@ spring:
   jpa:
     hibernate: 
       ddl-auto: none
- 
+  jackson:
+    time-zone: Asia/Kolkata
+    
 server: 
   port: 8089
   servlet: 

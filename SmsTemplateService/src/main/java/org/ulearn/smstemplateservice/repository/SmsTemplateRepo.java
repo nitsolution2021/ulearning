@@ -2,6 +2,8 @@ package org.ulearn.smstemplateservice.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.ulearn.smstemplateservice.entity.SmsTemplateEntity;
@@ -13,4 +15,7 @@ public interface SmsTemplateRepo extends JpaRepository<SmsTemplateEntity, Long> 
 	List<SmsTemplateEntity> findByStType(String stType);
 	
 	List<SmsTemplateEntity> findByStAction(String stAction);
+
+	@Query("SELECT Obj FROM SmsTemplateEntity Obj WHERE Obj.isDeleted = 0 and Obj.stName LIKE %?1%")
+	Page<SmsTemplateEntity> search(String string, Pageable pagingSort);
 }

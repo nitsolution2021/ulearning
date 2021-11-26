@@ -1,6 +1,8 @@
 package org.ulearn.smstemplateservice.controller;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.ulearn.smstemplateservice.entity.GlobalEntity;
 import org.ulearn.smstemplateservice.entity.GlobalResponseEntity;
@@ -42,10 +45,22 @@ public class SmsTemplateController {
 	}
 	
 	@GetMapping("/list")
-	public List<SmsTemplateEntity> getSmsTemplate() {
+	public Map<String, Object> getSmsTemplate(@RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy) {
 		LOGGER.info("Inside - SmsTemplateController.getSmsTemplate()");
 		try {
-			return smsTemplateService.getSmsTemplate();
+			return smsTemplateService.getSmsTemplate(page, sortBy);
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+	}
+	
+	@GetMapping(value = "/list/{page}/{limit}/{sortName}/{sort}")
+	public Map<String, Object> getSmsTemplatePagination(@PathVariable("page") int page, @PathVariable("limit") int limit,
+			@PathVariable("sort") String sort, @PathVariable("sortName") String sortName,
+			@RequestParam(defaultValue = "") Optional<String> keyword, @RequestParam Optional<String> sortBy) {
+		LOGGER.info("Inside - SmsTemplateController.getSmsTemplatePagination()");
+		try {
+			return smsTemplateService.getSmsTemplatePagination(page, limit, sort, sortName, keyword, sortBy);
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
 		}

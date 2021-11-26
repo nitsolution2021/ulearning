@@ -2,12 +2,18 @@ package org.ulearn.smstemplateservice.services;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.ulearn.smstemplateservice.entity.GlobalEntity;
 import org.ulearn.smstemplateservice.entity.GlobalResponseEntity;
@@ -74,15 +80,40 @@ public class SmsTemplateService {
 		}
 	}
 
-	public List<SmsTemplateEntity> getSmsTemplate() {
+	public Map<String, Object> getSmsTemplate(Optional<Integer> page, Optional<String> sortBy) {
 		LOGGER.info("Inside - SmsTemplateService.getSmsTemplate()");
 		try {
-			List<SmsTemplateEntity> findAll = smsTemplateRepo.findTemplate(0);
-			if (findAll.size() > 0) {
-				return findAll;
-			} else {
-				throw new CustomException("Data not found");
+			int Limit = 10;
+			
+			Pageable pagingSort = PageRequest.of(page.orElse(0), Limit, Sort.Direction.DESC,
+					sortBy.orElse("createdOn"));
+			Page<SmsTemplateEntity> findAll = smsTemplateRepo.findAll(pagingSort);
+			
+			int totalPage=findAll.getTotalPages()-1;
+			if(totalPage < 0) {
+				totalPage=0;
 			}
+			Map<String, Object> response = new HashMap<>();
+			response.put("data", findAll.getContent());
+			response.put("currentPage", findAll.getNumber());
+			response.put("total", findAll.getTotalElements());
+			response.put("totalPage", totalPage);
+			response.put("perPage", findAll.getSize());
+			response.put("perPageElement", findAll.getNumberOfElements());
+
+			if (findAll.getSize() < 1) {
+				throw new CustomException("Institute Not Found!");
+			} else {
+				return response;
+			}
+			
+			
+//			List<SmsTemplateEntity> findAll = smsTemplateRepo.findTemplate(0);
+//			if (findAll.size() > 0) {
+//				return findAll;
+//			} else {
+//				throw new CustomException("Data not found");
+//			}
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
 		}
@@ -122,6 +153,7 @@ public class SmsTemplateService {
 					smsTemplateEntity.setStOrder(findById.get().getStOrder());
 					smsTemplateEntity.setStTags(findById.get().getStTags());
 					smsTemplateEntity.setStTempId(globalEntity.getStTempId());
+					smsTemplateEntity.setStType(findById.get().getStType());
 					smsTemplateEntity.setUpdatedOn(new Date());
 					smsTemplateEntity.setStId(stId);
 					SmsTemplateEntity save = smsTemplateRepo.save(smsTemplateEntity);
@@ -265,6 +297,47 @@ public class SmsTemplateService {
 				}
 			} else {
 				throw new CustomException("Your requested id is not available");
+			}
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+	}
+
+	public Map<String, Object> getSmsTemplatePagination(int page, int limit, String sort, String sortName,
+			Optional<String> keyword, Optional<String> sortBy) {
+		LOGGER.info("Inside - SmsTemplateService.getSmsTemplatePagination()");
+		try {
+			Pageable pagingSort = null;
+
+			if (sort.equals("ASC")) {
+				pagingSort = PageRequest.of(page, limit, Sort.Direction.ASC, sortBy.orElse(sortName));
+			} else {
+				pagingSort = PageRequest.of(page, limit, Sort.Direction.DESC, sortBy.orElse(sortName));
+			}
+
+			Page<SmsTemplateEntity> findAll = null;
+			if (keyword.isPresent()) {
+				findAll = smsTemplateRepo.search(keyword.get(), pagingSort);
+			} else {
+				findAll = smsTemplateRepo.findAll(pagingSort);
+			}
+			int totalPage=findAll.getTotalPages()-1;
+			if(totalPage < 0) {
+				totalPage=0;
+			}
+			
+			Map<String, Object> response = new HashMap<>();
+			response.put("data", findAll.getContent());
+			response.put("currentPage", findAll.getNumber());
+			response.put("total", findAll.getTotalElements());
+			response.put("totalPage", totalPage);
+			response.put("perPage", findAll.getSize());
+			response.put("perPageElement", findAll.getNumberOfElements());
+
+			if (findAll.getSize() < 1) {
+				throw new CustomException("Institute Not Found!");
+			} else {
+				return response;
 			}
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
