@@ -163,8 +163,8 @@ public class LicenseService {
 					fieldValidation.isEmpty(licenseForUpdate.getLcStype()) & fieldValidation.isEmpty(licenseForUpdate.getLcValidityType()) & 
 					fieldValidation.isEmpty(licenseForUpdate.getLcValidityNum()) & fieldValidation.isEmpty(licenseForUpdate.getLcEndDate())) {
 			
-//					Optional<LicenseEntity> findByInstId = LicenseRepo.findByInstId(licenseForUpdate.getInstId());
-//					if(!findByInstId.isPresent()) {
+					Optional<LicenseEntity> findByInstId = LicenseRepo.findByInstId(licenseForUpdate.getInstId());
+					if(!findByInstId.isPresent()) {
 					
 					Optional<LicenseEntity> findById = this.LicenseRepo.findById(licenseId);
 					if(findById.isPresent()) {
@@ -243,7 +243,7 @@ public class LicenseService {
 								return new GlobalResponse("SUCCESS","Update Successfull",200);
 							}
 							else {
-								throw new CustomException("Upade not successfull");
+								throw new CustomException("Update not successfull");
 							}
 						}
 						else {
@@ -253,11 +253,11 @@ public class LicenseService {
 					else {
 						throw new CustomException("License not found for this Id  "+licenseId);
 					}
-//				}
-//				else {
-//					
-//					throw new CustomException("A license have already assigned for ths institute..");
-//				}
+				}
+				else {
+					
+					throw new CustomException("A license have already assigned for ths institute..");
+				}
 			}
 			else {
 			

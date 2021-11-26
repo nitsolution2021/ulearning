@@ -8,7 +8,7 @@ public class GlobalResponse {
 	
 	@Override
 	public String toString() {
-		return "GlobalResponse [resion=" + resion + ", message=" + message + ", statuss=" + status + "]";
+		return "GlobalResponse [resion=" + resion + ", message=" + message + ", status=" + status + "]";
 	}
 	public GlobalResponse() {
 		super();
