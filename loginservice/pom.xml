@@ -12,7 +12,6 @@
 	<groupId>org.ulearn.login</groupId>
 	<artifactId>loginservice</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
 	<name>LoginService</name>
 	<description>Login Module For U-Learn</description>
 	<properties>
