@@ -67,7 +67,7 @@ public class EmailTemplateController {
 						tags = tags + split[i] + " ";
 					}
 				}
-				if(findByEtActionWithDefaultET.size() > 0) {
+				if(findByEtActionWithDefaultET.size() <1) {
 					throw new CustomException("The Custome Template Action is Not Present in Default Action");
 				}
 				if(findByEtActionWithDefaultET.get(0).getEtTags().split(",").length < tags.split(" ").length) {
