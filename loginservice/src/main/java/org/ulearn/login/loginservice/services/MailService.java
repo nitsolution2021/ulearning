@@ -29,7 +29,7 @@ public class MailService {
 			MimeMessageHelper helper = new MimeMessageHelper(message);
 
 			helper.setSubject(subject);
-			helper.setFrom("developer.nitsolution@gmail.com");
+			helper.setFrom("soumendolui077@gmail.com");
 			helper.setTo(to);
 			helper.setText(body, enableHtml);
 			mailSender.send(message);

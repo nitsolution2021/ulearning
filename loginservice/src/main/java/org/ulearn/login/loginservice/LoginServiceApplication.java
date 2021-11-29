@@ -46,8 +46,8 @@ public class LoginServiceApplication implements CommandLineRunner{
 		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
 		mailSender.setHost("smtp.gmail.com");
 		mailSender.setPort(587);
-		mailSender.setUsername("developer.nitsolution@gmail.com");
-		mailSender.setPassword("devNIT@1234");
+		mailSender.setUsername("soumendolui077@gmail.com");
+		mailSender.setPassword("Soumen@1234c2");
 		 
 		Properties properties = new Properties();
 		properties.setProperty("mail.smtp.auth", "true");
