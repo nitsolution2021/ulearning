@@ -47,7 +47,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping("/login")
 public class LoginContoller {
 
@@ -254,7 +253,7 @@ public class LoginContoller {
 //			HttpHeaders responseHeaders = new HttpHeaders();
 //		    responseHeaders.set("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, remember-me");
 
-			return ResponseEntity.ok(new LoginUserDetails(token,findByUserName.get().getUid(),findByUserName.get().getUserName() , findByUserName.get().getPassword()));
+			return ResponseEntity.ok(new LoginUserDetails(token,findByUserName.get().getUid(),findByUserName.get().getUserName() , findByUserName.get().getPassword(), "Login successful", 200));
 		
 		}catch(Exception e) {
 			throw new CustomException(e.getMessage());

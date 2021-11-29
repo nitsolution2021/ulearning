@@ -60,7 +60,7 @@ public class SmsTemplateService {
 				smsTemplateEntity.setStOrder(globalEntity.getStOrder());
 				// need to discuss
 				smsTemplateEntity.setStTags(globalEntity.getStTags());
-				////End
+				//// End
 				smsTemplateEntity.setStTempId(globalEntity.getStTempId());
 				smsTemplateEntity.setStSubject(globalEntity.getStSubject());
 				smsTemplateEntity.setStType("CUSTOM");
@@ -84,14 +84,14 @@ public class SmsTemplateService {
 		LOGGER.info("Inside - SmsTemplateService.getSmsTemplate()");
 		try {
 			int Limit = 10;
-			
+
 			Pageable pagingSort = PageRequest.of(page.orElse(0), Limit, Sort.Direction.DESC,
 					sortBy.orElse("createdOn"));
 			Page<SmsTemplateEntity> findAll = smsTemplateRepo.findAll(pagingSort);
-			
-			int totalPage=findAll.getTotalPages()-1;
-			if(totalPage < 0) {
-				totalPage=0;
+
+			int totalPage = findAll.getTotalPages() - 1;
+			if (totalPage < 0) {
+				totalPage = 0;
 			}
 			Map<String, Object> response = new HashMap<>();
 			response.put("data", findAll.getContent());
@@ -106,8 +106,7 @@ public class SmsTemplateService {
 			} else {
 				return response;
 			}
-			
-			
+
 //			List<SmsTemplateEntity> findAll = smsTemplateRepo.findTemplate(0);
 //			if (findAll.size() > 0) {
 //				return findAll;
@@ -128,8 +127,7 @@ public class SmsTemplateService {
 					SmsTemplateEntity smsTemplateEntity = new SmsTemplateEntity();
 					smsTemplateEntity.setIsActive(findById.get().getIsActive());
 					smsTemplateEntity.setIsDeleted(findById.get().getIsDeleted());
-					
-					
+
 					if (globalEntity.getIsPrimary() == 1) {
 						List<SmsTemplateEntity> items = new ArrayList<SmsTemplateEntity>();
 						List<SmsTemplateEntity> findAll = smsTemplateRepo.findByStAction(globalEntity.getStAction());
@@ -142,8 +140,7 @@ public class SmsTemplateService {
 					} else {
 						smsTemplateEntity.setIsPrimary(globalEntity.getIsPrimary());
 					}
-					
-					
+
 //					smsTemplateEntity.setIsPrimary(globalEntity.getIsPrimary());
 					smsTemplateEntity.setStAction(globalEntity.getStAction());
 					smsTemplateEntity.setCreatedOn(findById.get().getCreatedOn());
@@ -188,7 +185,7 @@ public class SmsTemplateService {
 			throw new CustomException("Template For required");
 		} else if (!fieldValidation.isEmpty(globalEntity.getIsPrimary())) {
 			// SMS template is_Primary represent Set Default
-			LOGGER.info(globalEntity.getIsPrimary()+"");
+			LOGGER.info(globalEntity.getIsPrimary() + "");
 			throw new CustomException("Set Default required");
 		} else {
 			return true;
@@ -321,11 +318,11 @@ public class SmsTemplateService {
 			} else {
 				findAll = smsTemplateRepo.findAll(pagingSort);
 			}
-			int totalPage=findAll.getTotalPages()-1;
-			if(totalPage < 0) {
-				totalPage=0;
+			int totalPage = findAll.getTotalPages() - 1;
+			if (totalPage < 0) {
+				totalPage = 0;
 			}
-			
+
 			Map<String, Object> response = new HashMap<>();
 			response.put("data", findAll.getContent());
 			response.put("currentPage", findAll.getNumber());
@@ -343,7 +340,5 @@ public class SmsTemplateService {
 			throw new CustomException(e.getMessage());
 		}
 	}
-	
-	
 
 }

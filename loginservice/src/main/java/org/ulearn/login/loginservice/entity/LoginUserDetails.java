@@ -16,6 +16,8 @@ public class LoginUserDetails implements UserDetails{
 		private Long UId;
 		private String username;
 		private String password;
+		private String message;
+		private int status;
 
 		
 		public LoginUserDetails(LoginEntity vendor) {
@@ -46,14 +48,35 @@ public class LoginUserDetails implements UserDetails{
 		public void setPassword(String password) {
 			this.password = password;
 		}
+		
+		public String getMessage() {
+			return message;
+		}
 
 
-		public LoginUserDetails(String token, Long uId, String username, String password) {
+		public void setMessage(String message) {
+			this.message = message;
+		}
+
+
+		public int getStatus() {
+			return status;
+		}
+
+
+		public void setStatus(int status) {
+			this.status = status;
+		}
+
+
+		public LoginUserDetails(String token, Long uId, String username, String password, String message, int status) {
 			super();
 			this.token = token;
 			UId = uId;
 			this.username = username;
 			this.password = password;
+			this.message = message;
+			this.status = status;
 		}
 
 

@@ -3,18 +3,23 @@ package org.ulearn.smstemplateservice.entity;
 public class GlobalResponseEntity {
 	private String reason;
 	private String message;
-	private int statuss;
+	private int status;
 
 	public GlobalResponseEntity() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public GlobalResponseEntity(String reason, String message, int statuss) {
+	public GlobalResponseEntity(String reason, String message, int status) {
 		super();
 		this.reason = reason;
 		this.message = message;
-		this.statuss = statuss;
+		this.status = status;
+	}
+
+	@Override
+	public String toString() {
+		return "GlobalResponseEntity [reason=" + reason + ", message=" + message + ", status=" + status + "]";
 	}
 
 	public String getReason() {
@@ -33,12 +38,12 @@ public class GlobalResponseEntity {
 		this.message = message;
 	}
 
-	public int getStatuss() {
-		return statuss;
+	public int getStatus() {
+		return status;
 	}
 
-	public void setStatuss(int statuss) {
-		this.statuss = statuss;
+	public void setStatus(int status) {
+		this.status = status;
 	}
 
 }

@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 
 @Entity
 @Table(name = "tbl_inst_admin")
@@ -25,7 +26,7 @@ public class InstituteAdminEntity {
 	private String amdFname;
 	@Column(name = "ADM_LNAME")
 	private String amdLname;
-	@JsonFormat(pattern = "yyyy/mm/dd")
+	@JsonFormat(shape = Shape.STRING, pattern = "yyyy/MM/dd")
 	@Column(name = "ADM_DOB")
 	private Date amdDob;
 	@Column(name = "ADM_MNUM")

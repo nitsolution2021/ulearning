@@ -109,7 +109,7 @@ public class EmailTemplateController {
 					if(save.equals(null)) {
 						throw new CustomException("Data Not Save Try Again");
 					}else {
-						return new GlobalResponse("Data Save Successfully","SUCCESS");
+						return new GlobalResponse("Data Save Successfully","SUCCESS",200);
 					}	
 				}else {
 					throw new CustomException("The Custome Template Action is Not Present in Default Action");
@@ -180,7 +180,7 @@ public class EmailTemplateController {
 							if(save.equals(null)) {
 								throw new CustomException("Data Not Save Try Again");
 							}else {
-								return new GlobalResponse("Data Save Successfully","SUCCESS");
+								return new GlobalResponse("Data Save Successfully","SUCCESS",200);
 							}	
 							
 						}else {
@@ -202,22 +202,22 @@ public class EmailTemplateController {
 	}
 	
 	@DeleteMapping("/delete/{id}")
-	public GlobalResponse emailTemplateDelete(@RequestParam("id") Long id) {
+	public GlobalResponse emailTemplateDelete(@PathVariable("id") Long id) {
 		
 		LOGGER.info("Inside - EmailTemplateController.emailTemplateDelete()");
 		try {
 			Optional<EmailTemplateEntity> findById = emailTemplateRepo.findById(id);
 			if(findById.isPresent()) {
 				List<EmailTemplateEntity> findByIdAndDelete = emailTemplateRepo.findByIdAndDelete(0, id);
-				if(findByIdAndDelete.size()<1) {
-					if(findByIdAndDelete.get(1).getEtType().equals("DEFAULT")) {
+				if(findByIdAndDelete.size()>0) {
+					if(findByIdAndDelete.get(0).getEtType().equals("CUSTOM")) {
 						EmailTemplateEntity emailTemplateEntity = findById.get();
-						emailTemplateEntity.setIsDeleted(0);
+						emailTemplateEntity.setIsDeleted(1);
 						EmailTemplateEntity save = emailTemplateRepo.save(emailTemplateEntity);
 						if(save.equals(null)) {
 							throw new CustomException("Data Not Save Try Again");
 						}else {
-							return new GlobalResponse("Data Save Successfully","SUCCESS");
+							return new GlobalResponse("Data Save Successfully","SUCCESS",200);
 						}	
 					}else {
 						throw new CustomException("Default Template Can't be Deleted");
