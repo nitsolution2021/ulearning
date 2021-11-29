@@ -50,7 +50,7 @@ public class LoginServiceApplication implements CommandLineRunner{
 		mailSender.setPassword("devNIT@1234");
 		 
 		Properties properties = new Properties();
-		properties.setProperty("mail.smtp.auth", "false");
+		properties.setProperty("mail.smtp.auth", "true");
 		properties.setProperty("mail.smtp.starttls.enable", "true");
 		 
 		mailSender.setJavaMailProperties(properties);
