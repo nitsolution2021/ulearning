@@ -58,6 +58,10 @@ public class EmailTemplateController {
 					fieldValidation.isEmpty(emailTemplateEntity.getEtAction()) &&
 					fieldValidation.isEmpty(emailTemplateEntity.getIsPrimary())
 					){
+				Optional<EmailTemplateEntity> findByEtName = emailTemplateRepo.findByEtName(emailTemplateEntity.getEtName());
+				if(findByEtName.isPresent()) {
+					throw new CustomException("The Template Name Already Exist");
+				}
 				List<EmailTemplateEntity> findByEtActionWithDefaultET = emailTemplateRepo.findByEtActionWithDefaultET(emailTemplateEntity.getEtAction(),"DEFAULT");
 				String[] split = emailTemplateEntity.getEtBody().split(" ");
 				String tags = "";
@@ -134,9 +138,15 @@ public class EmailTemplateController {
 					fieldValidation.isEmpty(emailTemplateEntity.getEtBody()) &&
 					fieldValidation.isEmpty(emailTemplateEntity.getEtAction()) &&
 					fieldValidation.isEmpty(emailTemplateEntity.getIsPrimary())) {
-				
+				Optional<EmailTemplateEntity> findByEtName = emailTemplateRepo.findByEtName(emailTemplateEntity.getEtName());
+				if(findByEtName.isPresent()) {
+					throw new CustomException("The Template Name Already Exist");
+				}
 				Optional<EmailTemplateEntity> findById = emailTemplateRepo.findById(id);
 				if(findById.isPresent()) {
+					if(findById.get().getEtType().equals("DEFAULT")) {
+						throw new CustomException("Default Template Can't Delete");
+					}
 					List<EmailTemplateEntity> findByIdAndDelete = emailTemplateRepo.findByIdAndDelete(0, id);
 					if(findByIdAndDelete.size()>0) {
 						List<EmailTemplateEntity> findByEtActionWithDefaultET = emailTemplateRepo.findByEtActionWithDefaultET(emailTemplateEntity.getEtAction(),"DEFAULT");

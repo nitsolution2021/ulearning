@@ -1,6 +1,7 @@
 package org.ulearn.emailtemplateservice.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,5 +35,8 @@ public interface EmailTemplateRepo extends JpaRepository<EmailTemplateEntity, Lo
 	
 	@Query("SELECT Obj FROM EmailTemplateEntity Obj WHERE Obj.isDeleted = 0 and Obj.etName LIKE %?1%")
     Page<EmailTemplateEntity> Search(String sortKey, Pageable pageable);
+	
+	public Optional<EmailTemplateEntity> findByEtName(String etName);
+	
 	
 }
