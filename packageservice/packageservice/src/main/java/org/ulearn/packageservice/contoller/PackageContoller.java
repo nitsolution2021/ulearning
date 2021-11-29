@@ -1,8 +1,10 @@
 package org.ulearn.packageservice.contoller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 import org.hibernate.internal.build.AllowSysOut;
 import org.hibernate.type.descriptor.sql.TinyIntTypeDescriptor;
@@ -13,6 +15,10 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -25,6 +31,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.ulearn.packageservice.entity.InstituteAdminEntity;
@@ -60,19 +67,39 @@ public class PackageContoller {
 	private static final Logger log = LoggerFactory.getLogger(PackageContoller.class);
 
 	@GetMapping("/list")
-	public List<?> listAlldata(@RequestHeader("Authorization") String token ) {
+	public Map<String, Object> getInstute(@RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy) {
+		log.info("Inside - InstituteController.getpackage()");
+
+		int Limit = 10;
+
 		try {
-			log.info("Inside-PackageController.list");
-			List<InstituteEntity> allPackagedata =instituteRepo.findAll();
-			if (allPackagedata != null) {
-				return allPackagedata;
+			Pageable pagingSort = PageRequest.of(page.orElse(0), Limit, Sort.Direction.DESC,
+					sortBy.orElse("createdOn"));
+			Page<InstituteEntity> findAll = instituteRepo.findByAllInst(pagingSort);
+			
+			int totalPage=findAll.getTotalPages()-1;
+			if(totalPage < 0) {
+				totalPage=0;
+			}
+			Map<String, Object> response = new HashMap<>();
+			response.put("data", findAll.getContent());
+			response.put("currentPage", findAll.getNumber());
+			response.put("total", findAll.getTotalElements());
+			response.put("totalPage", totalPage);
+			response.put("perPage", findAll.getSize());
+			response.put("perPageElement", findAll.getNumberOfElements());
+
+			if (findAll.getSize() < 1) {
+				throw new CustomException("Package Not Found!");
 			} else {
-				throw new CustomException("No data found");
+				return response;
 			}
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
 		}
+
 	}
+
 
 	@GetMapping("/view/{pkId}")
 	public Optional<?> viewPackagedata(@PathVariable long pkId,
@@ -99,10 +126,10 @@ public class PackageContoller {
 					return Optional.of(dataResponseEntity);
 
 				} else {
-					throw new CustomException("NO RECORD FOUND");
+					throw new CustomException("No Id Found");
 				}
 			} else {
-				throw new CustomException("Invalid data input");
+				throw new CustomException("Invalid Data Input");
 			}
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
@@ -126,26 +153,25 @@ public class PackageContoller {
 				header.set("Authorization", token);
 				HttpEntity request = new HttpEntity(header);
 
-				ResponseEntity<String> response = new RestTemplate().exchange(
-						"http://localhost:8087/dev/institute/insIdvalidation/" + newData.getInstId(), HttpMethod.GET,
-						request, String.class);
-				System.out.println(response.getBody());
-				// if(response.)
-
-				if (response.getBody().equals("notOk")) {
-					throw new CustomException("Institute Id does not exist");
-				} else if (response.getBody().equals("Exception")) {
-					throw new CustomException("Exception");
-				} else {
+//				ResponseEntity<String> response = new RestTemplate().exchange(
+//						"http://localhost:8087/dev/institute/insIdvalidation/" + newData.getInstId(), HttpMethod.GET,
+//						request, String.class);
+//				System.out.println(response.getBody());
+//				// if(response.)
+//
+//				if (response.getBody().equals("notOk")) {
+//					throw new CustomException("Institute Id Does Not Exist");
+//				} else if (response.getBody().equals("Exception")) {
+//					throw new CustomException("Exception");
+//				} else {
 					newData.setCreatedOn(new Date());
 					newData.setIsActive((long) 1);
 					newData.setIsDeleted((long) 0);
 					newData.setPkCdate(new Date());
 					packageRepo.save(newData);
-					return new GlobalResponse("SUCCESSFULL", "Data is strored in database successfull");
-				}
+					return new GlobalResponse("SUCCESS", "Package Added Succesfully");
 			} else {
-				throw new CustomException("Please enter valid data");
+				throw new CustomException("Please Enter Valid Data");
 			}
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
@@ -170,7 +196,7 @@ public class PackageContoller {
 							& (fieldValidation.isEmpty(updatePackagedata.getPkValidityType()))) {
 						PackageEntity dbData = packageRepo.getById(pkId);
 						if (dbData.getInstId() != updatePackagedata.getInstId()) {
-							throw new CustomException("Please enter valid institute id");
+							throw new CustomException("Institute id cannot updated");
 						}
 						updatePackagedata.setCreatedOn(dbData.getCreatedOn());
 						updatePackagedata.setPkId(dbData.getPkId());
@@ -179,15 +205,15 @@ public class PackageContoller {
 						updatePackagedata.setIsDeleted(dbData.getIsDeleted());
 						updatePackagedata.setUpdatedOn(new Date());
 						packageRepo.save(updatePackagedata);
-						return new GlobalResponse("Successfull", "DB is updated");
+						return new GlobalResponse("Success", "Package updated Succesfully");
 					} else {
-						throw new CustomException("Please enter the valid information");
+						throw new CustomException("Please Enter The Valid Information");
 					}
 				} else {
-					throw new CustomException("Record not found");
+					throw new CustomException("Record Not Found");
 				}
 			} else {
-				throw new CustomException("Invalid input data");
+				throw new CustomException("Invalid Input Data");
 			}
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
@@ -220,22 +246,35 @@ public class PackageContoller {
 							packageLogRepo.save(logData);
 							suspendedPackageData.setIsActive(isActive);
 							packageRepo.save(suspendedPackageData);
-							return new GlobalResponse("Success", "PackageId is Suspended");
+							return new GlobalResponse("Success", "PackageId Is Suspended");
 						}
 						else
 						{
-							throw new CustomException("Invalid field data");
+							throw new CustomException("Invalid Field Data");
 						}
 					}
 					else
 					{
-						throw new CustomException("Id allready suspended");
+						throw new CustomException("Id Allready Suspended");
 					}
 				}
 				else
 				{
-					throw new CustomException("No record found");
+					throw new CustomException("No Record Found");
 				}
+		}
+		catch(Exception e)
+		{
+			throw new CustomException(e.getMessage());
+		}
+	}
+	@GetMapping("/instList")
+	public List<?> ListOfInstData()
+	{
+		try
+		{
+			List<InstituteEntity> instData=instituteRepo.findAll();
+			return instData;
 		}
 		catch(Exception e)
 		{
