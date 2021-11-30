@@ -148,8 +148,7 @@ public class PackageContoller {
 		}
 	}
 	@GetMapping("/view/{pkId}")
-	public Optional<?> viewPackagedata(@PathVariable long pkId,
-			@RequestHeader("Authorization") String token) {
+	public Optional<?> viewPackagedata(@PathVariable long pkId) {
 		try {
 			log.info("Inside-PackageController.view");
 			if (pkId != 0) {
@@ -180,6 +179,7 @@ public class PackageContoller {
 					& (fieldValidation.isEmpty(newData.getPkName()))
 					& (fieldValidation.isEmpty(newData.getPkNusers()))
 					& (fieldValidation.isEmpty(newData.getPkValidityNum()))
+					& (fieldValidation.isEmpty(newData.getPkCdate()))
 					& (fieldValidation.isEmpty(newData.getPkValidityType()))) {
 				long defaultId=0;
 				if(packageRepo.existsById(newData.getInstId()))
@@ -194,29 +194,29 @@ public class PackageContoller {
 				{
 					newData.setParentId(defaultId);
 				}
-					newData.setPkCdate(new Date());	
+					//newData.setPkCdate(new Date());	
 					newData.setCreatedOn(new Date());
-					newData.setIsActive((long) 2);
+					newData.setIsActive((long) 1);
 					newData.setIsDeleted((long) 0);
 					packageRepo.save(newData);
-					List<PackageEntity> recentlyAddedData= packageRepo.findByListInst()
-							.stream()
-							.filter(Inst -> Inst.getIsActive()==2)
-							.filter(Inst -> Inst.getIsDeleted()==0)
-							.collect(Collectors.toList());
-						PackageEntity newPackagedata=recentlyAddedData.get(0);
-						//System.out.println(newPackagedata);
-						PackageLogEntity pkLogdata=new PackageLogEntity();
-						pkLogdata.setPkId(newPackagedata.getPkId());
-						pkLogdata.setPlAction("Added");
-						pkLogdata.setPlAdate(newPackagedata.getPkCdate());
-						pkLogdata.setPlComment("Subcription Package Added");
-						pkLogdata.setPlCreat(new Date());
-						pkLogdata.setPlStatus("Running");
-						packageLogRepo.save(pkLogdata);
-						newPackagedata.setIsActive((long) 1);
-						packageRepo.save(newPackagedata);
-					 return new GlobalResponse("Success", "Package Added Successfully");
+//					List<PackageEntity> recentlyAddedData= packageRepo.findByListInst()
+//							.stream()
+//							.filter(Inst -> Inst.getIsActive()==2)
+//							.filter(Inst -> Inst.getIsDeleted()==0)
+//							.collect(Collectors.toList());
+//						PackageEntity newPackagedata=recentlyAddedData.get(0);
+//						//System.out.println(newPackagedata);
+//						PackageLogEntity pkLogdata=new PackageLogEntity();
+//						pkLogdata.setPkId(newPackagedata.getPkId());
+//						pkLogdata.setPlAction("Added");
+//						pkLogdata.setPlAdate(newPackagedata.getPkCdate());
+//						pkLogdata.setPlComment("Subcription Package Added");
+//						pkLogdata.setPlCreat(new Date());
+//						pkLogdata.setPlStatus("Running");
+//						packageLogRepo.save(pkLogdata);
+//						newPackagedata.setIsActive((long) 1);
+//						packageRepo.save(newPackagedata);
+					 return new GlobalResponse("Success", "Package Added Succesfully", 200);
 			} else {
 				throw new CustomException("Please Enter Valid Data");
 			}
@@ -249,7 +249,7 @@ public class PackageContoller {
 						updatePackagedata.setIsDeleted(dbData.getIsDeleted());
 						updatePackagedata.setUpdatedOn(new Date());
 						packageRepo.save(updatePackagedata);
-						return new GlobalResponse("Success", "Subcription Package Update Succcessfully");
+						return new GlobalResponse("Success", "Subcription Package Update Succcessfully",200);
 					} else {
 						throw new CustomException("Please Enter The Valid Information");
 					}
@@ -290,7 +290,7 @@ public class PackageContoller {
 							packageLogRepo.save(logData);
 							suspendedPackageData.setIsActive(isActive);
 							packageRepo.save(suspendedPackageData);
-							return new GlobalResponse("Success", "PackageId Is Suspended");
+							return new GlobalResponse("Success", "PackageId Is Suspended",200);
 						}
 						else
 						{

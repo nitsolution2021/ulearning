@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -40,7 +41,7 @@ public class PackageEntity implements Serializable{
 	
 	@Column(name = "PK_VALIDITY_TYPE")@NotEmpty(message = "Package validity type is required") private String pkValidityType;
 	@Column(name = "PK_VALIDITY_NUM") @Positive(message = "Package validity no required") Long pkValidityNum;
-	@Column(name = "PK_CDATE") Date pkCdate;
+	@Column(name = "PK_CDATE")@JsonFormat(shape = Shape.STRING,pattern = "yyyy/MM/dd") Date pkCdate;
 	@Column(name = "PK_COMMENT") @NotEmpty(message = "Write some comment on that package") String pkComment;
 	@Column(name = "PARENT_ID")private Long parentId;
 	@Column(name = "IS_ACTIVE") private Long isActive;
@@ -48,6 +49,9 @@ public class PackageEntity implements Serializable{
 	@Column(name = "PK_STATUS")private String pkStatus;
 	@Column(name = "CREATED_ON") private Date createdOn;
 	@Column(name = "UPDATED_ON") private Date updatedOn;
+	@ManyToOne
+	@JoinColumn(name = "INST_ID", insertable = false, updatable = false)
+	private InstituteEntity instituteEntity;
 	public PackageEntity(Long pkId, @Positive(message = "The Institute Id required") Long instId, String pkType,
 			@NotEmpty(message = "Package name is required") String pkName,
 			@NotEmpty(message = "Package Fname is required") String pkFname,
@@ -55,7 +59,7 @@ public class PackageEntity implements Serializable{
 			@NotEmpty(message = "Package validity type is required") String pkValidityType,
 			@Positive(message = "Package validity no required") Long pkValidityNum, Date pkCdate,
 			@NotEmpty(message = "Write some comment on that package") String pkComment, Long parentId, Long isActive,
-			Long isDeleted, String pkStatus, Date createdOn, Date updatedOn) {
+			Long isDeleted, String pkStatus, Date createdOn, Date updatedOn, InstituteEntity instituteEntity) {
 		super();
 		this.pkId = pkId;
 		this.instId = instId;
@@ -73,6 +77,7 @@ public class PackageEntity implements Serializable{
 		this.pkStatus = pkStatus;
 		this.createdOn = createdOn;
 		this.updatedOn = updatedOn;
+		this.instituteEntity = instituteEntity;
 	}
 	public PackageEntity() {
 		super();
@@ -174,13 +179,21 @@ public class PackageEntity implements Serializable{
 	public void setUpdatedOn(Date updatedOn) {
 		this.updatedOn = updatedOn;
 	}
+	public InstituteEntity getInstituteEntity() {
+		return instituteEntity;
+	}
+	public void setInstituteEntity(InstituteEntity instituteEntity) {
+		this.instituteEntity = instituteEntity;
+	}
 	@Override
 	public String toString() {
 		return "PackageEntity [pkId=" + pkId + ", instId=" + instId + ", pkType=" + pkType + ", pkName=" + pkName
 				+ ", pkFname=" + pkFname + ", pkNusers=" + pkNusers + ", pkValidityType=" + pkValidityType
 				+ ", pkValidityNum=" + pkValidityNum + ", pkCdate=" + pkCdate + ", pkComment=" + pkComment
 				+ ", parentId=" + parentId + ", isActive=" + isActive + ", isDeleted=" + isDeleted + ", pkStatus="
-				+ pkStatus + ", createdOn=" + createdOn + ", updatedOn=" + updatedOn + "]";
+				+ pkStatus + ", createdOn=" + createdOn + ", updatedOn=" + updatedOn + ", instituteEntity="
+				+ instituteEntity + "]";
 	}
 	
 }
+	
