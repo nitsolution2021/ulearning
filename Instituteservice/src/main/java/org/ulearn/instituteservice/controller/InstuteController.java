@@ -250,7 +250,7 @@ public class InstuteController {
 						filterInsAdrDetails.setUpdatedOn(new Date());
 
 						InstituteAddressEntity InsAdrDetails = instituteAddressRepo.save(filterInsAdrDetails);
-
+ 
 						InstituteAdminEntity filterInsAmdDetails = new InstituteAdminEntity();
 
 						filterInsAmdDetails.setAmdFname(instituteGlobalEntrity.getAmdFname());
