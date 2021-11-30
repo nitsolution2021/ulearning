@@ -26,7 +26,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @Entity
 @Table(name="tbl_institutes")
-public class InstituteEntity implements Serializable{
+public class InstituteEntity{
 
 	@Id
 	@Column(name = "INST_ID")
@@ -63,44 +63,22 @@ public class InstituteEntity implements Serializable{
 	private Date createdOn;
 	@Column(name = "UPDATED_ON")
 	private Date updatedOn;
-	@OneToOne
-	@JoinColumn(name = "INST_ID")
-	private InstituteAdminEntity instituteAdmin;
-	@OneToMany
-	@JoinColumn(name = "INST_ID", referencedColumnName = "INST_ID")
-	private List<InstituteAddressEntity> instituteAddress = new ArrayList<>();
-	@OneToMany
-	@JoinColumn(name = "INST_ID")
-	private List<PackageEntity> packageEntity = new ArrayList<>();
-	public InstituteEntity(Long instId, String instName, Date instEndDate, String instWebsite, String instEmail,
-			String instCnum, String instMnum, Date isntRegDate, String instLogo, String instPanNum, String instGstNum,
-			String instStatus, int isActive, int isDeleted, Date createdOn, Date updatedOn,
-			InstituteAdminEntity instituteAdmin, List<InstituteAddressEntity> instituteAddress,
-			List<PackageEntity> packageEntity) {
-		super();
-		this.instId = instId;
-		this.instName = instName;
-		this.instEndDate = instEndDate;
-		this.instWebsite = instWebsite;
-		this.instEmail = instEmail;
-		this.instCnum = instCnum;
-		this.instMnum = instMnum;
-		this.isntRegDate = isntRegDate;
-		this.instLogo = instLogo;
-		this.instPanNum = instPanNum;
-		this.instGstNum = instGstNum;
-		this.instStatus = instStatus;
-		this.isActive = isActive;
-		this.isDeleted = isDeleted;
-		this.createdOn = createdOn;
-		this.updatedOn = updatedOn;
-		this.instituteAdmin = instituteAdmin;
-		this.instituteAddress = instituteAddress;
-		this.packageEntity = packageEntity;
-	}
-	public InstituteEntity() {
-		super();
-		// TODO Auto-generated constructor stub
+//	@OneToOne
+//	@JoinColumn(name = "INST_ID")
+//	private InstituteAdminEntity instituteAdmin;
+//	@OneToMany
+//	@JoinColumn(name = "INST_ID", referencedColumnName = "INST_ID")
+//	private List<InstituteAddressEntity> instituteAddress = new ArrayList<>();
+//	@OneToMany
+//	@JoinColumn(name = "INST_ID")
+//	private List<PackageEntity> packageEntity = new ArrayList<>();
+	@Override
+	public String toString() {
+		return "InstituteEntity [instId=" + instId + ", instName=" + instName + ", instEndDate=" + instEndDate
+				+ ", instWebsite=" + instWebsite + ", instEmail=" + instEmail + ", instCnum=" + instCnum + ", instMnum="
+				+ instMnum + ", isntRegDate=" + isntRegDate + ", instLogo=" + instLogo + ", instPanNum=" + instPanNum
+				+ ", instGstNum=" + instGstNum + ", instStatus=" + instStatus + ", isActive=" + isActive
+				+ ", isDeleted=" + isDeleted + ", createdOn=" + createdOn + ", updatedOn=" + updatedOn + "]";
 	}
 	public Long getInstId() {
 		return instId;
@@ -198,33 +176,30 @@ public class InstituteEntity implements Serializable{
 	public void setUpdatedOn(Date updatedOn) {
 		this.updatedOn = updatedOn;
 	}
-	public InstituteAdminEntity getInstituteAdmin() {
-		return instituteAdmin;
+	public InstituteEntity(Long instId, String instName, Date instEndDate, String instWebsite, String instEmail,
+			String instCnum, String instMnum, Date isntRegDate, String instLogo, String instPanNum, String instGstNum,
+			String instStatus, int isActive, int isDeleted, Date createdOn, Date updatedOn) {
+		super();
+		this.instId = instId;
+		this.instName = instName;
+		this.instEndDate = instEndDate;
+		this.instWebsite = instWebsite;
+		this.instEmail = instEmail;
+		this.instCnum = instCnum;
+		this.instMnum = instMnum;
+		this.isntRegDate = isntRegDate;
+		this.instLogo = instLogo;
+		this.instPanNum = instPanNum;
+		this.instGstNum = instGstNum;
+		this.instStatus = instStatus;
+		this.isActive = isActive;
+		this.isDeleted = isDeleted;
+		this.createdOn = createdOn;
+		this.updatedOn = updatedOn;
 	}
-	public void setInstituteAdmin(InstituteAdminEntity instituteAdmin) {
-		this.instituteAdmin = instituteAdmin;
+	public InstituteEntity() {
+		super();
+		// TODO Auto-generated constructor stub
 	}
-	public List<InstituteAddressEntity> getInstituteAddress() {
-		return instituteAddress;
-	}
-	public void setInstituteAddress(List<InstituteAddressEntity> instituteAddress) {
-		this.instituteAddress = instituteAddress;
-	}
-	public List<PackageEntity> getPackageEntity() {
-		return packageEntity;
-	}
-	public void setPackageEntity(List<PackageEntity> packageEntity) {
-		this.packageEntity = packageEntity;
-	}
-	@Override
-	public String toString() {
-		return "InstituteEntity [instId=" + instId + ", instName=" + instName + ", instEndDate=" + instEndDate
-				+ ", instWebsite=" + instWebsite + ", instEmail=" + instEmail + ", instCnum=" + instCnum + ", instMnum="
-				+ instMnum + ", isntRegDate=" + isntRegDate + ", instLogo=" + instLogo + ", instPanNum=" + instPanNum
-				+ ", instGstNum=" + instGstNum + ", instStatus=" + instStatus + ", isActive=" + isActive
-				+ ", isDeleted=" + isDeleted + ", createdOn=" + createdOn + ", updatedOn=" + updatedOn
-				+ ", instituteAdmin=" + instituteAdmin + ", instituteAddress=" + instituteAddress + ", packageEntity="
-				+ packageEntity + "]";
-	}
-	
+		
 }
