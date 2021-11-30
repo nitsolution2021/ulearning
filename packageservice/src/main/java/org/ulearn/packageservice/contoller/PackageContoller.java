@@ -100,7 +100,6 @@ public class PackageContoller {
 
 	}
 
-
 	@GetMapping("/view/{pkId}")
 	public Optional<?> viewPackagedata(@PathVariable long pkId,
 			@RequestHeader("Authorization") String token) {
@@ -109,9 +108,9 @@ public class PackageContoller {
 			if (pkId != 0) {
 				if (packageRepo.existsById(pkId)) {
 					PackageEntity packageData = packageRepo.getById(pkId);
-					InstituteEntity insttituteEntity= instituteRepo.getById(packageData.getInstId());
+					InstituteEntity instituteEntity= instituteRepo.getById(packageData.getInstId());
 					//insttituteEntity.setPackageEntity((List<PackageEntity>) packageData);
-					return Optional.of(insttituteEntity);
+					return Optional.of(instituteEntity);
 
 				} else {
 					throw new CustomException("No Id Found");
@@ -123,52 +122,6 @@ public class PackageContoller {
 			throw new CustomException(e.getMessage());
 		}
 	}
-//	@GetMapping("/list/{page}/{limit}/{sortName}/{sort}")
-//	public Map<String, Object> getpackagePagination(@PathVariable("page") int page, @PathVariable("limit") int limit,
-//			@PathVariable("sort") String sort, @PathVariable("sortName") String sortName,
-//			@RequestParam(defaultValue = "") Optional<String>keyword, @RequestParam Optional<String> sortBy) {
-//
-//		log.info("Inside - PackageController.getpackagePagination()");
-//		
-//		try {
-//			Pageable pagingSort = null;
-//
-//			if (sort.equals("ASC")) {
-//				pagingSort = PageRequest.of(page, limit, Sort.Direction.ASC, sortBy.orElse(sortName));
-//			} else {
-//				pagingSort = PageRequest.of(page, limit, Sort.Direction.DESC, sortBy.orElse(sortName));
-//			}
-//
-//			Page<PackageEntity> findAll = null;
-//			if (keyword.isPresent()) {
-//				//findAll = packageRepo.Search(keyword.get(), pagingSort);
-//			} else {
-//				findAll = packageRepo.findByAllInst(pagingSort);
-//			}
-//			int totalPage=findAll.getTotalPages()-1;
-//			if(totalPage < 0) {
-//				totalPage=0;
-//			}
-//			
-//			Map<String, Object> response = new HashMap<>();
-//			response.put("data", findAll.getContent());
-//			response.put("currentPage", findAll.getNumber());
-//			response.put("total", findAll.getTotalElements());
-//			response.put("totalPage", totalPage);
-//			response.put("perPage", findAll.getSize());
-//			response.put("perPageElement", findAll.getNumberOfElements());
-//
-//			if (findAll.getSize() < 1) {
-//				throw new CustomException("Package Not Found");
-//			} else {
-//				return response;
-//			}
-//		} catch (Exception e) {
-//			throw new CustomException(e.getMessage());
-//		}
-//
-//	}
-
 	@PostMapping("/add")
 	public GlobalResponse addPackagedata(@Valid @RequestBody PackageEntity newData) {
 		try {
@@ -194,6 +147,7 @@ public class PackageContoller {
 				{
 					newData.setParentId(defaultId);
 				}
+					newData.setPkCdate(new Date());	
 					newData.setCreatedOn(new Date());
 					newData.setIsActive((long) 2);
 					newData.setIsDeleted((long) 0);
@@ -318,6 +272,33 @@ public class PackageContoller {
 		{
 			List<InstituteEntity> instData=instituteRepo.findAll();
 			return instData;
+		}
+		catch(Exception e)
+		{
+			throw new CustomException(e.getMessage());
+		}
+	}
+	@GetMapping("/institutePackagelist/{instId}")
+	public InstituteEntity institutePackageList(@PathVariable long instId)
+	{
+		try
+		{
+			if(instId!=0)	
+			{
+				if(instituteRepo.existsById(instId))
+				{
+					InstituteEntity allPackagedata=instituteRepo.getById(instId);
+					return allPackagedata;
+				}
+				else
+				{
+					throw new CustomException("No Package Found");
+				}
+			}
+			else
+			{
+				throw new CustomException("Invalid Data Input");
+			}
 		}
 		catch(Exception e)
 		{

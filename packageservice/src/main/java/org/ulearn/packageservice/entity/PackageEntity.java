@@ -48,8 +48,7 @@ public class PackageEntity implements Serializable{
 	@Column(name = "PK_STATUS")private String pkStatus;
 	@Column(name = "CREATED_ON") private Date createdOn;
 	@Column(name = "UPDATED_ON") private Date updatedOn;
-	public PackageEntity(Long pkId, @Positive(message = "The Institute Id required") Long instId,
-			@NotEmpty(message = "Package type is required") String pkType,
+	public PackageEntity(Long pkId, @Positive(message = "The Institute Id required") Long instId, String pkType,
 			@NotEmpty(message = "Package name is required") String pkName,
 			@NotEmpty(message = "Package Fname is required") String pkFname,
 			@Positive(message = "Package nusers is required") Long pkNusers,
@@ -183,5 +182,5 @@ public class PackageEntity implements Serializable{
 				+ ", parentId=" + parentId + ", isActive=" + isActive + ", isDeleted=" + isDeleted + ", pkStatus="
 				+ pkStatus + ", createdOn=" + createdOn + ", updatedOn=" + updatedOn + "]";
 	}
-
+	
 }

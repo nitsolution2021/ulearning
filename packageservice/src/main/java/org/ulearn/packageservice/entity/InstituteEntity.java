@@ -72,11 +72,14 @@ public class InstituteEntity implements Serializable{
 	@OneToMany
 	@JoinColumn(name = "INST_ID")
 	private List<PackageEntity> packageEntity = new ArrayList<>();
+	@OneToOne
+	@JoinColumn(name="INST_ID")
+	private LicenseEntity licenseEntity;
 	public InstituteEntity(Long instId, String instName, Date instEndDate, String instWebsite, String instEmail,
 			String instCnum, String instMnum, Date isntRegDate, String instLogo, String instPanNum, String instGstNum,
 			String instStatus, int isActive, int isDeleted, Date createdOn, Date updatedOn,
 			InstituteAdminEntity instituteAdmin, List<InstituteAddressEntity> instituteAddress,
-			List<PackageEntity> packageEntity) {
+			List<PackageEntity> packageEntity, LicenseEntity licenseEntity) {
 		super();
 		this.instId = instId;
 		this.instName = instName;
@@ -97,6 +100,7 @@ public class InstituteEntity implements Serializable{
 		this.instituteAdmin = instituteAdmin;
 		this.instituteAddress = instituteAddress;
 		this.packageEntity = packageEntity;
+		this.licenseEntity = licenseEntity;
 	}
 	public InstituteEntity() {
 		super();
@@ -216,6 +220,12 @@ public class InstituteEntity implements Serializable{
 	public void setPackageEntity(List<PackageEntity> packageEntity) {
 		this.packageEntity = packageEntity;
 	}
+	public LicenseEntity getLicenseEntity() {
+		return licenseEntity;
+	}
+	public void setLicenseEntity(LicenseEntity licenseEntity) {
+		this.licenseEntity = licenseEntity;
+	}
 	@Override
 	public String toString() {
 		return "InstituteEntity [instId=" + instId + ", instName=" + instName + ", instEndDate=" + instEndDate
@@ -224,7 +234,7 @@ public class InstituteEntity implements Serializable{
 				+ ", instGstNum=" + instGstNum + ", instStatus=" + instStatus + ", isActive=" + isActive
 				+ ", isDeleted=" + isDeleted + ", createdOn=" + createdOn + ", updatedOn=" + updatedOn
 				+ ", instituteAdmin=" + instituteAdmin + ", instituteAddress=" + instituteAddress + ", packageEntity="
-				+ packageEntity + "]";
+				+ packageEntity + ", licenseEntity=" + licenseEntity + "]";
 	}
 	
 }
