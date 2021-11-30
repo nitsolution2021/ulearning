@@ -203,7 +203,7 @@ public class PackageContoller {
 					newData.setIsActive((long) 2);
 					newData.setIsDeleted((long) 0);
 					packageRepo.save(newData);
-					List<PackageEntity> recentlyAddedData=packageRepo.recentlyAddedData()
+					List<PackageEntity> recentlyAddedData= packageRepo.findByListInst()
 							.stream()
 							.filter(Inst -> Inst.getIsActive()==2)
 							.filter(Inst -> Inst.getIsDeleted()==0)

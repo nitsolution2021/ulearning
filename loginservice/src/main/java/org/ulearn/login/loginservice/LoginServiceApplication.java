@@ -47,10 +47,10 @@ public class LoginServiceApplication implements CommandLineRunner{
 		mailSender.setHost("smtp.gmail.com");
 		mailSender.setPort(587);
 		mailSender.setUsername("soumendolui077@gmail.com");
-		mailSender.setPassword("Soumen@1234c");
+		mailSender.setPassword("Soumen@1234c2");
 		 
 		Properties properties = new Properties();
-		properties.setProperty("mail.smtp.auth", "false");
+		properties.setProperty("mail.smtp.auth", "true");
 		properties.setProperty("mail.smtp.starttls.enable", "true");
 		 
 		mailSender.setJavaMailProperties(properties);
