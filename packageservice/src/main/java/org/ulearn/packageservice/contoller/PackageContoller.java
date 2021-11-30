@@ -231,13 +231,10 @@ public class PackageContoller {
 			if (pkId != 0) {
 				if (packageRepo.existsById(pkId)) {
 					if ((fieldValidation.isEmpty(updatePackagedata.getInstId()))
-							& (fieldValidation.isEmpty(updatePackagedata.getParentId()))
 							& (fieldValidation.isEmpty(updatePackagedata.getPkComment()))
 							& (fieldValidation.isEmpty(updatePackagedata.getPkFname()))
 							& (fieldValidation.isEmpty(updatePackagedata.getPkName()))
 							& (fieldValidation.isEmpty(updatePackagedata.getPkNusers()))
-							& (fieldValidation.isEmpty(updatePackagedata.getPkStatus()))
-							& (fieldValidation.isEmpty(updatePackagedata.getPkType()))
 							& (fieldValidation.isEmpty(updatePackagedata.getPkValidityNum()))
 							& (fieldValidation.isEmpty(updatePackagedata.getPkValidityType()))) {
 						PackageEntity dbData = packageRepo.getById(pkId);
