@@ -109,14 +109,9 @@ public class PackageContoller {
 			if (pkId != 0) {
 				if (packageRepo.existsById(pkId)) {
 					PackageEntity packageData = packageRepo.getById(pkId);
-					HttpHeaders header = new HttpHeaders();
-					header.set("Authorization", token);
-					HttpEntity request = new HttpEntity(header);
-					ResponseEntity<InstituteEntity> instituteData = new RestTemplate().exchange(
-							"http://localhost:8087/dev/institute/view/" + packageData.getInstId(), HttpMethod.GET,
-							request, InstituteEntity.class);
-					System.out.println(instituteData.getBody());
-					return Optional.of(packageData);
+					InstituteEntity insttituteEntity= instituteRepo.getById(packageData.getInstId());
+					//insttituteEntity.setPackageEntity((List<PackageEntity>) packageData);
+					return Optional.of(insttituteEntity);
 
 				} else {
 					throw new CustomException("No Id Found");
