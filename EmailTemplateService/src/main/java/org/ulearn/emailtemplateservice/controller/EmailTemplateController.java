@@ -139,7 +139,7 @@ public class EmailTemplateController {
 					fieldValidation.isEmpty(emailTemplateEntity.getEtAction()) &&
 					fieldValidation.isEmpty(emailTemplateEntity.getIsPrimary())) {
 				Optional<EmailTemplateEntity> findByEtName = emailTemplateRepo.findByEtName(emailTemplateEntity.getEtName());
-				if(findByEtName.isPresent() && !findByEtName.get().getEtName().equals(emailTemplateEntity.getEtName())) {
+				if(findByEtName.isPresent() && findByEtName.get().getEtId()!=emailTemplateEntity.getEtId()) {
 					throw new CustomException("The Template Name Already Exist");
 				}
 				Optional<EmailTemplateEntity> findById = emailTemplateRepo.findById(id);
