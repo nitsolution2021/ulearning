@@ -30,7 +30,7 @@ public class InstituteGlobalEntity {
 	private String instMnum;
 	@JsonFormat(shape = Shape.STRING,pattern = "yyyy/MM/dd")
 	private Date isntRegDate;
-	@NotEmpty(message = "The Institute Logo is Required")
+//	@NotEmpty(message = "The Institute Logo is Required")
 	private String instLogo;
 	@NotEmpty(message = "The Institute Pan is Required")
 	private String instPanNum;
