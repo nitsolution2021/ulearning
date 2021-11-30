@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -99,7 +99,54 @@ public class PackageContoller {
 		}
 
 	}
+	@RequestMapping(value = { "/list/{page}/{limit}/{sortName}/{sort}" }, method = RequestMethod.GET)
+	public Map<String, Object> getInstutePagination(@PathVariable("page") int page, @PathVariable("limit") int limit,
+			@PathVariable("sort") String sort, @PathVariable("sortName") String sortName,
+			@RequestParam(defaultValue = "") Optional<String>keyword, @RequestParam Optional<String> sortBy)
+	{
+		try
+		{
+			Pageable pageSort=null;
+			if(sort.equals("ASC"))
+					{
+						pageSort= PageRequest.of(page, limit, Sort.Direction.ASC, sortBy.orElse(sortName));
+					}
+					else
+					{
+						pageSort= PageRequest.of(page, limit, Sort.Direction.DESC, sortBy.orElse(sortName));
+					}
+			Page<PackageEntity> findAll =null;
+			if(keyword.isPresent())
+			{
+				findAll= packageRepo.Search(keyword.get(),pageSort);
+			}
+			else
+			{
+				findAll=packageRepo.findByListpackage(pageSort);
+			}
+			int totalPage=findAll.getTotalPages()-1;
+			if(totalPage < 0) {
+				totalPage=0;
+			}
+			Map<String, Object> response = new HashMap<>();
+			response.put("data", findAll.getContent());
+			response.put("currentPage", findAll.getNumber());
+			response.put("total", findAll.getTotalElements());
+			response.put("totalPage", totalPage);
+			response.put("perPage", findAll.getSize());
+			response.put("perPageElement", findAll.getNumberOfElements());
 
+			if (findAll.getSize() < 1) {
+				throw new CustomException("Institute Not Found!");
+			} else {
+				return response;
+			}
+		}
+		catch(Exception e)
+		{
+			throw new CustomException(e.getMessage());
+		}
+	}
 	@GetMapping("/view/{pkId}")
 	public Optional<?> viewPackagedata(@PathVariable long pkId,
 			@RequestHeader("Authorization") String token) {
