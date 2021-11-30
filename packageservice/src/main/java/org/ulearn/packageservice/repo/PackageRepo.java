@@ -17,13 +17,8 @@ public interface PackageRepo extends JpaRepository<PackageEntity, Long>{
 	List<DataResponseEntity> findAlldata();
 	@Query(value = "SELECT packObj FROM PackageEntity packObj WHERE packObj.isDeleted = 0")
 	List<PackageEntity> findByListInst();
-	
+	@Query("SELECT packObj FROM PackageEntity packObj WHERE packObj.isDeleted = 0 AND CONCAT(packObj.pkName,packObj.pkFname,packObj.pkValidityNum,packObj.parentId) LIKE %?1%")
+	Page<PackageEntity> Search(String string, Pageable pageSort);
 	@Query(value = "SELECT packObj FROM PackageEntity packObj WHERE packObj.isDeleted = 0")
-	Page<PackageEntity> findAllByStatus(Pageable pagingSort);
-	
-	@Query("SELECT packObj FROM PackageEntity packObj WHERE packObj.isDeleted = 0 AND packObj.pkName LIKE %?1%")
-    Page<PackageEntity> Search(String sortKey, Pageable pageable);
-
-//	@Query(value = "SELECT packObj FROM PackageEntity packObj WHERE packObj.isDeleted = 0")
-	
+	Page<PackageEntity> findByListpackage(Pageable pageSort);
 }
