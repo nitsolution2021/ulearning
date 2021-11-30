@@ -185,7 +185,7 @@ public class InstuteController {
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstEmail()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstEndDate()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstGstNum()))
-					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstLogo()))
+//					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstLogo()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstMnum()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstName()))
 //					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstStatus()))
@@ -250,7 +250,7 @@ public class InstuteController {
 						filterInsAdrDetails.setUpdatedOn(new Date());
 
 						InstituteAddressEntity InsAdrDetails = instituteAddressRepo.save(filterInsAdrDetails);
-
+ 
 						InstituteAdminEntity filterInsAmdDetails = new InstituteAdminEntity();
 
 						filterInsAmdDetails.setAmdFname(instituteGlobalEntrity.getAmdFname());
@@ -283,7 +283,7 @@ public class InstuteController {
 
 						HttpEntity request = new HttpEntity(headers);
 						ResponseEntity<InstituteGlobalEntity> responseEmailTemp = new RestTemplate().exchange(
-								"http://localhost:8090/dev/emailTemplate/getPrimaryETByAction/Institute_Create",
+								"http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/Institute_Create",
 								HttpMethod.GET, request, InstituteGlobalEntity.class);
 						String ETSubject = responseEmailTemp.getBody().getEtSubject();
 						String ETBody = responseEmailTemp.getBody().getEtBody();
@@ -316,9 +316,9 @@ public class InstuteController {
 
 						HttpEntity<String> entity = new HttpEntity(requestJson, headers);
 						ResponseEntity<String> response = new RestTemplate()
-								.postForEntity("http://localhost:8086/dev/login/sendMail/", entity, String.class);
+								.postForEntity("http://65.1.66.115:8086/dev/login/sendMail/", entity, String.class);
 
-						return new GlobalResponse("SUCCESS", "Institute Added Successfully");
+						return new GlobalResponse("SUCCESS",200, "Institute Added Successfully");
 					} else {
 						throw new CustomException("Institute Email Already Exist!");
 					}
@@ -355,14 +355,14 @@ public class InstuteController {
 	@PutMapping("/update/{instId}")
 	public GlobalResponse putInstituteDetails(@Valid @RequestBody InstituteGlobalEntity instituteGlobalEntrity,
 			@PathVariable("instId") long instId, @RequestHeader("Authorization") String token) {
-		LOGGER.info("Inside - InstituteController.putInstituteDetails()");
+		LOGGER.info("Inside - InstituteController.putInstituteDetails()"+instituteGlobalEntrity);
 		try {
 			if ((fieldValidation.isEmpty(instituteGlobalEntrity.getInstCnum()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstName()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstEmail()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstEndDate()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstGstNum()))
-					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstLogo()))
+//					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstLogo()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstMnum()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstStatus()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstWebsite()))
@@ -436,9 +436,9 @@ public class InstuteController {
 								filterInsAdrDetails.setAdrTaluka(instituteGlobalEntrity.getAdrTaluka());
 								filterInsAdrDetails.setAdrType(instituteGlobalEntrity.getAdrType());
 								filterInsAdrDetails.setInstId(save.getInstId());
-								filterInsAdrDetails.setIsPrimary(instituteGlobalEntrity.getIsPrimary());
-								filterInsAdrDetails.setAdrStatus(instituteGlobalEntrity.getAdrStatus());
-								filterInsAdrDetails.setIsActive(0);
+								filterInsAdrDetails.setIsPrimary(findByAdrId.get().getIsPrimary());
+								filterInsAdrDetails.setAdrStatus(findByAdrId.get().getAdrStatus());
+								filterInsAdrDetails.setIsActive(findByAdrId.get().getIsActive());
 								filterInsAdrDetails.setIsDeleted(0);
 								filterInsAdrDetails.setCreatedOn(new Date());
 								filterInsAdrDetails.setUpdatedOn(new Date());
@@ -490,7 +490,7 @@ public class InstuteController {
 
 								InstituteAdminEntity InsAmdDetails = instituteAdminRepo.save(filterInsAmdDetails);
 							}
-							return new GlobalResponse("SUCCESS", "Institute Updated Successfully");
+							return new GlobalResponse("SUCCESS",200, "Institute Updated Successfully");
 
 						} else {
 							throw new CustomException("Institute Email Already Exist!");

@@ -103,14 +103,14 @@ public class LicenseService {
 						headers.setContentType(MediaType.APPLICATION_JSON);
 						
 						HttpEntity request=new HttpEntity(headers);
-						ResponseEntity<LicenseGlobalEntity> responseEmailTempForInstNameEmail=new RestTemplate().exchange("http://localhost:8087/dev/institute/view/"+save.getInstId(),  HttpMethod.GET, request, LicenseGlobalEntity.class);
+						ResponseEntity<LicenseGlobalEntity> responseEmailTempForInstNameEmail=new RestTemplate().exchange("http://65.1.66.115:8087/dev/institute/view/"+save.getInstId(),  HttpMethod.GET, request, LicenseGlobalEntity.class);
 						String emailId = responseEmailTempForInstNameEmail.getBody().getInstituteAdmin().getAmdEmail();
 						String amdFname = responseEmailTempForInstNameEmail.getBody().getInstituteAdmin().getAmdFname();
 						String amdLname = responseEmailTempForInstNameEmail.getBody().getInstituteAdmin().getAmdLname();
 						
 						
 						//HttpEntity request = new HttpEntity(headers);
-						ResponseEntity<LicenseGlobalEntity> responseEmailTemp = new RestTemplate().exchange("http://localhost:8090/dev/emailTemplate/getPrimaryETByAction/License_Create",
+						ResponseEntity<LicenseGlobalEntity> responseEmailTemp = new RestTemplate().exchange("http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/License_Create",
 								HttpMethod.GET, request, LicenseGlobalEntity.class);
 						String ETSubject = responseEmailTemp.getBody().getEtSubject();
 						String ETBody = responseEmailTemp.getBody().getEtBody();
@@ -128,7 +128,7 @@ public class LicenseService {
 						requestJson.put("enableHtml", true);
 
 						HttpEntity<String> entity = new HttpEntity(requestJson, headers);
-						ResponseEntity<String> response = new RestTemplate().postForEntity("http://localhost:8086/dev/login/sendMail/", entity, String.class);
+						ResponseEntity<String> response = new RestTemplate().postForEntity("http://65.1.66.115:8086/dev/login/sendMail/", entity, String.class);
 						
 						
 
@@ -154,7 +154,7 @@ public class LicenseService {
 
 	public GlobalResponse updateLicense(long licenseId, LicenseEntity licenseForUpdate, String token) {
 		// TODO Auto-generated method stub
-		
+		Long instituteId;
 		try {
 			
 			if(fieldValidation.isEmpty(licenseForUpdate.getInstId()) & fieldValidation.isEmpty(licenseForUpdate.getLcName()) & 
@@ -162,18 +162,33 @@ public class LicenseService {
 					fieldValidation.isEmpty(licenseForUpdate.getLcStype()) & fieldValidation.isEmpty(licenseForUpdate.getLcValidityType()) & 
 					fieldValidation.isEmpty(licenseForUpdate.getLcValidityNum()) & fieldValidation.isEmpty(licenseForUpdate.getLcEndDate())) {
 			
-					Optional<LicenseEntity> findByInstId = LicenseRepo.findByInstId(licenseForUpdate.getInstId());
-					if(!findByInstId.isPresent()) {
+
 					
 					Optional<LicenseEntity> findById = this.LicenseRepo.findById(licenseId);
 					if(findById.isPresent()) {
 						if(findById.get().getLcId().equals(licenseId)) {
+							
+								
 							LicenseEntity licenseUpdate = new LicenseEntity();
+							
+							if( findById.get().getInstId().equals(licenseForUpdate.getInstId())) {
+								 instituteId = licenseForUpdate.getInstId();
+							}
+							else {
+								Optional<LicenseEntity> findByInstId = LicenseRepo.findByInstId(licenseForUpdate.getInstId());
+								if(!findByInstId.isPresent()) {
+									instituteId = licenseForUpdate.getInstId();
+								}
+								else {
+								
+									throw new CustomException("A license have already assigned for this institute.please select another institute.");
+								}
+							}
 							
 							//LOGGER.info(findById.get().getCreatedOn()+"");
 							licenseUpdate.setLcName(licenseForUpdate.getLcName());
 							licenseUpdate.setLcId(findById.get().getLcId());
-							licenseUpdate.setInstId(licenseForUpdate.getInstId());
+							licenseUpdate.setInstId(instituteId);
 							licenseUpdate.setLcCreatDate(licenseForUpdate.getLcCreatDate());
 							licenseUpdate.setLcType(licenseForUpdate.getLcType());
 							licenseUpdate.setLcStype(licenseForUpdate.getLcStype());
@@ -209,14 +224,14 @@ public class LicenseService {
 							headers.setContentType(MediaType.APPLICATION_JSON);
 							
 							HttpEntity request=new HttpEntity(headers);
-							ResponseEntity<LicenseGlobalEntity> responseEmailTempForInstNameEmail=new RestTemplate().exchange("http://localhost:8087/dev/institute/view/"+save.getInstId(),  HttpMethod.GET, request, LicenseGlobalEntity.class);
+							ResponseEntity<LicenseGlobalEntity> responseEmailTempForInstNameEmail=new RestTemplate().exchange("http://65.1.66.115:8087/dev/institute/view/"+save.getInstId(),  HttpMethod.GET, request, LicenseGlobalEntity.class);
 							String emailId = responseEmailTempForInstNameEmail.getBody().getInstituteAdmin().getAmdEmail();
 							String amdFname = responseEmailTempForInstNameEmail.getBody().getInstituteAdmin().getAmdFname();
 							String amdLname = responseEmailTempForInstNameEmail.getBody().getInstituteAdmin().getAmdLname();
 							
 							
 							//HttpEntity request = new HttpEntity(headers);
-							ResponseEntity<LicenseGlobalEntity> responseEmailTemp = new RestTemplate().exchange("http://localhost:8090/dev/emailTemplate/getPrimaryETByAction/License_Update",
+							ResponseEntity<LicenseGlobalEntity> responseEmailTemp = new RestTemplate().exchange("http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/License_Update",
 									HttpMethod.GET, request, LicenseGlobalEntity.class);
 							String ETSubject = responseEmailTemp.getBody().getEtSubject();
 							String ETBody = responseEmailTemp.getBody().getEtBody();
@@ -234,7 +249,7 @@ public class LicenseService {
 							requestJson.put("enableHtml", true);
 
 							HttpEntity<String> entity = new HttpEntity(requestJson, headers);
-							ResponseEntity<String> response = new RestTemplate().postForEntity("http://localhost:8086/dev/login/sendMail/", entity, String.class);
+							ResponseEntity<String> response = new RestTemplate().postForEntity("http://65.1.66.115:8086/dev/login/sendMail/", entity, String.class);
 							
 							
 							
@@ -244,6 +259,7 @@ public class LicenseService {
 							else {
 								throw new CustomException("Update not successfull");
 							}
+							
 						}
 						else {
 							throw new CustomException("License id not matched");
@@ -252,11 +268,6 @@ public class LicenseService {
 					else {
 						throw new CustomException("License not found for this Id  "+licenseId);
 					}
-				}
-				else {
-					
-					throw new CustomException("A license have already assigned for ths institute..");
-				}
 			}
 			else {
 			
@@ -397,7 +408,7 @@ public class LicenseService {
 					LicenseLogEntity save = licenseLogRepo.save(licenseLogEntityForSuspend);
 					
 					if (!save.equals(null)) {
-						return new GlobalResponse("SUCCESS","Suspend date added for this license.",200);
+						return new GlobalResponse("SUCCESS","This license has been suspended for this date.",200);
 					}
 					else {
 						throw new CustomException("Suspend date not add.. ");

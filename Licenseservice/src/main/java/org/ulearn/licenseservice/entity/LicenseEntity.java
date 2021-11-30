@@ -7,12 +7,16 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+//@JsonIgnoreProperties({"hibernateLazyInitializer"})
 @Entity
 @Table(name = "tbl_inst_license")
 public class LicenseEntity {
@@ -75,7 +79,10 @@ public class LicenseEntity {
 
 	
 
-	
+//	@OneToOne
+//	@JoinColumn(name="INST_ID")
+//	private InstituteEntity instituteEntity; 
+//	
 
 	
 	public LicenseEntity() {
@@ -83,9 +90,12 @@ public class LicenseEntity {
 		// TODO Auto-generated constructor stub
 	}
 
+
+	
+
 	public LicenseEntity(Long lcId, Long instId, String lcName, Date lcCreatDate, String lcType, String lcStype,
-			String lcValidityType, Long lcValidityNum, Date lcEndDate, String lcComment, String lcStatus,
-			int isActive, int isDeleted, Date createdOn, Date updatedOn) {
+			String lcValidityType, Long lcValidityNum, Date lcEndDate, String lcComment, String lcStatus, int isActive,
+			int isDeleted, Date createdOn, Date updatedOn) {
 		super();
 		this.lcId = lcId;
 		this.instId = instId;
@@ -102,104 +112,143 @@ public class LicenseEntity {
 		this.isDeleted = isDeleted;
 		this.createdOn = createdOn;
 		this.updatedOn = updatedOn;
+//		this.instituteEntity = instituteEntity;
 	}
+
+
+
 
 	@Override
 	public String toString() {
 		return "LicenseEntity [lcId=" + lcId + ", instId=" + instId + ", lcName=" + lcName + ", lcCreatDate="
 				+ lcCreatDate + ", lcType=" + lcType + ", lcStype=" + lcStype + ", lcValidityType=" + lcValidityType
-				+ ", lcValidityNum=" + lcValidityNum + ", lcEndDate=" + lcEndDate + ", lcComment="
-				+ lcComment + ", lcStatus=" + lcStatus + ", isActive=" + isActive + ", isDeleted=" + isDeleted
-				+ ", createdOn=" + createdOn + ", updatedOn=" + updatedOn + ", getLcName()=" + getLcName()
-				+ ", getLcId()=" + getLcId() + ", getInstId()=" + getInstId() + ", getLcCreatDate()=" + getLcCreatDate()
-				+ ", getLcType()=" + getLcType() + ", getLcStype()=" + getLcStype() + ", getLcValidityType()="
-				+ getLcValidityType() + ", getLcValidityNum()=" + getLcValidityNum() + ", getLcEndDate()="
-				+ getLcEndDate() + ", getLcComment()=" + getLcComment()
-				+ ", getLcStatus()=" + getLcStatus() + ", getIsActive()=" + getIsActive() + ", getIsDeleted()="
-				+ getIsDeleted() + ", getCreatedOn()=" + getCreatedOn() + ", getUpdatedOn()=" + getUpdatedOn()
-				+ ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + ", toString()=" + super.toString()
-				+ "]";
+				+ ", lcValidityNum=" + lcValidityNum + ", lcEndDate=" + lcEndDate + ", lcComment=" + lcComment
+				+ ", lcStatus=" + lcStatus + ", isActive=" + isActive + ", isDeleted=" + isDeleted + ", createdOn="
+				+ createdOn + ", updatedOn=" + updatedOn  + "]";
 	}
 
-	public String getLcName() {
-		return lcName;
-	}
 
-	public void setLcName(String lcName) {
-		this.lcName = lcName;
-	}
+//	+ ", instituteEntity=" + instituteEntity
 
 	public Long getLcId() {
 		return lcId;
 	}
 
+
+
 	public void setLcId(Long lcId) {
 		this.lcId = lcId;
 	}
+
+
 
 	public Long getInstId() {
 		return instId;
 	}
 
+
+
 	public void setInstId(Long instId) {
 		this.instId = instId;
 	}
+
+
+
+	public String getLcName() {
+		return lcName;
+	}
+
+
+
+	public void setLcName(String lcName) {
+		this.lcName = lcName;
+	}
+
+
 
 	public Date getLcCreatDate() {
 		return lcCreatDate;
 	}
 
+
+
 	public void setLcCreatDate(Date lcCreatDate) {
 		this.lcCreatDate = lcCreatDate;
 	}
+
+
 
 	public String getLcType() {
 		return lcType;
 	}
 
+
+
 	public void setLcType(String lcType) {
 		this.lcType = lcType;
 	}
+
+
 
 	public String getLcStype() {
 		return lcStype;
 	}
 
+
+
 	public void setLcStype(String lcStype) {
 		this.lcStype = lcStype;
 	}
+
+
 
 	public String getLcValidityType() {
 		return lcValidityType;
 	}
 
+
+
 	public void setLcValidityType(String lcValidityType) {
 		this.lcValidityType = lcValidityType;
 	}
+
+
 
 	public Long getLcValidityNum() {
 		return lcValidityNum;
 	}
 
+
+
 	public void setLcValidityNum(Long lcValidityNum) {
 		this.lcValidityNum = lcValidityNum;
 	}
+
+
 
 	public Date getLcEndDate() {
 		return lcEndDate;
 	}
 
+
+
 	public void setLcEndDate(Date lcEndDate) {
 		this.lcEndDate = lcEndDate;
 	}
+
+
 
 	public String getLcComment() {
 		return lcComment;
 	}
 
+
+
 	public void setLcComment(String lcComment) {
 		this.lcComment = lcComment;
 	}
+
+
 
 	public String getLcStatus() {
 		return lcStatus;
@@ -240,5 +289,15 @@ public class LicenseEntity {
 	public void setUpdatedOn(Date updatedOn) {
 		this.updatedOn = updatedOn;
 	}
+
+//	public InstituteEntity getInstituteEntity() {
+//		return instituteEntity;
+//	}
+//
+//	public void setInstituteEntity(InstituteEntity instituteEntity) {
+//		this.instituteEntity = instituteEntity;
+//	}
+
+	
 
 }
