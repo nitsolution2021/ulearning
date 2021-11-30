@@ -122,8 +122,7 @@ public class PackageContoller {
 			throw new CustomException(e.getMessage());
 		}
 	}
-<<<<<<< HEAD
-=======
+	
 	@GetMapping("/list/{page}/{limit}/{sortName}/{sort}")
 	public Map<String, Object> getpackagePagination(@PathVariable("page") int page, @PathVariable("limit") int limit,
 			@PathVariable("sort") String sort, @PathVariable("sortName") String sortName,
@@ -170,7 +169,6 @@ public class PackageContoller {
 
 	}
 
->>>>>>> 163d4c0a2576ed57715c667852c4ddaeec92c164
 	@PostMapping("/add")
 	public GlobalResponse addPackagedata(@Valid @RequestBody PackageEntity newData) {
 		try {
