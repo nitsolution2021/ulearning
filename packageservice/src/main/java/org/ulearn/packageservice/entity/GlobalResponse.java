@@ -36,4 +36,8 @@ public class GlobalResponse {
 		this.message = message;
 	}
 
+	public GlobalResponse(String string, int i, String string2) {
+		// TODO Auto-generated constructor stub
+	}
+
 }

@@ -17,7 +17,12 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @Entity
@@ -28,22 +33,52 @@ public class PackageEntity implements Serializable{
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "PK_ID") private Long pkId;
 	@Column(name = "INST_ID")@Positive(message = "The Institute Id required") private Long instId;
-	@Column(name = "PK_TYPE") @NotEmpty(message = "Package type is required") String pkType;
+	@Column(name = "PK_TYPE") String pkType;
 	@Column(name = "PK_NAME") @NotEmpty(message = "Package name is required") String pkName;
 	@Column(name = "PK_FNAME") @NotEmpty(message = "Package Fname is required") String pkFname;
 	@Column(name = "PK_NUSERS")@Positive(message = "Package nusers is required") private Long pkNusers;
 	
 	@Column(name = "PK_VALIDITY_TYPE")@NotEmpty(message = "Package validity type is required") private String pkValidityType;
 	@Column(name = "PK_VALIDITY_NUM") @Positive(message = "Package validity no required") Long pkValidityNum;
-	@Column(name = "PK_CDATE")private Date pkCdate;
-	//@Column(name = "HS_ID") private Long hsId;
+	@Column(name = "PK_CDATE") Date pkCdate;
 	@Column(name = "PK_COMMENT") @NotEmpty(message = "Write some comment on that package") String pkComment;
-	@Column(name = "PARENT_ID")@Positive(message = "Parent is required") private Long parentId;
+	@Column(name = "PARENT_ID")private Long parentId;
 	@Column(name = "IS_ACTIVE") private Long isActive;
 	@Column(name = "IS_DELETED") private Long isDeleted;
-	@Column(name = "PK_STATUS")@NotEmpty(message = "Package status is requred") private String pkStatus;
+	@Column(name = "PK_STATUS")private String pkStatus;
 	@Column(name = "CREATED_ON") private Date createdOn;
 	@Column(name = "UPDATED_ON") private Date updatedOn;
+	public PackageEntity(Long pkId, @Positive(message = "The Institute Id required") Long instId,
+			@NotEmpty(message = "Package type is required") String pkType,
+			@NotEmpty(message = "Package name is required") String pkName,
+			@NotEmpty(message = "Package Fname is required") String pkFname,
+			@Positive(message = "Package nusers is required") Long pkNusers,
+			@NotEmpty(message = "Package validity type is required") String pkValidityType,
+			@Positive(message = "Package validity no required") Long pkValidityNum, Date pkCdate,
+			@NotEmpty(message = "Write some comment on that package") String pkComment, Long parentId, Long isActive,
+			Long isDeleted, String pkStatus, Date createdOn, Date updatedOn) {
+		super();
+		this.pkId = pkId;
+		this.instId = instId;
+		this.pkType = pkType;
+		this.pkName = pkName;
+		this.pkFname = pkFname;
+		this.pkNusers = pkNusers;
+		this.pkValidityType = pkValidityType;
+		this.pkValidityNum = pkValidityNum;
+		this.pkCdate = pkCdate;
+		this.pkComment = pkComment;
+		this.parentId = parentId;
+		this.isActive = isActive;
+		this.isDeleted = isDeleted;
+		this.pkStatus = pkStatus;
+		this.createdOn = createdOn;
+		this.updatedOn = updatedOn;
+	}
+	public PackageEntity() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 	public Long getPkId() {
 		return pkId;
 	}
@@ -98,12 +133,6 @@ public class PackageEntity implements Serializable{
 	public void setPkCdate(Date pkCdate) {
 		this.pkCdate = pkCdate;
 	}
-	/*public Long getHsId() {
-		return hsId;
-	}
-	public void setHsId(Long hsId) {
-		this.hsId = hsId;
-	}*/
 	public String getPkComment() {
 		return pkComment;
 	}
@@ -150,40 +179,9 @@ public class PackageEntity implements Serializable{
 	public String toString() {
 		return "PackageEntity [pkId=" + pkId + ", instId=" + instId + ", pkType=" + pkType + ", pkName=" + pkName
 				+ ", pkFname=" + pkFname + ", pkNusers=" + pkNusers + ", pkValidityType=" + pkValidityType
-				+ ", pkValidityNum=" + pkValidityNum + ", pkCdate=" + pkCdate + ", pkComment="
-				+ pkComment + ", parentId=" + parentId + ", isActive=" + isActive + ", isDeleted=" + isDeleted
-				+ ", pkStatus=" + pkStatus + ", createdOn=" + createdOn + ", updatedOn=" + updatedOn + "]";
+				+ ", pkValidityNum=" + pkValidityNum + ", pkCdate=" + pkCdate + ", pkComment=" + pkComment
+				+ ", parentId=" + parentId + ", isActive=" + isActive + ", isDeleted=" + isDeleted + ", pkStatus="
+				+ pkStatus + ", createdOn=" + createdOn + ", updatedOn=" + updatedOn + "]";
 	}
-	public PackageEntity(Long pkId, Long instId, String pkType, String pkName, String pkFname, Long pkNusers,
-			String pkValidityType, Long pkValidityNum, Date pkCdate, Long hsId, String pkComment, Long parentId,
-			Long isActive, Long isDeleted, String pkStatus, Date createdOn, Date updatedOn) {
-		super();
-		this.pkId = pkId;
-		this.instId = instId;
-		this.pkType = pkType;
-		this.pkName = pkName;
-		this.pkFname = pkFname;
-		this.pkNusers = pkNusers;
-		this.pkValidityType = pkValidityType;
-		this.pkValidityNum = pkValidityNum;
-		this.pkCdate = pkCdate;
-		//this.hsId = hsId;
-		this.pkComment = pkComment;
-		this.parentId = parentId;
-		this.isActive = isActive;
-		this.isDeleted = isDeleted;
-		this.pkStatus = pkStatus;
-		this.createdOn = createdOn;
-		this.updatedOn = updatedOn;
-	}
-	public PackageEntity() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-	
-	
-	
-	
-	
 
 }
