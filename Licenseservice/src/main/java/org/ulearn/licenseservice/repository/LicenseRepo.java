@@ -19,6 +19,8 @@ public interface LicenseRepo extends JpaRepository<LicenseEntity, Long> {
 	@Query("SELECT licObj FROM LicenseEntity licObj WHERE licObj.isDeleted = 0 AND CONCAT(licObj.lcName, licObj.lcType, licObj.lcStype, licObj.lcValidityType, licObj.lcComment, licObj.lcStatus) LIKE %?1%")
 	Page<LicenseEntity> Search(String keyword, Pageable pagingSort);
 
+	
+//	@Query(value = "SELECT licenseObj,instituteObj.INST_NAME FROM tbl_inst_license licenseObj, tbl_institutes instituteObj WHERE licenseObj.isDeleted = 0 and instituteObj.INST_ID =licenseObj.INST_ID")
 	@Query(value = "SELECT licenseObj FROM LicenseEntity licenseObj WHERE licenseObj.isDeleted = 0")
 	Page<LicenseEntity> findByAllLicense(Pageable pagingSort);
 
