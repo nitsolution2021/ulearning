@@ -26,7 +26,7 @@ public class GlobalResponse {
 	public String toString() {
 		return "GlobalResponse [reason=" + reason + ", message=" + message + ", status=" + status + "]";
 	}
-	public GlobalResponse(String reason, String message, int status) {
+	public GlobalResponse(String message, String reason, int status) {
 		super();
 		this.reason = reason;
 		this.message = message;
