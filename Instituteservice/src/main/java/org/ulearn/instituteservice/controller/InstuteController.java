@@ -355,7 +355,7 @@ public class InstuteController {
 	@PutMapping("/update/{instId}")
 	public GlobalResponse putInstituteDetails(@Valid @RequestBody InstituteGlobalEntity instituteGlobalEntrity,
 			@PathVariable("instId") long instId, @RequestHeader("Authorization") String token) {
-		LOGGER.info("Inside - InstituteController.putInstituteDetails()");
+		LOGGER.info("Inside - InstituteController.putInstituteDetails()"+instituteGlobalEntrity);
 		try {
 			if ((fieldValidation.isEmpty(instituteGlobalEntrity.getInstCnum()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstName()))
@@ -436,9 +436,9 @@ public class InstuteController {
 								filterInsAdrDetails.setAdrTaluka(instituteGlobalEntrity.getAdrTaluka());
 								filterInsAdrDetails.setAdrType(instituteGlobalEntrity.getAdrType());
 								filterInsAdrDetails.setInstId(save.getInstId());
-								filterInsAdrDetails.setIsPrimary(instituteGlobalEntrity.getIsPrimary());
-								filterInsAdrDetails.setAdrStatus(instituteGlobalEntrity.getAdrStatus());
-								filterInsAdrDetails.setIsActive(0);
+								filterInsAdrDetails.setIsPrimary(findByAdrId.get().getIsPrimary());
+								filterInsAdrDetails.setAdrStatus(findByAdrId.get().getAdrStatus());
+								filterInsAdrDetails.setIsActive(findByAdrId.get().getIsActive());
 								filterInsAdrDetails.setIsDeleted(0);
 								filterInsAdrDetails.setCreatedOn(new Date());
 								filterInsAdrDetails.setUpdatedOn(new Date());
