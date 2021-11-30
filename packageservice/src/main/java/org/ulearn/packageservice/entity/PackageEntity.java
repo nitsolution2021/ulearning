@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -27,7 +28,7 @@ import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @Entity
 @Table(name = "tbl_inst_package")
-public class PackageEntity implements Serializable{
+public class PackageEntity{
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -48,6 +49,7 @@ public class PackageEntity implements Serializable{
 	@Column(name = "PK_STATUS")private String pkStatus;
 	@Column(name = "CREATED_ON") private Date createdOn;
 	@Column(name = "UPDATED_ON") private Date updatedOn;
+<<<<<<< HEAD
 	public PackageEntity(Long pkId, @Positive(message = "The Institute Id required") Long instId, String pkType,
 			@NotEmpty(message = "Package name is required") String pkName,
 			@NotEmpty(message = "Package Fname is required") String pkFname,
@@ -78,6 +80,12 @@ public class PackageEntity implements Serializable{
 		super();
 		// TODO Auto-generated constructor stub
 	}
+=======
+	@OneToOne
+	@JoinColumn(name = "INST_ID",insertable=false, updatable =false)
+	private InstituteEntity institute;
+	
+>>>>>>> 163d4c0a2576ed57715c667852c4ddaeec92c164
 	public Long getPkId() {
 		return pkId;
 	}
@@ -174,13 +182,56 @@ public class PackageEntity implements Serializable{
 	public void setUpdatedOn(Date updatedOn) {
 		this.updatedOn = updatedOn;
 	}
+	public InstituteEntity getInstituteEntity() {
+		return institute;
+	}
+	public void setInstituteEntity(InstituteEntity instituteEntity) {
+		this.institute = instituteEntity;
+	}
 	@Override
 	public String toString() {
 		return "PackageEntity [pkId=" + pkId + ", instId=" + instId + ", pkType=" + pkType + ", pkName=" + pkName
 				+ ", pkFname=" + pkFname + ", pkNusers=" + pkNusers + ", pkValidityType=" + pkValidityType
 				+ ", pkValidityNum=" + pkValidityNum + ", pkCdate=" + pkCdate + ", pkComment=" + pkComment
 				+ ", parentId=" + parentId + ", isActive=" + isActive + ", isDeleted=" + isDeleted + ", pkStatus="
-				+ pkStatus + ", createdOn=" + createdOn + ", updatedOn=" + updatedOn + "]";
+				+ pkStatus + ", createdOn=" + createdOn + ", updatedOn=" + updatedOn + ", instituteEntity="
+				+ institute + "]";
+	}
+	public PackageEntity(Long pkId, @Positive(message = "The Institute Id required") Long instId, String pkType,
+			@NotEmpty(message = "Package name is required") String pkName,
+			@NotEmpty(message = "Package Fname is required") String pkFname,
+			@Positive(message = "Package nusers is required") Long pkNusers,
+			@NotEmpty(message = "Package validity type is required") String pkValidityType,
+			@Positive(message = "Package validity no required") Long pkValidityNum, Date pkCdate,
+			@NotEmpty(message = "Write some comment on that package") String pkComment, Long parentId, Long isActive,
+			Long isDeleted, String pkStatus, Date createdOn, Date updatedOn, InstituteEntity instituteEntity) {
+		super();
+		this.pkId = pkId;
+		this.instId = instId;
+		this.pkType = pkType;
+		this.pkName = pkName;
+		this.pkFname = pkFname;
+		this.pkNusers = pkNusers;
+		this.pkValidityType = pkValidityType;
+		this.pkValidityNum = pkValidityNum;
+		this.pkCdate = pkCdate;
+		this.pkComment = pkComment;
+		this.parentId = parentId;
+		this.isActive = isActive;
+		this.isDeleted = isDeleted;
+		this.pkStatus = pkStatus;
+		this.createdOn = createdOn;
+		this.updatedOn = updatedOn;
+		this.institute = instituteEntity;
+	}
+<<<<<<< HEAD
+	
+=======
+	public PackageEntity() {
+		super();
+		// TODO Auto-generated constructor stub
 	}
 	
+
+>>>>>>> 163d4c0a2576ed57715c667852c4ddaeec92c164
 }

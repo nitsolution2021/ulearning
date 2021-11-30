@@ -122,6 +122,55 @@ public class PackageContoller {
 			throw new CustomException(e.getMessage());
 		}
 	}
+<<<<<<< HEAD
+=======
+	@GetMapping("/list/{page}/{limit}/{sortName}/{sort}")
+	public Map<String, Object> getpackagePagination(@PathVariable("page") int page, @PathVariable("limit") int limit,
+			@PathVariable("sort") String sort, @PathVariable("sortName") String sortName,
+			@RequestParam(defaultValue = "") Optional<String> keyword, @RequestParam Optional<String> sortBy) {
+
+		log.info("Inside - PackageController.getpackagePagination()");
+		
+		try {
+			Pageable pagingSort = null;
+
+			if (sort.equals("ASC")) {
+				pagingSort = PageRequest.of(page, limit, Sort.Direction.ASC, sortBy.orElse(sortName));
+			} else {
+				pagingSort = PageRequest.of(page, limit, Sort.Direction.DESC, sortBy.orElse(sortName));
+			}
+
+			Page<PackageEntity> findAll = null;
+			if (keyword.isPresent()) {
+				findAll = packageRepo.Search(keyword.get(), pagingSort);
+			} else {
+				findAll = packageRepo.findAllByStatus(pagingSort);
+			}
+			int totalPage=findAll.getTotalPages()-1;
+			if(totalPage < 0) {
+				totalPage=0;
+			}
+			
+			Map<String, Object> response = new HashMap<>();
+			response.put("data", findAll.getContent());
+			response.put("currentPage", findAll.getNumber());
+			response.put("total", findAll.getTotalElements());
+			response.put("totalPage", totalPage);
+			response.put("perPage", findAll.getSize());
+			response.put("perPageElement", findAll.getNumberOfElements());
+
+			if (findAll.getSize() < 1) {
+				throw new CustomException("Package Not Found");
+			} else {
+				return response;
+			}
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+
+	}
+
+>>>>>>> 163d4c0a2576ed57715c667852c4ddaeec92c164
 	@PostMapping("/add")
 	public GlobalResponse addPackagedata(@Valid @RequestBody PackageEntity newData) {
 		try {
