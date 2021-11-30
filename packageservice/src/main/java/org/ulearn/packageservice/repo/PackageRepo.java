@@ -1,8 +1,6 @@
 package org.ulearn.packageservice.repo;
 import java.util.List;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,13 +15,4 @@ public interface PackageRepo extends JpaRepository<PackageEntity, Long>{
 	List<DataResponseEntity> findAlldata();
 	@Query(value = "SELECT packObj FROM PackageEntity packObj WHERE packObj.isDeleted = 0")
 	List<PackageEntity> findByListInst();
-	
-	@Query(value = "SELECT packObj FROM PackageEntity packObj WHERE packObj.isDeleted = 0")
-	Page<PackageEntity> findAllByStatus(Pageable pagingSort);
-	
-	@Query("SELECT packObj FROM PackageEntity packObj WHERE packObj.isDeleted = 0 AND packObj.pkName LIKE %?1%")
-    Page<PackageEntity> Search(String sortKey, Pageable pageable);
-
-//	@Query(value = "SELECT packObj FROM PackageEntity packObj WHERE packObj.isDeleted = 0")
-	
 }
