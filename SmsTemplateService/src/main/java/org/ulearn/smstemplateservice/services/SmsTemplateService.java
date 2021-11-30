@@ -38,6 +38,10 @@ public class SmsTemplateService {
 		try {
 
 			if (validateData(globalEntity)) {
+				Optional<SmsTemplateEntity> findByStName = smsTemplateRepo.findByStName(globalEntity.getStName());
+				if (findByStName.isPresent()) {
+					throw new CustomException("Template name already exists");
+				}
 				SmsTemplateEntity smsTemplateEntity = new SmsTemplateEntity();
 				smsTemplateEntity.setIsActive(1);
 				smsTemplateEntity.setIsDeleted(0);
@@ -124,6 +128,10 @@ public class SmsTemplateService {
 			Optional<SmsTemplateEntity> findById = smsTemplateRepo.findById(stId);
 			if (findById.isPresent()) {
 				if (validateData(globalEntity)) {
+					Optional<SmsTemplateEntity> findByStName = smsTemplateRepo.findByStName(globalEntity.getStName());
+					if (findByStName.isPresent() && findByStName.get().getStId() != stId) {
+						throw new CustomException("Template name already exists");
+					}
 					SmsTemplateEntity smsTemplateEntity = new SmsTemplateEntity();
 					smsTemplateEntity.setIsActive(findById.get().getIsActive());
 					smsTemplateEntity.setIsDeleted(findById.get().getIsDeleted());

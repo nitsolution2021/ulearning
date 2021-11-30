@@ -1,6 +1,7 @@
 package org.ulearn.smstemplateservice.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,4 +19,6 @@ public interface SmsTemplateRepo extends JpaRepository<SmsTemplateEntity, Long> 
 
 	@Query("SELECT Obj FROM SmsTemplateEntity Obj WHERE Obj.isDeleted = 0 and Obj.stName LIKE %?1%")
 	Page<SmsTemplateEntity> search(String string, Pageable pagingSort);
+	
+	Optional<SmsTemplateEntity> findByStName(String stName);
 }
