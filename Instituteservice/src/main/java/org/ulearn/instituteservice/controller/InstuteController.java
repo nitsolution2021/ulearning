@@ -204,8 +204,7 @@ public class InstuteController {
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdDob()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdEmail()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdUsername()))
-					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdPassword()))
-					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdPpic()))) {
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdPassword()))) {
 				if (!findByInstituteName.isPresent()) {
 					if (!findByInstEmail.isPresent()) {
 
@@ -382,7 +381,7 @@ public class InstuteController {
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdEmail()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdUsername()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdPassword()))
-					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdPpic()))
+//					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdPpic()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdId()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstId()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrId()))) {
