@@ -283,7 +283,7 @@ public class InstuteController {
 
 						HttpEntity request = new HttpEntity(headers);
 						ResponseEntity<InstituteGlobalEntity> responseEmailTemp = new RestTemplate().exchange(
-								"http://localhost:8090/dev/emailTemplate/getPrimaryETByAction/Institute_Create",
+								"http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/Institute_Create",
 								HttpMethod.GET, request, InstituteGlobalEntity.class);
 						String ETSubject = responseEmailTemp.getBody().getEtSubject();
 						String ETBody = responseEmailTemp.getBody().getEtBody();
@@ -316,9 +316,9 @@ public class InstuteController {
 
 						HttpEntity<String> entity = new HttpEntity(requestJson, headers);
 						ResponseEntity<String> response = new RestTemplate()
-								.postForEntity("http://localhost:8086/dev/login/sendMail/", entity, String.class);
+								.postForEntity("http://65.1.66.115:8086/dev/login/sendMail/", entity, String.class);
 
-						return new GlobalResponse("SUCCESS", "Institute Added Successfully");
+						return new GlobalResponse("SUCCESS",200, "Institute Added Successfully");
 					} else {
 						throw new CustomException("Institute Email Already Exist!");
 					}
@@ -490,7 +490,7 @@ public class InstuteController {
 
 								InstituteAdminEntity InsAmdDetails = instituteAdminRepo.save(filterInsAmdDetails);
 							}
-							return new GlobalResponse("SUCCESS", "Institute Updated Successfully");
+							return new GlobalResponse("SUCCESS",200, "Institute Updated Successfully");
 
 						} else {
 							throw new CustomException("Institute Email Already Exist!");
