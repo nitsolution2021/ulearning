@@ -257,7 +257,7 @@ public class PackageContoller {
 		}
 	}
 
-	@PutMapping("/suspended/{pkId}")
+	@PostMapping("/suspended/{pkId}")
 	public GlobalResponse suspend(@PathVariable long pkId, @RequestBody PackageLogEntity packageLogEntity) {
 		try {
 			log.info("Inside-packageController.suspend()");
@@ -277,6 +277,7 @@ public class PackageContoller {
 						logData.setPlStatus("Running");
 						logData.setPlUpdate(null);
 						packageLogRepo.save(logData);
+						suspendedPackageData.setPkStatus("Suspended");
 						suspendedPackageData.setIsActive(isActive);
 						packageRepo.save(suspendedPackageData);
 						return new GlobalResponse("Success", "PackageId Is Suspended", 200);
