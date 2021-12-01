@@ -354,7 +354,7 @@ public class InstuteController {
 	@PutMapping("/update/{instId}")
 	public GlobalResponse putInstituteDetails(@Valid @RequestBody InstituteGlobalEntity instituteGlobalEntrity,
 			@PathVariable("instId") long instId, @RequestHeader("Authorization") String token) {
-		LOGGER.info("Inside - InstituteController.putInstituteDetails()"+instituteGlobalEntrity);
+		LOGGER.info("Inside - InstituteController.putInstituteDetails()");
 		try {
 			if ((fieldValidation.isEmpty(instituteGlobalEntrity.getInstCnum()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstName()))
@@ -383,6 +383,7 @@ public class InstuteController {
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdId()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstId()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrId()))) {
+				
 				Optional<InstituteEntity> findById = instituteRepo.findById(instId);
 				List<InstituteEntity> findByInstName = instituteRepo.findByInstUnqName(instId,
 						instituteGlobalEntrity.getInstName());
@@ -468,9 +469,16 @@ public class InstuteController {
 //
 //							HttpEntity<String> entity = new HttpEntity(requestJson, headers);
 //							ResponseEntity<String> response=new RestTemplate().postForEntity("http://localhost:8088/dev/login/sendMail/", entity, String.class);
-
+							
 							if (findByAdminId.isPresent()) {
-
+								String Password;
+								boolean PassCheck=findByAdminId.get().getAmdPassword().equals(instituteGlobalEntrity.getAmdPassword());
+								if(PassCheck == true) {
+									 Password=instituteGlobalEntrity.getAmdPassword();
+								}else {
+									 Password=passwordEncoder.encode(instituteGlobalEntrity.getAmdPassword());
+								}
+								
 								filterInsAmdDetails.setAmdId(instituteGlobalEntrity.getAmdId());
 								filterInsAmdDetails.setAmdFname(instituteGlobalEntrity.getAmdFname());
 								filterInsAmdDetails.setAmdLname(instituteGlobalEntrity.getAmdLname());
@@ -478,8 +486,7 @@ public class InstuteController {
 								filterInsAmdDetails.setAmdMnum(instituteGlobalEntrity.getAmdMnum());
 								filterInsAmdDetails.setAmdEmail(instituteGlobalEntrity.getAmdEmail());
 								filterInsAmdDetails.setAmdUsername(instituteGlobalEntrity.getAmdUsername());
-								filterInsAmdDetails.setAmdPassword(
-										passwordEncoder.encode(instituteGlobalEntrity.getAmdPassword()));
+								filterInsAmdDetails.setAmdPassword(Password);
 								filterInsAmdDetails.setAmdPpic(instituteGlobalEntrity.getAmdPpic());
 								filterInsAmdDetails.setInstId(save.getInstId());
 								filterInsAmdDetails.setCreatedOn(findByAdminId.get().getCreatedOn());

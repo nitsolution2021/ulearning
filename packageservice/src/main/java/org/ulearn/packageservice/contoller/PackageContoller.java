@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import org.ulearn.packageservice.entity.DataResponseEntity;
 import org.ulearn.packageservice.entity.GlobalResponse;
 import org.ulearn.packageservice.entity.InstituteAddressEntity;
 import org.ulearn.packageservice.entity.InstituteEntity;
@@ -76,10 +77,10 @@ public class PackageContoller {
 			Pageable pagingSort = PageRequest.of(page.orElse(0), Limit, Sort.Direction.DESC,
 					sortBy.orElse("createdOn"));
 			Page<InstituteEntity> findAll = instituteRepo.findByAllInst(pagingSort);
-			
-			int totalPage=findAll.getTotalPages()-1;
-			if(totalPage < 0) {
-				totalPage=0;
+
+			int totalPage = findAll.getTotalPages() - 1;
+			if (totalPage < 0) {
+				totalPage = 0;
 			}
 			Map<String, Object> response = new HashMap<>();
 			response.put("data", findAll.getContent());
@@ -99,34 +100,27 @@ public class PackageContoller {
 		}
 
 	}
+
 	@RequestMapping(value = { "/list/{page}/{limit}/{sortName}/{sort}" }, method = RequestMethod.GET)
 	public Map<String, Object> getInstutePagination(@PathVariable("page") int page, @PathVariable("limit") int limit,
 			@PathVariable("sort") String sort, @PathVariable("sortName") String sortName,
-			@RequestParam(defaultValue = "") Optional<String>keyword, @RequestParam Optional<String> sortBy)
-	{
-		try
-		{
-			Pageable pageSort=null;
-			if(sort.equals("ASC"))
-					{
-						pageSort= PageRequest.of(page, limit, Sort.Direction.ASC, sortBy.orElse(sortName));
-					}
-					else
-					{
-						pageSort= PageRequest.of(page, limit, Sort.Direction.DESC, sortBy.orElse(sortName));
-					}
-			Page<PackageEntity> findAll =null;
-			if(keyword.isPresent())
-			{
-				findAll= packageRepo.Search(keyword.get(),pageSort);
+			@RequestParam(defaultValue = "") Optional<String> keyword, @RequestParam Optional<String> sortBy) {
+		try {
+			Pageable pageSort = null;
+			if (sort.equals("ASC")) {
+				pageSort = PageRequest.of(page, limit, Sort.Direction.ASC, sortBy.orElse(sortName));
+			} else {
+				pageSort = PageRequest.of(page, limit, Sort.Direction.DESC, sortBy.orElse(sortName));
 			}
-			else
-			{
-				findAll=packageRepo.findByListpackage(pageSort);
+			Page<PackageEntity> findAll = null;
+			if (keyword.isPresent()) {
+				findAll = packageRepo.Search(keyword.get(), pageSort);
+			} else {
+				findAll = packageRepo.findByListpackage(pageSort);
 			}
-			int totalPage=findAll.getTotalPages()-1;
-			if(totalPage < 0) {
-				totalPage=0;
+			int totalPage = findAll.getTotalPages() - 1;
+			if (totalPage < 0) {
+				totalPage = 0;
 			}
 			Map<String, Object> response = new HashMap<>();
 			response.put("data", findAll.getContent());
@@ -141,12 +135,11 @@ public class PackageContoller {
 			} else {
 				return response;
 			}
-		}
-		catch(Exception e)
-		{
+		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
 		}
 	}
+
 	@GetMapping("/view/{pkId}")
 	public Optional<?> viewPackagedata(@PathVariable long pkId) {
 		try {
@@ -154,9 +147,12 @@ public class PackageContoller {
 			if (pkId != 0) {
 				if (packageRepo.existsById(pkId)) {
 					PackageEntity packageData = packageRepo.getById(pkId);
-					InstituteEntity instituteEntity= instituteRepo.getById(packageData.getInstId());
-					//insttituteEntity.setPackageEntity((List<PackageEntity>) packageData);
-					return Optional.of(instituteEntity);
+					InstituteEntity instituteEntity = instituteRepo.getById(packageData.getInstId());
+					// insttituteEntity.setPackageEntity((List<PackageEntity>) packageData);
+					DataResponseEntity dataResponseEntity = new DataResponseEntity();
+					dataResponseEntity.setInstituteData(instituteEntity);
+					dataResponseEntity.setPackageData(packageData);
+					return Optional.of(dataResponseEntity);
 
 				} else {
 					throw new CustomException("No Id Found");
@@ -168,37 +164,34 @@ public class PackageContoller {
 			throw new CustomException(e.getMessage());
 		}
 	}
+
 	@PostMapping("/add")
 	public GlobalResponse addPackagedata(@Valid @RequestBody PackageEntity newData) {
 		try {
 
 			log.info("Inside-PackageController.addPackagedata");
-			if ((fieldValidation.isEmpty(newData.getInstId()))
-					& (fieldValidation.isEmpty(newData.getPkComment()))
-					& (fieldValidation.isEmpty(newData.getPkFname())) 
-					& (fieldValidation.isEmpty(newData.getPkName()))
+			if ((fieldValidation.isEmpty(newData.getInstId())) & (fieldValidation.isEmpty(newData.getPkComment()))
+					& (fieldValidation.isEmpty(newData.getPkFname())) & (fieldValidation.isEmpty(newData.getPkName()))
 					& (fieldValidation.isEmpty(newData.getPkNusers()))
 					& (fieldValidation.isEmpty(newData.getPkValidityNum()))
 					& (fieldValidation.isEmpty(newData.getPkCdate()))
 					& (fieldValidation.isEmpty(newData.getPkValidityType()))) {
-				long defaultId=0;
-				if(packageRepo.existsById(newData.getInstId()))
-				{
-					Optional<PackageEntity> oldPackageData=packageRepo.findById(newData.getInstId());
-					PackageEntity packageData=oldPackageData.get();
-					long parentId=packageData.getInstId();
+				long defaultId = 0;
+				if (packageRepo.existsById(newData.getInstId())) {
+					Optional<PackageEntity> oldPackageData = packageRepo.findById(newData.getInstId());
+					PackageEntity packageData = oldPackageData.get();
+					long parentId = packageData.getInstId();
 					System.out.println(parentId);
 					newData.setParentId(parentId);
-				}
-				else
-				{
+				} else {
 					newData.setParentId(defaultId);
 				}
-					//newData.setPkCdate(new Date());	
-					newData.setCreatedOn(new Date());
-					newData.setIsActive((long) 1);
-					newData.setIsDeleted((long) 0);
-					packageRepo.save(newData);
+				// newData.setPkCdate(new Date());
+				newData.setCreatedOn(new Date());
+				newData.setIsActive((long) 1);
+				newData.setIsDeleted((long) 0);
+				newData.setPkStatus("Active");
+				packageRepo.save(newData);
 //					List<PackageEntity> recentlyAddedData= packageRepo.findByListInst()
 //							.stream()
 //							.filter(Inst -> Inst.getIsActive()==2)
@@ -216,7 +209,7 @@ public class PackageContoller {
 //						packageLogRepo.save(pkLogdata);
 //						newPackagedata.setIsActive((long) 1);
 //						packageRepo.save(newPackagedata);
-					 return new GlobalResponse("Success", "Package Added Succesfully", 200);
+				return new GlobalResponse("Success", "Package Added Succesfully", 200);
 			} else {
 				throw new CustomException("Please Enter Valid Data");
 			}
@@ -249,7 +242,7 @@ public class PackageContoller {
 						updatePackagedata.setIsDeleted(dbData.getIsDeleted());
 						updatePackagedata.setUpdatedOn(new Date());
 						packageRepo.save(updatePackagedata);
-						return new GlobalResponse("Success", "Subcription Package Update Succcessfully",200);
+						return new GlobalResponse("Success", "Subcription Package Update Succcessfully", 200);
 					} else {
 						throw new CustomException("Please Enter The Valid Information");
 					}
@@ -263,92 +256,69 @@ public class PackageContoller {
 			throw new CustomException(e.getMessage());
 		}
 	}
-	@PutMapping("/suspended/{pkId}")
-	public GlobalResponse suspend(@PathVariable long pkId,@RequestBody PackageLogEntity packageLogEntity)
-	{
-		try
-		{
+
+	@PostMapping("/suspended/{pkId}")
+	public GlobalResponse suspend(@PathVariable long pkId, @RequestBody PackageLogEntity packageLogEntity) {
+		try {
 			log.info("Inside-packageController.suspend()");
-				if(packageRepo.existsById(pkId))
-				{
-					PackageEntity suspendedPackageData=packageRepo.getById(pkId);
-					long isActive=0; 
-					if(suspendedPackageData.getIsActive()!=isActive)
-					{
-						if((fieldValidation.isEmpty(packageLogEntity.getPlAdate()))
-								& (fieldValidation.isEmpty(packageLogEntity.getPlComment())))
-						{
-							
-							PackageLogEntity logData=new PackageLogEntity();
-							logData.setPkId(pkId);
-							logData.setPlAction("Suspended");
-							logData.setPlAdate(packageLogEntity.getPlAdate());
-							logData.setPlComment(packageLogEntity.getPlComment());
-							logData.setPlCreat(new Date());
-							logData.setPlStatus("Running");
-							logData.setPlUpdate(null);
-							packageLogRepo.save(logData);
-							suspendedPackageData.setIsActive(isActive);
-							packageRepo.save(suspendedPackageData);
-							return new GlobalResponse("Success", "PackageId Is Suspended",200);
-						}
-						else
-						{
-							throw new CustomException("Invalid Field Data");
-						}
+			if (packageRepo.existsById(pkId)) {
+				PackageEntity suspendedPackageData = packageRepo.getById(pkId);
+				long isActive = 0;
+				if (suspendedPackageData.getIsActive() != isActive) {
+					if ((fieldValidation.isEmpty(packageLogEntity.getPlAdate()))
+							& (fieldValidation.isEmpty(packageLogEntity.getPlComment()))) {
+
+						PackageLogEntity logData = new PackageLogEntity();
+						logData.setPkId(pkId);
+						logData.setPlAction("Suspended");
+						logData.setPlAdate(packageLogEntity.getPlAdate());
+						logData.setPlComment(packageLogEntity.getPlComment());
+						logData.setPlCreat(new Date());
+						logData.setPlStatus("Running");
+						logData.setPlUpdate(null);
+						packageLogRepo.save(logData);
+						suspendedPackageData.setPkStatus("Suspended");
+						suspendedPackageData.setIsActive(isActive);
+						packageRepo.save(suspendedPackageData);
+						return new GlobalResponse("Success", "PackageId Is Suspended", 200);
+					} else {
+						throw new CustomException("Invalid Field Data");
 					}
-					else
-					{
-						throw new CustomException("Id Allready Suspended");
-					}
+				} else {
+					throw new CustomException("Id Allready Suspended");
 				}
-				else
-				{
-					throw new CustomException("No Record Found");
-				}
-		}
-		catch(Exception e)
-		{
+			} else {
+				throw new CustomException("No Record Found");
+			}
+		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
 		}
 	}
+
 	@GetMapping("/instList")
-	public List<?> ListOfInstData()
-	{
-		try
-		{
-			List<InstituteEntity> instData=instituteRepo.findAll();
+	public List<?> ListOfInstData() {
+		try {
+			List<InstituteEntity> instData = instituteRepo.findAll();
 			return instData;
-		}
-		catch(Exception e)
-		{
+		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
 		}
 	}
+
 	@GetMapping("/institutePackagelist/{instId}")
-	public InstituteEntity institutePackageList(@PathVariable long instId)
-	{
-		try
-		{
-			if(instId!=0)	
-			{
-				if(instituteRepo.existsById(instId))
-				{
-					InstituteEntity allPackagedata=instituteRepo.getById(instId);
+	public InstituteEntity institutePackageList(@PathVariable long instId) {
+		try {
+			if (instId != 0) {
+				if (instituteRepo.existsById(instId)) {
+					InstituteEntity allPackagedata = instituteRepo.getById(instId);
 					return allPackagedata;
-				}
-				else
-				{
+				} else {
 					throw new CustomException("No Package Found");
 				}
-			}
-			else
-			{
+			} else {
 				throw new CustomException("Invalid Data Input");
 			}
-		}
-		catch(Exception e)
-		{
+		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
 		}
 	}
