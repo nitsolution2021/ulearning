@@ -42,6 +42,7 @@ public class SmsTemplateService {
 				if (findByStName.isPresent()) {
 					throw new CustomException("Template name already exists");
 				}
+				this.checkTag(globalEntity);
 				SmsTemplateEntity smsTemplateEntity = new SmsTemplateEntity();
 				smsTemplateEntity.setIsActive(1);
 				smsTemplateEntity.setIsDeleted(0);
@@ -132,6 +133,7 @@ public class SmsTemplateService {
 					if (findByStName.isPresent() && findByStName.get().getStId() != stId) {
 						throw new CustomException("Template name already exists");
 					}
+					this.checkTag(globalEntity);
 					SmsTemplateEntity smsTemplateEntity = new SmsTemplateEntity();
 					smsTemplateEntity.setIsActive(findById.get().getIsActive());
 					smsTemplateEntity.setIsDeleted(findById.get().getIsDeleted());
@@ -346,6 +348,32 @@ public class SmsTemplateService {
 			}
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
+		}
+	}
+	
+	private void checkTag(GlobalEntity globalEntity) {
+		
+		List<SmsTemplateEntity> findByEtActionWithDefaultET = smsTemplateRepo.findByEtActionWithDefaultET(globalEntity.getStAction(),"DEFAULT");
+		String[] split = globalEntity.getStBody().split(" ");
+		String tags = "";
+		for(int i = 0;i < split.length;i++) {
+			if(split[i].startsWith("<<") && split[i].endsWith(">>")) {
+				LOGGER.info("tags: " + split[i]);
+				tags = tags + split[i] + " ";
+			}
+		}
+		if(findByEtActionWithDefaultET.size() <1) {
+			throw new CustomException("The Custome Template Action is Not Present in Default Action");
+		}
+		if(findByEtActionWithDefaultET.get(0).getStTags().split(",").length < tags.split(" ").length) {
+			throw new CustomException("Tags lengths Are not Match");
+		}
+		String[] splitTags = tags.split(" ");
+		String splitTagsFromDB = findByEtActionWithDefaultET.get(0).getStTags();
+		for(int i = 0;i < splitTags.length;i++) {
+			if(splitTagsFromDB.indexOf(splitTags[i]) == -1){
+				throw new CustomException("Tags Are Not Present in Default Template");
+			}
 		}
 	}
 
