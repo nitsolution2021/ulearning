@@ -21,4 +21,7 @@ public interface SmsTemplateRepo extends JpaRepository<SmsTemplateEntity, Long> 
 	Page<SmsTemplateEntity> search(String string, Pageable pagingSort);
 	
 	Optional<SmsTemplateEntity> findByStName(String stName);
+
+	@Query(value = "select obj from SmsTemplateEntity obj where obj.stAction = ?1 and obj.stType = ?2")
+	List<SmsTemplateEntity> findByEtActionWithDefaultET(String stAction, String string);
 }
