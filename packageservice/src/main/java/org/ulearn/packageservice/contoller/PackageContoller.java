@@ -312,7 +312,7 @@ public class PackageContoller {
 		}
 	}
 
-	@PostMapping("/update/{pkId}")
+	@PutMapping("/update/{pkId}")
 	public GlobalResponse updatePackage(@Valid @RequestBody PackageEntity updatePackagedata, @PathVariable long pkId,
 			@RequestHeader("Authorization") String token) {
 		try {
@@ -397,7 +397,7 @@ public class PackageContoller {
 			throw new CustomException(e.getMessage());
 		}
 	}
-	@PutMapping("/suspended/{pkId}")
+	@PostMapping("/suspended/{pkId}")
 	public GlobalResponse suspend(@PathVariable long pkId,@RequestBody PackageLogEntity packageLogEntity,
 			@RequestHeader("Authorization") String token)
 	{
