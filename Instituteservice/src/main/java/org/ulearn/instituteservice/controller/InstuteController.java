@@ -121,9 +121,8 @@ public class InstuteController {
 			}
 			String keywordVal=keyword.get();
 			Page<InstituteEntity> findAll = null;
-			
 			if (keywordVal.isEmpty()) {
-				findAll = instituteRepo.findAll(pagingSort);				
+				findAll = instituteRepo.findByAllInst(pagingSort);				
 			} else {
 				findAll = instituteRepo.Search(keyword.get(), pagingSort);
 			}
@@ -268,7 +267,9 @@ public class InstuteController {
 						
 
 						InstituteAdminEntity InsAmdDetails = instituteAdminRepo.save(filterInsAmdDetails);
-
+						
+						try {
+												
 						HttpHeaders headers = new HttpHeaders();
 						headers.set("Authorization", token);
 						headers.setContentType(MediaType.APPLICATION_JSON);
@@ -293,9 +294,7 @@ public class InstuteController {
 						String processedMailBodyContent = processedUsername.replace(ETTargetPassword,
 								ETPasswordReplacement);
 
-						String mailid = instituteGlobalEntrity.getAmdEmail();
-						
-						
+						String mailid = instituteGlobalEntrity.getAmdEmail();												
 						
 						JSONObject requestJson = new JSONObject();
 						requestJson.put("senderMailId", mailid);
@@ -305,7 +304,9 @@ public class InstuteController {
 
 						HttpEntity<String> entity = new HttpEntity(requestJson, headers);
 						ResponseEntity<String> response = new RestTemplate().postForEntity("http://65.1.66.115:8086/dev/login/sendMail/", entity, String.class);
-
+						} catch (Exception e) {
+							throw new CustomException(e.getMessage());
+						}
 						return new GlobalResponse("SUCCESS",200, "Institute Added Successfully");
 					} else {
 						throw new CustomException("Institute Email Already Exist!");
@@ -469,6 +470,38 @@ public class InstuteController {
 								filterInsAmdDetails.setUpdatedOn(new Date());
 
 								InstituteAdminEntity InsAmdDetails = instituteAdminRepo.save(filterInsAmdDetails);
+								
+								try {
+									
+									HttpHeaders headers = new HttpHeaders();
+									headers.set("Authorization", token);
+									headers.setContentType(MediaType.APPLICATION_JSON);
+
+									HttpEntity request = new HttpEntity(headers);
+									ResponseEntity<InstituteGlobalEntity> responseEmailTemp = new RestTemplate().exchange(
+											"http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/Institute_Update",
+											HttpMethod.GET, request, InstituteGlobalEntity.class);
+									String ETSubject = responseEmailTemp.getBody().getEtSubject();
+									String ETBody = responseEmailTemp.getBody().getEtBody();
+
+									String ETTargetName = "__$instname$__";
+									String ETNameReplacement = instituteGlobalEntrity.getInstName();
+									String processedMailBodyContent = ETBody.replace(ETTargetName, ETNameReplacement);
+
+									String mailid = instituteGlobalEntrity.getAmdEmail();												
+									
+									JSONObject requestJson = new JSONObject();
+									requestJson.put("senderMailId", mailid);
+									requestJson.put("subject", ETSubject);
+									requestJson.put("body", processedMailBodyContent);
+									requestJson.put("enableHtml", true);
+
+									HttpEntity<String> entity = new HttpEntity(requestJson, headers);
+									ResponseEntity<String> response = new RestTemplate().postForEntity("http://65.1.66.115:8086/dev/login/sendMail/", entity, String.class);
+									} catch (Exception e) {
+										throw new CustomException(e.getMessage());
+									}
+								
 							}
 							return new GlobalResponse("SUCCESS",200, "Institute Updated Successfully");
 
