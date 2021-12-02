@@ -312,7 +312,7 @@ public class PackageContoller {
 		}
 	}
 
-	@PutMapping("/update/{pkId}")
+	@PostMapping("/update/{pkId}")
 	public GlobalResponse updatePackage(@Valid @RequestBody PackageEntity updatePackagedata, @PathVariable long pkId,
 			@RequestHeader("Authorization") String token) {
 		try {
