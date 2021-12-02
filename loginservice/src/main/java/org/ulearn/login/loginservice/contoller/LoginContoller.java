@@ -128,7 +128,7 @@ public class LoginContoller {
 					throw new CustomException("Data Not Save Try Again");
 				}else {
 					//** SEND MAIL IF DETAILS SAVE IN DATABASE **//
-					mailService.sendEmail( findByUserName.get().getEmail(),"Forgot Password Link",forgotPasswordLink,false);
+					mailService.sendEmail( findByUserName.get().getEmail(),"Forgot Password Link","Hi " + findByUserName.get().getFirstName() + " "+ findByUserName.get().getLastName() +"<br>       This is Your Link For Reset Password " + forgotPasswordLink,false);
 				}
 				
 				return new GlobalResponse("SUCCESS","Mail Send Successfully", 200);
