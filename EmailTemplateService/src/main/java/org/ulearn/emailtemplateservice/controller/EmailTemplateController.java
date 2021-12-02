@@ -221,6 +221,9 @@ public class EmailTemplateController {
 				List<EmailTemplateEntity> findByIdAndDelete = emailTemplateRepo.findByIdAndDelete(0, id);
 				if(findByIdAndDelete.size()>0) {
 					if(findByIdAndDelete.get(0).getEtType().equals("CUSTOM")) {
+						if(findByIdAndDelete.get(0).getIsPrimary()==1) {
+							throw new CustomException("Primary Template Can't be Deleted");
+						}
 						EmailTemplateEntity emailTemplateEntity = findById.get();
 						emailTemplateEntity.setIsDeleted(1);
 						EmailTemplateEntity save = emailTemplateRepo.save(emailTemplateEntity);
