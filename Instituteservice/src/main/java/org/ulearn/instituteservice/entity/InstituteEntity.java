@@ -65,9 +65,9 @@ public class InstituteEntity {
 	@JoinColumn(name = "INST_ID", referencedColumnName = "INST_ID")
 	private List<InstituteAddressEntity> instituteAddress = new ArrayList<>();
 	
-	@OneToOne
-	@JoinColumn(name = "INST_ID")
-	private InstituteAdminEntity instituteAdmin;
+	@OneToMany
+	@JoinColumn(name = "INST_ID", referencedColumnName = "INST_ID")
+	private List<InstituteAdminEntity> instituteAdmin = new ArrayList<>();
 	
 	@OneToOne
 	@JoinColumn(name = "INST_ID")
@@ -84,7 +84,7 @@ public class InstituteEntity {
 	public InstituteEntity(Long instId, String instName, Date instEndDate, String instWebsite, String instEmail,
 			String instCnum, String instMnum, Date isntRegDate, String instLogo, String instPanNum, String instGstNum,
 			String instStatus, int isActive, int isDeleted, Date createdOn, Date updatedOn,
-			List<InstituteAddressEntity> instituteAddress, InstituteAdminEntity instituteAdmin,
+			List<InstituteAddressEntity> instituteAddress, List<InstituteAdminEntity> instituteAdmin,
 			LicenseEntity instituteLicense) {
 		super();
 		this.instId = instId;
@@ -116,7 +116,7 @@ public class InstituteEntity {
 	public InstituteEntity(Long instId, String instName, Date instEndDate, String instWebsite, String instEmail,
 			String instCnum, String instMnum, Date isntRegDate, String instLogo, String instPanNum, String instGstNum,
 			String instStatus, int isActive, int isDeleted, Date createdOn, Date updatedOn,
-			List<InstituteAddressEntity> instituteAddress, InstituteAdminEntity instituteAdmin) {
+			List<InstituteAddressEntity> instituteAddress, List<InstituteAdminEntity> instituteAdmin) {
 		super();
 		this.instId = instId;
 		this.instName = instName;
@@ -285,11 +285,11 @@ public class InstituteEntity {
 		this.instituteAddress = instituteAddress;
 	}
 
-	public InstituteAdminEntity getInstituteAdmin() {
+	public List<InstituteAdminEntity> getInstituteAdmin() {
 		return instituteAdmin;
 	}
 
-	public void setInstituteAdmin(InstituteAdminEntity instituteAdmin) {
+	public void setInstituteAdmin(List<InstituteAdminEntity> instituteAdmin) {
 		this.instituteAdmin = instituteAdmin;
 	}
 	
