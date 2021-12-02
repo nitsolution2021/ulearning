@@ -66,7 +66,7 @@ public class EmailTemplateController {
 				String[] split = emailTemplateEntity.getEtBody().split(" ");
 				String tags = "";
 				for(int i = 0;i < split.length;i++) {
-					if(split[i].startsWith("<<") && split[i].endsWith(">>")) {
+					if(split[i].startsWith("__$") && split[i].endsWith("$__")) {
 						LOGGER.info("tags: " + split[i]);
 						tags = tags + split[i] + " ";
 					}
@@ -153,7 +153,7 @@ public class EmailTemplateController {
 						String[] split = emailTemplateEntity.getEtBody().split(" ");
 						String tags = "";
 						for(int i = 0;i < split.length;i++) {
-							if(split[i].startsWith("<<") && split[i].endsWith(">>")) {
+							if(split[i].startsWith("__$") && split[i].endsWith("$__")) {
 								LOGGER.info("tags: " + split[i]);
 								tags = tags + split[i] + " ";
 							}
