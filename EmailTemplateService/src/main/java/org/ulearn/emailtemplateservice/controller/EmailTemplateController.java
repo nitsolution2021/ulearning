@@ -63,10 +63,10 @@ public class EmailTemplateController {
 					throw new CustomException("The Template Name Already Exist");
 				}
 				List<EmailTemplateEntity> findByEtActionWithDefaultET = emailTemplateRepo.findByEtActionWithDefaultET(emailTemplateEntity.getEtAction(),"DEFAULT");
-				String[] split = emailTemplateEntity.getEtBody().split(" ");
+				String[] split = emailTemplateEntity.getEtBody().split("__");
 				String tags = "";
 				for(int i = 0;i < split.length;i++) {
-					if(split[i].startsWith("<<") && split[i].endsWith(">>")) {
+					if(split[i].startsWith("$") && split[i].endsWith("$")) {
 						LOGGER.info("tags: " + split[i]);
 						tags = tags + split[i] + " ";
 					}
@@ -150,10 +150,10 @@ public class EmailTemplateController {
 					List<EmailTemplateEntity> findByIdAndDelete = emailTemplateRepo.findByIdAndDelete(0, id);
 					if(findByIdAndDelete.size()>0) {
 						List<EmailTemplateEntity> findByEtActionWithDefaultET = emailTemplateRepo.findByEtActionWithDefaultET(emailTemplateEntity.getEtAction(),"DEFAULT");
-						String[] split = emailTemplateEntity.getEtBody().split(" ");
+						String[] split = emailTemplateEntity.getEtBody().split("__");
 						String tags = "";
 						for(int i = 0;i < split.length;i++) {
-							if(split[i].startsWith("<<") && split[i].endsWith(">>")) {
+							if(split[i].startsWith("$") && split[i].endsWith("$")) {
 								LOGGER.info("tags: " + split[i]);
 								tags = tags + split[i] + " ";
 							}
@@ -221,6 +221,9 @@ public class EmailTemplateController {
 				List<EmailTemplateEntity> findByIdAndDelete = emailTemplateRepo.findByIdAndDelete(0, id);
 				if(findByIdAndDelete.size()>0) {
 					if(findByIdAndDelete.get(0).getEtType().equals("CUSTOM")) {
+						if(findByIdAndDelete.get(0).getIsPrimary()==1) {
+							throw new CustomException("Primary Template Can't be Deleted");
+						}
 						EmailTemplateEntity emailTemplateEntity = findById.get();
 						emailTemplateEntity.setIsDeleted(1);
 						EmailTemplateEntity save = emailTemplateRepo.save(emailTemplateEntity);

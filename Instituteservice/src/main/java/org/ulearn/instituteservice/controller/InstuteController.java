@@ -78,7 +78,7 @@ public class InstuteController {
 
 		try {
 			Pageable pagingSort = PageRequest.of(page.orElse(0), Limit, Sort.Direction.DESC,
-					sortBy.orElse("createdOn"));
+					sortBy.orElse("instId"));
 			Page<InstituteEntity> findAll = instituteRepo.findByAllInst(pagingSort);
 			
 			int totalPage=findAll.getTotalPages()-1;
@@ -114,18 +114,20 @@ public class InstuteController {
 		try {
 			Pageable pagingSort = null;
 
-			if (sort.equals("ASC")) {
+			if (sort=="ASC") {
 				pagingSort = PageRequest.of(page, limit, Sort.Direction.ASC, sortBy.orElse(sortName));
 			} else {
 				pagingSort = PageRequest.of(page, limit, Sort.Direction.DESC, sortBy.orElse(sortName));
 			}
-
+			String keywordVal=keyword.get();
 			Page<InstituteEntity> findAll = null;
-			if (keyword.isPresent()) {
-				findAll = instituteRepo.Search(keyword.get(), pagingSort);
+			
+			if (keywordVal.isEmpty()) {
+				findAll = instituteRepo.findAll(pagingSort);				
 			} else {
-				findAll = instituteRepo.findByAllInst(pagingSort);
+				findAll = instituteRepo.Search(keyword.get(), pagingSort);
 			}
+			
 			int totalPage=findAll.getTotalPages()-1;
 			if(totalPage < 0) {
 				totalPage=0;
@@ -196,6 +198,7 @@ public class InstuteController {
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrCountry()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrDistrict()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrLine1()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrLine2()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrPincode()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrState()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrTaluka()))
@@ -277,9 +280,9 @@ public class InstuteController {
 						String ETSubject = responseEmailTemp.getBody().getEtSubject();
 						String ETBody = responseEmailTemp.getBody().getEtBody();
 
-						String ETTargetName = "<<_name_>>";
-						String ETTargetUsername = "<<_username_>>";
-						String ETTargetPassword = "<<_password_>>";
+						String ETTargetName = "__$name$__";
+						String ETTargetUsername = "__$username$__";
+						String ETTargetPassword = "__$password$__";
 						String ETNameReplacement = instituteGlobalEntrity.getAmdFname() + " "
 								+ instituteGlobalEntrity.getAmdLname();
 						String ETUsernameReplacement = instituteGlobalEntrity.getAmdUsername();
@@ -365,6 +368,7 @@ public class InstuteController {
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrCountry()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrDistrict()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrLine1()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrLine2()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrPincode()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrState()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrTaluka()))
