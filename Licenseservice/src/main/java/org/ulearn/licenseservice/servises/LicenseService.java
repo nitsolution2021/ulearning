@@ -115,7 +115,7 @@ public class LicenseService {
 						String ETSubject = responseEmailTemp.getBody().getEtSubject();
 						String ETBody = responseEmailTemp.getBody().getEtBody();
 
-						String ETTargetName = "<<_name_>>";
+						String ETTargetName = "__$name$__";
 						
 						String ETNameReplacement = amdFname +" "+ amdLname;
 
@@ -235,7 +235,7 @@ public class LicenseService {
 							String ETSubject = responseEmailTemp.getBody().getEtSubject();
 							String ETBody = responseEmailTemp.getBody().getEtBody();
 
-							String ETTargetName = "<<_name_>>";
+							String ETTargetName = "__$name$__";
 							
 							String ETNameReplacement = amdFname +" "+ amdLname;
 
