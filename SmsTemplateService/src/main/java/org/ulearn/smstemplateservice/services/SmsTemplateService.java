@@ -208,6 +208,9 @@ public class SmsTemplateService {
 		try {
 			Optional<SmsTemplateEntity> findById = smsTemplateRepo.findById(stId);
 			if (findById.isPresent()) {
+				if (findById.get().getIsPrimary() == 1) {
+					throw new CustomException("Primary Template Can't be Deleted");
+				}
 				SmsTemplateEntity smsTemplateEntity = new SmsTemplateEntity();
 				smsTemplateEntity.setCreatedOn(findById.get().getCreatedOn());
 				smsTemplateEntity.setIsActive(findById.get().getIsActive());
@@ -350,28 +353,29 @@ public class SmsTemplateService {
 			throw new CustomException(e.getMessage());
 		}
 	}
-	
+
 	private void checkTag(GlobalEntity globalEntity) {
-		
-		List<SmsTemplateEntity> findByEtActionWithDefaultET = smsTemplateRepo.findByEtActionWithDefaultET(globalEntity.getStAction(),"DEFAULT");
-		String[] split = globalEntity.getStBody().split(" ");
+
+		List<SmsTemplateEntity> findByEtActionWithDefaultET = smsTemplateRepo
+				.findByEtActionWithDefaultET(globalEntity.getStAction(), "DEFAULT");
+		String[] split = globalEntity.getStBody().split("__");
 		String tags = "";
-		for(int i = 0;i < split.length;i++) {
-			if(split[i].startsWith("<<") && split[i].endsWith(">>")) {
+		for (int i = 0; i < split.length; i++) {
+			if (split[i].startsWith("$") && split[i].endsWith("$")) {
 				LOGGER.info("tags: " + split[i]);
 				tags = tags + split[i] + " ";
 			}
 		}
-		if(findByEtActionWithDefaultET.size() <1) {
+		if (findByEtActionWithDefaultET.size() < 1) {
 			throw new CustomException("The Custome Template Action is Not Present in Default Action");
 		}
-		if(findByEtActionWithDefaultET.get(0).getStTags().split(",").length < tags.split(" ").length) {
+		if (findByEtActionWithDefaultET.get(0).getStTags().split(",").length < tags.split(" ").length) {
 			throw new CustomException("Tags lengths Are not Match");
 		}
 		String[] splitTags = tags.split(" ");
 		String splitTagsFromDB = findByEtActionWithDefaultET.get(0).getStTags();
-		for(int i = 0;i < splitTags.length;i++) {
-			if(splitTagsFromDB.indexOf(splitTags[i]) == -1){
+		for (int i = 0; i < splitTags.length; i++) {
+			if (splitTagsFromDB.indexOf(splitTags[i]) == -1) {
 				throw new CustomException("Tags Are Not Present in Default Template");
 			}
 		}
