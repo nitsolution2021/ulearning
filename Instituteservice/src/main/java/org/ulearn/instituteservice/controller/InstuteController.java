@@ -343,6 +343,7 @@ public class InstuteController {
 			if (!(findById.isPresent())) {
 				throw new CustomException("Institute Not Found!");
 			} else {
+				LOGGER.info("findById:- " + findById.get().getInstituteAdmin().toString());
 				return findById;
 			}
 
