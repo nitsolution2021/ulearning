@@ -1,6 +1,8 @@
 package org.ulearn.licenseservice.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -79,9 +82,9 @@ public class LicenseEntity {
 
 	
 
-	@OneToOne
+	@OneToMany
 	@JoinColumn(name="INST_ID")
-	private InstituteEntity instituteEntity;
+	private List<InstituteEntity> instituteEntity = new ArrayList<>();
 
 
 
@@ -265,13 +268,13 @@ public class LicenseEntity {
 
 
 
-	public InstituteEntity getInstituteEntity() {
+	public List<InstituteEntity> getInstituteEntity() {
 		return instituteEntity;
 	}
 
 
 
-	public void setInstituteEntity(InstituteEntity instituteEntity) {
+	public void setInstituteEntity(List<InstituteEntity> instituteEntity) {
 		this.instituteEntity = instituteEntity;
 	}
 
@@ -297,7 +300,7 @@ public class LicenseEntity {
 
 	public LicenseEntity(Long lcId, Long instId, String lcName, Date lcCreatDate, String lcType, String lcStype,
 			String lcValidityType, Long lcValidityNum, Date lcEndDate, String lcComment, String lcStatus, int isActive,
-			int isDeleted, Date createdOn, Date updatedOn, InstituteEntity instituteEntity) {
+			int isDeleted, Date createdOn, Date updatedOn, List<InstituteEntity> instituteEntity) {
 		super();
 		this.lcId = lcId;
 		this.instId = instId;
