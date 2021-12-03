@@ -32,6 +32,9 @@ import org.ulearn.licenseservice.repository.LicenseLogRepo;
 import org.ulearn.licenseservice.repository.LicenseRepo;
 import org.ulearn.licenseservice.validation.FieldValidation;
 
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.Unirest;
+
 @Service
 public class LicenseService {
 	
@@ -104,17 +107,23 @@ public class LicenseService {
 						
 						HttpEntity request=new HttpEntity(headers);
 						
-						String emailId;
-						String amdFname;
-						String amdLname;
+						String emailId="";
+						String amdFname="";
+						String amdLname="";
 						try {
-							ResponseEntity<LicenseGlobalEntity> responseEmailTempForInstNameEmail=new RestTemplate().exchange("http://65.1.66.115:8087/dev/institute/view/"+save.getInstId(),  HttpMethod.GET, request, LicenseGlobalEntity.class);
-							 emailId = responseEmailTempForInstNameEmail.getBody().getInstituteAdmin().getAmdEmail();
-							 amdFname = responseEmailTempForInstNameEmail.getBody().getInstituteAdmin().getAmdFname();
-							 amdLname = responseEmailTempForInstNameEmail.getBody().getInstituteAdmin().getAmdLname();	
+							
+							Unirest.setTimeouts(0, 0);
+							HttpResponse<String> response = Unirest.get("http://65.1.66.115:8087/dev/institute/view/"+ save.getInstId())
+							  .header("Authorization", token)
+							  .asString();
+
+//							 emailId = response.getBody().getInstEmail();
+//							 amdFname = response.getBody().getInstituteAdmin().getAmdFname();
+//							 amdLname = response.getBody().getInstituteAdmin().getAmdLname();	
+							 LOGGER.info("Inside the LicenseController Update License"+response.getBody());
 						}
 						catch(Exception e) {
-							if(!save.equals(null)) {
+							if(save.equals(null)) {
 								throw new CustomException("License have added but there is a problem in institute view.please check.");
 							}
 							else {
