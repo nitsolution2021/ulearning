@@ -495,6 +495,7 @@ public class InstuteController {
 									requestJson.put("subject", ETSubject);
 									requestJson.put("body", processedMailBodyContent);
 									requestJson.put("enableHtml", true);
+									
 								} catch (Exception e) {
 									throw new CustomException("Institute Updated Successfully But Email Service Is Not Running!");
 								}
