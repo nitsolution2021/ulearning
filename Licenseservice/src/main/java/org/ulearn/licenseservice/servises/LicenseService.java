@@ -103,32 +103,104 @@ public class LicenseService {
 						headers.setContentType(MediaType.APPLICATION_JSON);
 						
 						HttpEntity request=new HttpEntity(headers);
-						ResponseEntity<LicenseGlobalEntity> responseEmailTempForInstNameEmail=new RestTemplate().exchange("http://65.1.66.115:8087/dev/institute/view/"+save.getInstId(),  HttpMethod.GET, request, LicenseGlobalEntity.class);
-						String emailId = responseEmailTempForInstNameEmail.getBody().getInstituteAdmin().getAmdEmail();
-						String amdFname = responseEmailTempForInstNameEmail.getBody().getInstituteAdmin().getAmdFname();
-						String amdLname = responseEmailTempForInstNameEmail.getBody().getInstituteAdmin().getAmdLname();
+						
+						String emailId;
+						String amdFname;
+						String amdLname;
+						try {
+							ResponseEntity<LicenseGlobalEntity> responseEmailTempForInstNameEmail=new RestTemplate().exchange("http://65.1.66.115:8087/dev/institute/view/"+save.getInstId(),  HttpMethod.GET, request, LicenseGlobalEntity.class);
+							 emailId = responseEmailTempForInstNameEmail.getBody().getInstituteAdmin().getAmdEmail();
+							 amdFname = responseEmailTempForInstNameEmail.getBody().getInstituteAdmin().getAmdFname();
+							 amdLname = responseEmailTempForInstNameEmail.getBody().getInstituteAdmin().getAmdLname();	
+						}
+						catch(Exception e) {
+							if(!save.equals(null)) {
+								throw new CustomException("License have added but there is a problem in institute view.please check.");
+							}
+							else {
+								throw new CustomException("Error from institute view.");
+							}
+							
+						}
 						
 						
+						String ETSubject;
+						String ETBody;
+						String ETTargetName;
+						String ETNameReplacement;
+						String processedName;
 						//HttpEntity request = new HttpEntity(headers);
-						ResponseEntity<LicenseGlobalEntity> responseEmailTemp = new RestTemplate().exchange("http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/License_Create",
-								HttpMethod.GET, request, LicenseGlobalEntity.class);
-						String ETSubject = responseEmailTemp.getBody().getEtSubject();
-						String ETBody = responseEmailTemp.getBody().getEtBody();
-
-						String ETTargetName = "<<_name_>>";
 						
-						String ETNameReplacement = amdFname +" "+ amdLname;
+						try {
+							
+							ResponseEntity<LicenseGlobalEntity> responseEmailTemp = new RestTemplate().exchange("http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/License_Create",HttpMethod.GET, request, LicenseGlobalEntity.class);
+							 ETSubject = responseEmailTemp.getBody().getEtSubject();
+							 ETBody = responseEmailTemp.getBody().getEtBody();
 
-						String processedName = ETBody.replace(ETTargetName, ETNameReplacement);
+							 ETTargetName = "__$name$__";
+							
+							 ETNameReplacement = amdFname +" "+ amdLname;
 
-						JSONObject requestJson = new JSONObject();
-						requestJson.put("senderMailId", emailId);
-						requestJson.put("subject", ETSubject);
-						requestJson.put("body", processedName);
-						requestJson.put("enableHtml", true);
+							 processedName = ETBody.replace(ETTargetName, ETNameReplacement);
+						}
+						catch(Exception e) {
+							if(!save.equals(null)) {
+								throw new CustomException("License have added but there is a problem in emailTemplate view.please check.");
+							}
+							else {
+								throw new CustomException("Error from mail template.");
+							}
+							
+						}
+						
 
-						HttpEntity<String> entity = new HttpEntity(requestJson, headers);
-						ResponseEntity<String> response = new RestTemplate().postForEntity("http://65.1.66.115:8086/dev/login/sendMail/", entity, String.class);
+						try {
+							
+							JSONObject requestJson = new JSONObject();
+							requestJson.put("senderMailId", emailId);
+							requestJson.put("subject", ETSubject);
+							requestJson.put("body", processedName);
+							requestJson.put("enableHtml", true);
+
+							HttpEntity<String> entity = new HttpEntity(requestJson, headers);
+							ResponseEntity<String> response = new RestTemplate().postForEntity("http://65.1.66.115:8086/dev/login/sendMail/", entity, String.class);
+						}
+						catch(Exception e) {
+							if(!save.equals(null)) {
+								throw new CustomException("License have added but there is a problem in sendMail.please check.");
+							}
+							else {
+								throw new CustomException("Error from sendMail.");
+							}
+							
+						}
+						
+//						ResponseEntity<LicenseGlobalEntity> responseEmailTempForInstNameEmail=new RestTemplate().exchange("http://65.1.66.115:8087/dev/institute/view/"+save.getInstId(),  HttpMethod.GET, request, LicenseGlobalEntity.class);
+//						String emailId = responseEmailTempForInstNameEmail.getBody().getInstituteAdmin().getAmdEmail();
+//						String amdFname = responseEmailTempForInstNameEmail.getBody().getInstituteAdmin().getAmdFname();
+//						String amdLname = responseEmailTempForInstNameEmail.getBody().getInstituteAdmin().getAmdLname();
+//						
+//						
+//						//HttpEntity request = new HttpEntity(headers);
+//						ResponseEntity<LicenseGlobalEntity> responseEmailTemp = new RestTemplate().exchange("http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/License_Create",
+//								HttpMethod.GET, request, LicenseGlobalEntity.class);
+//						String ETSubject = responseEmailTemp.getBody().getEtSubject();
+//						String ETBody = responseEmailTemp.getBody().getEtBody();
+//
+//						String ETTargetName = "<<_name_>>";
+//						
+//						String ETNameReplacement = amdFname +" "+ amdLname;
+//
+//						String processedName = ETBody.replace(ETTargetName, ETNameReplacement);
+//
+//						JSONObject requestJson = new JSONObject();
+//						requestJson.put("senderMailId", emailId);
+//						requestJson.put("subject", ETSubject);
+//						requestJson.put("body", processedName);
+//						requestJson.put("enableHtml", true);
+//
+//						HttpEntity<String> entity = new HttpEntity(requestJson, headers);
+//						ResponseEntity<String> response = new RestTemplate().postForEntity("http://65.1.66.115:8086/dev/login/sendMail/", entity, String.class);
 						
 						
 
@@ -224,31 +296,77 @@ public class LicenseService {
 							headers.setContentType(MediaType.APPLICATION_JSON);
 							
 							HttpEntity request=new HttpEntity(headers);
-							ResponseEntity<LicenseGlobalEntity> responseEmailTempForInstNameEmail=new RestTemplate().exchange("http://65.1.66.115:8087/dev/institute/view/"+save.getInstId(),  HttpMethod.GET, request, LicenseGlobalEntity.class);
-							String emailId = responseEmailTempForInstNameEmail.getBody().getInstituteAdmin().getAmdEmail();
-							String amdFname = responseEmailTempForInstNameEmail.getBody().getInstituteAdmin().getAmdFname();
-							String amdLname = responseEmailTempForInstNameEmail.getBody().getInstituteAdmin().getAmdLname();
+							String emailId;
+							String amdFname;
+							String amdLname;
+							try {
+								ResponseEntity<LicenseGlobalEntity> responseEmailTempForInstNameEmail=new RestTemplate().exchange("http://65.1.66.115:8087/dev/institute/view/"+save.getInstId(),  HttpMethod.GET, request, LicenseGlobalEntity.class);
+								 emailId = responseEmailTempForInstNameEmail.getBody().getInstituteAdmin().getAmdEmail();
+								 amdFname = responseEmailTempForInstNameEmail.getBody().getInstituteAdmin().getAmdFname();
+								 amdLname = responseEmailTempForInstNameEmail.getBody().getInstituteAdmin().getAmdLname();	
+							}
+							catch(Exception e) {
+								if(!save.equals(null)) {
+									throw new CustomException("License have updated but there is a problem in institute view.please check.");
+								}
+								else {
+									throw new CustomException("Error from institute view.");
+								}
+								
+							}
 							
 							
+							String ETSubject;
+							String ETBody;
+							String ETTargetName;
+							String ETNameReplacement;
+							String processedName;
 							//HttpEntity request = new HttpEntity(headers);
-							ResponseEntity<LicenseGlobalEntity> responseEmailTemp = new RestTemplate().exchange("http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/License_Create",HttpMethod.GET, request, LicenseGlobalEntity.class);
-							String ETSubject = responseEmailTemp.getBody().getEtSubject();
-							String ETBody = responseEmailTemp.getBody().getEtBody();
-
-							String ETTargetName = "<<_name_>>";
 							
-							String ETNameReplacement = amdFname +" "+ amdLname;
+							try {
+								
+								ResponseEntity<LicenseGlobalEntity> responseEmailTemp = new RestTemplate().exchange("http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/License_Create",HttpMethod.GET, request, LicenseGlobalEntity.class);
+								 ETSubject = responseEmailTemp.getBody().getEtSubject();
+								 ETBody = responseEmailTemp.getBody().getEtBody();
 
-							String processedName = ETBody.replace(ETTargetName, ETNameReplacement);
+								 ETTargetName = "__$name$__";
+								
+								 ETNameReplacement = amdFname +" "+ amdLname;
 
-							JSONObject requestJson = new JSONObject();
-							requestJson.put("senderMailId", emailId);
-							requestJson.put("subject", ETSubject);
-							requestJson.put("body", processedName);
-							requestJson.put("enableHtml", true);
+								 processedName = ETBody.replace(ETTargetName, ETNameReplacement);
+							}
+							catch(Exception e) {
+								if(!save.equals(null)) {
+									throw new CustomException("License have updated but there is a problem in emailTemplate view.please check.");
+								}
+								else {
+									throw new CustomException("Error from mail template.");
+								}
+								
+							}
+							
 
-							HttpEntity<String> entity = new HttpEntity(requestJson, headers);
-							ResponseEntity<String> response = new RestTemplate().postForEntity("http://65.1.66.115:8086/dev/login/sendMail/", entity, String.class);
+							try {
+								
+								JSONObject requestJson = new JSONObject();
+								requestJson.put("senderMailId", emailId);
+								requestJson.put("subject", ETSubject);
+								requestJson.put("body", processedName);
+								requestJson.put("enableHtml", true);
+
+								HttpEntity<String> entity = new HttpEntity(requestJson, headers);
+								ResponseEntity<String> response = new RestTemplate().postForEntity("http://65.1.66.115:8086/dev/login/sendMail/", entity, String.class);
+							}
+							catch(Exception e) {
+								if(!save.equals(null)) {
+									throw new CustomException("License have updated but there is a problem in sendMail.please check.");
+								}
+								else {
+									throw new CustomException("Error from sendMail.");
+								}
+								
+							}
+							
 							
 							
 							
