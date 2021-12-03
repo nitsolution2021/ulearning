@@ -19,7 +19,7 @@ public interface InstituteRepo extends JpaRepository<InstituteEntity, Long> {
 	@Query(value = "SELECT instObj FROM InstituteEntity instObj WHERE instObj.isDeleted = 0")
 	Page<InstituteEntity> findByAllInst(Pageable pagingSort);
 	
-	@Query(value = "SELECT instObj FROM InstituteEntity instObj WHERE instObj.isDeleted = 0")
+	@Query(value = "SELECT instObj FROM InstituteEntity instObj WHERE instObj.isDeleted = 0 AND instObj.instStatus = 1")
 	List<InstituteEntity> findByListInst();
 
 	@Query(value = "select * from tbl_institutes where INST_ID != ? and INST_NAME = ? and IS_DELETED = 0",nativeQuery = true)
@@ -28,7 +28,7 @@ public interface InstituteRepo extends JpaRepository<InstituteEntity, Long> {
 	@Query(value = "select instD from InstituteEntity instD where instD.instId != ?1 and instD.instEmail = ?2 and instD.isDeleted = 0")
 	List<InstituteEntity> findByInstUnqEmail(long instId,String instEmail);
 	 
-	@Query(value = "select instAdrObj from InstituteEntity instD INNER JOIN InstituteAddressEntity instAdrObj on instAdrObj.instId = instD.instId WHERE instD.isDeleted = 0")
+	@Query(value = "select instAdrObj from InstituteEntity instD INNER JOIN InstituteAddressEntity instAdrObj on instAdrObj.instId = instD.instId INNER JOIN InstituteAdminEntity instAmdObj on instAmdObj.instId = instD.instId WHERE instD.isDeleted = 0")
 	List<InstituteGlobalEntity> findByAllInstQuery();	
 
 	@Query(value = "select * from tbl_institutes where IS_DELETED = 0",nativeQuery = true)
@@ -36,8 +36,8 @@ public interface InstituteRepo extends JpaRepository<InstituteEntity, Long> {
 	
 	@Query(value = "select tbl_institutes.*,tbl_inst_addr.* from tbl_institutes INNER JOIN tbl_inst_addr on tbl_institutes.INST_ID = tbl_inst_addr.INST_ID",nativeQuery = true)
 	List<InstituteEntity> func();	
-
-	@Query("SELECT instObj FROM InstituteEntity instObj WHERE instObj.isDeleted = 0 AND CONCAT(instituteAdmin.amdUsername,instObj.instName,instObj.instEmail,instObj.instMnum,instObj.instCnum) LIKE %?1%")
+//	instituteAdmin.amdUsername,
+	@Query("SELECT instObj FROM InstituteEntity instObj WHERE instObj.isDeleted = 0 AND CONCAT(instObj.instName,instObj.instEmail,instObj.instMnum,instObj.instCnum) LIKE %?1%")
     Page<InstituteEntity> Search(String sortKey, Pageable pageable);
 	
 	

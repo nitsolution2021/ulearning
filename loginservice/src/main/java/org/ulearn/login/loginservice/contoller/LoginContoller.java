@@ -128,7 +128,7 @@ public class LoginContoller {
 					throw new CustomException("Data Not Save Try Again");
 				}else {
 					//** SEND MAIL IF DETAILS SAVE IN DATABASE **//
-					mailService.sendEmail( findByUserName.get().getEmail(),forgotPasswordLink,"Forgot Password Link",false);
+					mailService.sendEmail( findByUserName.get().getEmail(),"Forgot Password Link","Hi " + findByUserName.get().getFirstName() + " "+ findByUserName.get().getLastName() +"<br>       This is Your Link For Reset Password " + forgotPasswordLink,false);
 				}
 				
 				return new GlobalResponse("SUCCESS","Mail Send Successfully", 200);
@@ -171,11 +171,11 @@ public class LoginContoller {
 	                        .parse(linkTime);
 					calObjForLinkCreateTime.setTime(dateObjForLinkCreateTime);
 					
-					if(calObjForCurrentTime.get(Calendar.YEAR)==calObjForLinkCreateTime.get(Calendar.YEAR) && calObjForCurrentTime.get(Calendar.MONTH)==calObjForLinkCreateTime.get(Calendar.MONTH) && calObjForCurrentTime.get(Calendar.DATE)==calObjForLinkCreateTime.get(Calendar.DATE) && calObjForCurrentTime.get(Calendar.HOUR)==calObjForLinkCreateTime.get(Calendar.HOUR)) {
-						
-					}else {
-						throw new CustomException("This Link is Expier");
-					}
+//					if(calObjForCurrentTime.get(Calendar.YEAR)==calObjForLinkCreateTime.get(Calendar.YEAR) && calObjForCurrentTime.get(Calendar.MONTH)==calObjForLinkCreateTime.get(Calendar.MONTH) && calObjForCurrentTime.get(Calendar.DATE)==calObjForLinkCreateTime.get(Calendar.DATE) && calObjForCurrentTime.get(Calendar.HOUR)==calObjForLinkCreateTime.get(Calendar.HOUR)) {
+//						
+//					}else {
+//						throw new CustomException("This Link is Expier");
+//					}
 				//** FIND THE USER CORRESPONDING THE LINK IN LOGIN TABLE **//
 					LoginResetEntity loginResetEntity = findByPrToken.get();
 					Optional<LoginEntity> findById = loginRepository.findById(loginResetEntity.getuId());

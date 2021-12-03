@@ -65,9 +65,48 @@ public class InstituteEntity {
 	@JoinColumn(name = "INST_ID", referencedColumnName = "INST_ID")
 	private List<InstituteAddressEntity> instituteAddress = new ArrayList<>();
 	
+	@OneToMany
+	@JoinColumn(name = "INST_ID", referencedColumnName = "INST_ID")
+	private List<InstituteAdminEntity> instituteAdmin = new ArrayList<>();
+	
 	@OneToOne
 	@JoinColumn(name = "INST_ID")
-	private InstituteAdminEntity instituteAdmin;
+	private LicenseEntity instituteLicense;
+
+	public LicenseEntity getInstituteLicense() {
+		return instituteLicense;
+	}
+
+	public void setInstituteLicense(LicenseEntity instituteLicense) {
+		this.instituteLicense = instituteLicense;
+	}
+
+	public InstituteEntity(Long instId, String instName, Date instEndDate, String instWebsite, String instEmail,
+			String instCnum, String instMnum, Date isntRegDate, String instLogo, String instPanNum, String instGstNum,
+			String instStatus, int isActive, int isDeleted, Date createdOn, Date updatedOn,
+			List<InstituteAddressEntity> instituteAddress, List<InstituteAdminEntity> instituteAdmin,
+			LicenseEntity instituteLicense) {
+		super();
+		this.instId = instId;
+		this.instName = instName;
+		this.instEndDate = instEndDate;
+		this.instWebsite = instWebsite;
+		this.instEmail = instEmail;
+		this.instCnum = instCnum;
+		this.instMnum = instMnum;
+		this.isntRegDate = isntRegDate;
+		this.instLogo = instLogo;
+		this.instPanNum = instPanNum;
+		this.instGstNum = instGstNum;
+		this.instStatus = instStatus;
+		this.isActive = isActive;
+		this.isDeleted = isDeleted;
+		this.createdOn = createdOn;
+		this.updatedOn = updatedOn;
+		this.instituteAddress = instituteAddress;
+		this.instituteAdmin = instituteAdmin;
+		this.instituteLicense = instituteLicense;
+	}
 
 	public InstituteEntity() {
 		super();
@@ -77,7 +116,7 @@ public class InstituteEntity {
 	public InstituteEntity(Long instId, String instName, Date instEndDate, String instWebsite, String instEmail,
 			String instCnum, String instMnum, Date isntRegDate, String instLogo, String instPanNum, String instGstNum,
 			String instStatus, int isActive, int isDeleted, Date createdOn, Date updatedOn,
-			List<InstituteAddressEntity> instituteAddress, InstituteAdminEntity instituteAdmin) {
+			List<InstituteAddressEntity> instituteAddress, List<InstituteAdminEntity> instituteAdmin) {
 		super();
 		this.instId = instId;
 		this.instName = instName;
@@ -106,7 +145,8 @@ public class InstituteEntity {
 				+ instMnum + ", isntRegDate=" + isntRegDate + ", instLogo=" + instLogo + ", instPanNum=" + instPanNum
 				+ ", instGstNum=" + instGstNum + ", instStatus=" + instStatus + ", isActive=" + isActive
 				+ ", isDeleted=" + isDeleted + ", createdOn=" + createdOn + ", updatedOn=" + updatedOn
-				+ ", instituteAddress=" + instituteAddress + ", instituteAdmin=" + instituteAdmin + "]";
+				+ ", instituteAddress=" + instituteAddress + ", instituteAdmin=" + instituteAdmin
+				+ ", instituteLicense=" + instituteLicense + "]";
 	}
 
 	public Long getInstId() {
@@ -245,11 +285,11 @@ public class InstituteEntity {
 		this.instituteAddress = instituteAddress;
 	}
 
-	public InstituteAdminEntity getInstituteAdmin() {
+	public List<InstituteAdminEntity> getInstituteAdmin() {
 		return instituteAdmin;
 	}
 
-	public void setInstituteAdmin(InstituteAdminEntity instituteAdmin) {
+	public void setInstituteAdmin(List<InstituteAdminEntity> instituteAdmin) {
 		this.instituteAdmin = instituteAdmin;
 	}
 	

@@ -14,11 +14,14 @@ import org.ulearn.packageservice.entity.PackageEntity;
 public interface PackageRepo extends JpaRepository<PackageEntity, Long>{
 
 	@Query(value="select * from tbl_inst_package",nativeQuery = true)
-	List<DataResponseEntity> findAlldata();
+	List<PackageEntity> findAlldata();
 	@Query(value = "SELECT packObj FROM PackageEntity packObj WHERE packObj.isDeleted = 0")
 	List<PackageEntity> findByListInst();
-	@Query("SELECT packObj FROM PackageEntity packObj WHERE packObj.isDeleted = 0 AND CONCAT(packObj.pkName,packObj.pkFname,packObj.pkValidityNum,packObj.parentId) LIKE %?1%")
+	@Query("SELECT packObj FROM PackageEntity packObj WHERE packObj.isDeleted = 0 AND CONCAT(instituteEntity.instName,packObj.pkName,packObj.pkFname,packObj.pkValidityNum,packObj.parentId) LIKE %?1%")
 	Page<PackageEntity> Search(String string, Pageable pageSort);
 	@Query(value = "SELECT packObj FROM PackageEntity packObj WHERE packObj.isDeleted = 0")
 	Page<PackageEntity> findByListpackage(Pageable pageSort);
+	@Query(value="select * from tbl_inst_package where IS_ACTIVE=2",nativeQuery = true)
+	List<PackageEntity> recentData();
+	
 }
