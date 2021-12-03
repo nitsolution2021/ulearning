@@ -234,7 +234,7 @@ public class LicenseService {
 
 	public GlobalResponse updateLicense(long licenseId, LicenseEntity licenseForUpdate, String token) {
 		// TODO Auto-generated method stub
-		Long instituteId;
+		
 		try {
 			
 			if(fieldValidation.isEmpty(licenseForUpdate.getInstId()) & fieldValidation.isEmpty(licenseForUpdate.getLcName()) & 
@@ -245,12 +245,13 @@ public class LicenseService {
 
 					
 					Optional<LicenseEntity> findById = this.LicenseRepo.findById(licenseId);
+					
 					if(findById.isPresent()) {
 						if(findById.get().getLcId().equals(licenseId)) {
 							
 								
-							LicenseEntity licenseUpdate = new LicenseEntity();
 							
+							Long instituteId= null;
 							if( findById.get().getInstId().equals(licenseForUpdate.getInstId())) {
 								 instituteId = licenseForUpdate.getInstId();
 							}
@@ -265,9 +266,11 @@ public class LicenseService {
 								}
 							}
 							
-							//LOGGER.info(findById.get().getCreatedOn()+"");
+							
+							LicenseEntity licenseUpdate = new LicenseEntity();
+							
 							licenseUpdate.setLcName(licenseForUpdate.getLcName());
-							licenseUpdate.setLcId(findById.get().getLcId());
+							licenseUpdate.setLcId(licenseId);
 							licenseUpdate.setInstId(instituteId);
 							licenseUpdate.setLcCreatDate(licenseForUpdate.getLcCreatDate());
 							licenseUpdate.setLcType(licenseForUpdate.getLcType());
@@ -281,8 +284,8 @@ public class LicenseService {
 							licenseUpdate.setIsDeleted(findById.get().getIsDeleted());
 							licenseUpdate.setCreatedOn(findById.get().getCreatedOn());
 							licenseUpdate.setUpdatedOn(new Date());
-							LOGGER.info("licenseUpdate?????????: "+licenseUpdate.toString());
-							LicenseEntity save = LicenseRepo.save(licenseUpdate);
+							
+							LicenseEntity save = LicenseRepo.save(licenseUpdate);					
 							
 							//Set data for license log table
 							
