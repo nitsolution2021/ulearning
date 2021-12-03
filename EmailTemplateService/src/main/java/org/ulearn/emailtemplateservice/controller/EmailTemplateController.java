@@ -34,7 +34,7 @@ import org.ulearn.emailtemplateservice.validation.FieldValidation;
 
 
 @RestController
-@RequestMapping("/emailTemplate")
+@RequestMapping("/emailTemplate") 
 public class EmailTemplateController {
 	
 	@Autowired
@@ -190,7 +190,7 @@ public class EmailTemplateController {
 							if(save.equals(null)) {
 								throw new CustomException("Data Not Save Try Again");
 							}else {
-								return new GlobalResponse("Data Save Successfully","SUCCESS",200);
+								return new GlobalResponse("Data Updated Successfully","SUCCESS",200);
 							}	
 							
 						}else {
@@ -230,7 +230,7 @@ public class EmailTemplateController {
 						if(save.equals(null)) {
 							throw new CustomException("Data Not Save Try Again");
 						}else {
-							return new GlobalResponse("Data Save Successfully","SUCCESS",200);
+							return new GlobalResponse("Data Deleted Successfully","SUCCESS",200);
 						}	
 					}else {
 						throw new CustomException("Default Template Can't be Deleted");
@@ -352,7 +352,7 @@ public class EmailTemplateController {
 	@GetMapping("/getPrimaryETByAction/{action}")
 	public EmailTemplateEntity getPrimaryETByAction(@PathVariable("action") String action) {
 		
-		LOGGER.info("Inside - EmailTemplateController.emailTemplateGetAll()");
+		LOGGER.info("Inside - EmailTemplateController.getPrimaryETByAction()");
 		try {
 
 				List<EmailTemplateEntity> findAllByIdAndDelete = emailTemplateRepo.getPrimaryETByAction(action,1);

@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.ulearn.instituteservice.entity.InstituteEntity;
-import org.ulearn.instituteservice.entity.InstituteAddressEntity;
 import org.ulearn.instituteservice.entity.InstituteGlobalEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +15,7 @@ public interface InstituteRepo extends JpaRepository<InstituteEntity, Long> {
 	
 	Optional<InstituteEntity> findByInstEmail(String instEmail);	
 	
-	@Query(value = "SELECT instObj FROM InstituteEntity instObj WHERE instObj.isDeleted = 0")
+	@Query(value = "SELECT instObj FROM InstituteEntity instObj INNER JOIN InstituteAdminEntity instAmdObj on instAmdObj.instId = instObj.instId WHERE instObj.isDeleted = 0")
 	Page<InstituteEntity> findByAllInst(Pageable pagingSort);
 	
 	@Query(value = "SELECT instObj FROM InstituteEntity instObj WHERE instObj.isDeleted = 0 AND instObj.instStatus = 1")
@@ -37,7 +36,7 @@ public interface InstituteRepo extends JpaRepository<InstituteEntity, Long> {
 	@Query(value = "select tbl_institutes.*,tbl_inst_addr.* from tbl_institutes INNER JOIN tbl_inst_addr on tbl_institutes.INST_ID = tbl_inst_addr.INST_ID",nativeQuery = true)
 	List<InstituteEntity> func();	
 //	instituteAdmin.amdUsername,
-	@Query("SELECT instObj FROM InstituteEntity instObj WHERE instObj.isDeleted = 0 AND CONCAT(instObj.instName,instObj.instEmail,instObj.instMnum,instObj.instCnum) LIKE %?1%")
+	@Query("SELECT instObj FROM InstituteEntity instObj INNER JOIN InstituteAdminEntity instAmdObj on instAmdObj.instId = instObj.instId WHERE instObj.isDeleted = 0 AND CONCAT(instAmdObj.amdUsername,instObj.instName,instObj.instEmail,instObj.instMnum,instObj.instCnum) LIKE %?1%")
     Page<InstituteEntity> Search(String sortKey, Pageable pageable);
 	
 	

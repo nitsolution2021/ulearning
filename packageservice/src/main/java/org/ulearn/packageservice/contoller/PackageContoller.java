@@ -130,7 +130,7 @@ public class PackageContoller {
 						pageSort= PageRequest.of(page, limit, Sort.Direction.DESC, sortBy.orElse(sortName));
 					}
 			Page<PackageEntity> findAll =null;
-			if(keyword.isPresent())
+			if(!keyword.get().isEmpty())
 			{
 				findAll= packageRepo.Search(keyword.get(),pageSort);
 			}
