@@ -34,7 +34,7 @@ import org.ulearn.emailtemplateservice.validation.FieldValidation;
 
 
 @RestController
-@RequestMapping("/emailTemplate")
+@RequestMapping("/emailTemplate") 
 public class EmailTemplateController {
 	
 	@Autowired
