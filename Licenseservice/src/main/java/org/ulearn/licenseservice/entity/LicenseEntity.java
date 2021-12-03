@@ -7,7 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 
@@ -78,56 +79,11 @@ public class LicenseEntity {
 
 	
 
-//	@OneToOne
-//	@JoinColumn(name="INST_ID")
-//	private InstituteEntity instituteEntity; 
-//	
-
-	
-	public LicenseEntity() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+	@OneToOne
+	@JoinColumn(name="INST_ID")
+	private InstituteEntity instituteEntity;
 
 
-	
-
-	public LicenseEntity(Long lcId, Long instId, String lcName, Date lcCreatDate, String lcType, String lcStype,
-			String lcValidityType, Long lcValidityNum, Date lcEndDate, String lcComment, String lcStatus, int isActive,
-			int isDeleted, Date createdOn, Date updatedOn) {
-		super();
-		this.lcId = lcId;
-		this.instId = instId;
-		this.lcName = lcName;
-		this.lcCreatDate = lcCreatDate;
-		this.lcType = lcType;
-		this.lcStype = lcStype;
-		this.lcValidityType = lcValidityType;
-		this.lcValidityNum = lcValidityNum;
-		this.lcEndDate = lcEndDate;
-		this.lcComment = lcComment;
-		this.lcStatus = lcStatus;
-		this.isActive = isActive;
-		this.isDeleted = isDeleted;
-		this.createdOn = createdOn;
-		this.updatedOn = updatedOn;
-//		this.instituteEntity = instituteEntity;
-	}
-
-
-
-
-	@Override
-	public String toString() {
-		return "LicenseEntity [lcId=" + lcId + ", instId=" + instId + ", lcName=" + lcName + ", lcCreatDate="
-				+ lcCreatDate + ", lcType=" + lcType + ", lcStype=" + lcStype + ", lcValidityType=" + lcValidityType
-				+ ", lcValidityNum=" + lcValidityNum + ", lcEndDate=" + lcEndDate + ", lcComment=" + lcComment
-				+ ", lcStatus=" + lcStatus + ", isActive=" + isActive + ", isDeleted=" + isDeleted + ", createdOn="
-				+ createdOn + ", updatedOn=" + updatedOn  + "]";
-	}
-
-
-//	+ ", instituteEntity=" + instituteEntity
 
 	public Long getLcId() {
 		return lcId;
@@ -253,50 +209,117 @@ public class LicenseEntity {
 		return lcStatus;
 	}
 
+
+
 	public void setLcStatus(String lcStatus) {
 		this.lcStatus = lcStatus;
 	}
+
+
 
 	public int getIsActive() {
 		return isActive;
 	}
 
+
+
 	public void setIsActive(int isActive) {
 		this.isActive = isActive;
 	}
+
+
 
 	public int getIsDeleted() {
 		return isDeleted;
 	}
 
+
+
 	public void setIsDeleted(int isDeleted) {
 		this.isDeleted = isDeleted;
 	}
+
+
 
 	public Date getCreatedOn() {
 		return createdOn;
 	}
 
+
+
 	public void setCreatedOn(Date createdOn) {
 		this.createdOn = createdOn;
 	}
+
+
 
 	public Date getUpdatedOn() {
 		return updatedOn;
 	}
 
+
+
 	public void setUpdatedOn(Date updatedOn) {
 		this.updatedOn = updatedOn;
 	}
 
-//	public InstituteEntity getInstituteEntity() {
-//		return instituteEntity;
-//	}
-//
-//	public void setInstituteEntity(InstituteEntity instituteEntity) {
-//		this.instituteEntity = instituteEntity;
-//	}
 
+
+	public InstituteEntity getInstituteEntity() {
+		return instituteEntity;
+	}
+
+
+
+	public void setInstituteEntity(InstituteEntity instituteEntity) {
+		this.instituteEntity = instituteEntity;
+	}
+
+
+
+	@Override
+	public String toString() {
+		return "LicenseEntity [lcId=" + lcId + ", instId=" + instId + ", lcName=" + lcName + ", lcCreatDate="
+				+ lcCreatDate + ", lcType=" + lcType + ", lcStype=" + lcStype + ", lcValidityType=" + lcValidityType
+				+ ", lcValidityNum=" + lcValidityNum + ", lcEndDate=" + lcEndDate + ", lcComment=" + lcComment
+				+ ", lcStatus=" + lcStatus + ", isActive=" + isActive + ", isDeleted=" + isDeleted + ", createdOn="
+				+ createdOn + ", updatedOn=" + updatedOn + ", instituteEntity=" + instituteEntity + "]";
+	}
+
+
+
+	public LicenseEntity() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+
+
+	public LicenseEntity(Long lcId, Long instId, String lcName, Date lcCreatDate, String lcType, String lcStype,
+			String lcValidityType, Long lcValidityNum, Date lcEndDate, String lcComment, String lcStatus, int isActive,
+			int isDeleted, Date createdOn, Date updatedOn, InstituteEntity instituteEntity) {
+		super();
+		this.lcId = lcId;
+		this.instId = instId;
+		this.lcName = lcName;
+		this.lcCreatDate = lcCreatDate;
+		this.lcType = lcType;
+		this.lcStype = lcStype;
+		this.lcValidityType = lcValidityType;
+		this.lcValidityNum = lcValidityNum;
+		this.lcEndDate = lcEndDate;
+		this.lcComment = lcComment;
+		this.lcStatus = lcStatus;
+		this.isActive = isActive;
+		this.isDeleted = isDeleted;
+		this.createdOn = createdOn;
+		this.updatedOn = updatedOn;
+		this.instituteEntity = instituteEntity;
+	} 
+
+
+	
+	
 	
 
 }
