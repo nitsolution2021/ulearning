@@ -47,7 +47,7 @@ public class InstituteGlobalEntity {
 	private String adrType;
 	@NotEmpty(message = "The Address Line 1 is Required")
 	private String adrLine1;
-	@NotEmpty(message = "The Address Line 2 is Required")
+//	@NotEmpty(message = "The Address Line 2 is Required")
 	private String adrLine2;	
 	@Positive(message = "The Country is Required")
 	private Long adrCountry;	
