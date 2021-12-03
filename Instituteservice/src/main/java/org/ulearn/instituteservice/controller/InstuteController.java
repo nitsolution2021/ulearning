@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import org.hibernate.annotations.Where;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +23,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,7 +34,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.servlet.ModelAndView;
 import org.ulearn.instituteservice.entity.GlobalResponse;
 import org.ulearn.instituteservice.entity.InstituteAddressEntity;
 import org.ulearn.instituteservice.entity.InstituteAdminEntity;
@@ -107,7 +104,7 @@ public class InstuteController {
 			@PathVariable("sort") String sort, @PathVariable("sortName") String sortName,
 			@RequestParam(defaultValue = "") Optional<String> keyword, @RequestParam Optional<String> sortBy) {
 
-		LOGGER.info("Inside - InstituteController.getInstutePagination()" + sort);
+		LOGGER.info("Inside - InstituteController.getInstutePagination()");
 
 		try {
 			Pageable pagingSort = null;
@@ -119,12 +116,13 @@ public class InstuteController {
 			}
 			String keywordVal = keyword.get();
 			Page<InstituteEntity> findAll = null;
+			
 			if (keyword.get().isEmpty()) {
 				findAll = instituteRepo.findByAllInst(pagingSort);
-				LOGGER.info("Inside - InstituteController.getInstutePagination()+++" + sortName);
+				
 			} else {
 				findAll = instituteRepo.Search(keyword.get(), pagingSort);
-				LOGGER.info("Inside - InstituteController.getInstutePagination()-----");
+				
 			}
 
 			int totalPage = findAll.getTotalPages() - 1;
@@ -195,7 +193,7 @@ public class InstuteController {
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrCountry()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrDistrict()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrLine1()))
-					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrLine2()))
+//					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrLine2()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrPincode()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrState()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrTaluka()))
@@ -291,7 +289,7 @@ public class InstuteController {
 							String processedUsername = processedName.replace(ETTargetUsername, ETUsernameReplacement);
 							String processedMailBodyContent = processedUsername.replace(ETTargetPassword,
 									ETPasswordReplacement);
-							String mailid = instituteGlobalEntrity.getAmdEmail();
+							String mailid = instituteGlobalEntrity.getInstEmail();
 
 							requestJson = new JSONObject();
 							requestJson.put("senderMailId", mailid);
@@ -327,19 +325,6 @@ public class InstuteController {
 
 	}
 
-//	@GetMapping("/views")
-//	public String view(Model model) { 
-//		LOGGER.info("Inside - InstituteController.view()");
-////		Map<String, Object> params = new HashMap();
-////		ModelAndView mav = new ModelAndView("InstituteRegister");
-////	    mav.addObject("listEmployees", instituteRepo.findAll());
-//	    
-//	    InstituteEntity employee= new InstituteEntity();
-//		 model.addAttribute("employee", employee);
-//		return "InstituteRegister";
-//	
-//	}
-
 	@GetMapping("/view/{instId}")
 	public Optional<InstituteEntity> viewInstituteDetails(@PathVariable() long instId) {
 		LOGGER.info("Inside - InstituteController.viewInstituteDetails()");
@@ -373,7 +358,7 @@ public class InstuteController {
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrCountry()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrDistrict()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrLine1()))
-					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrLine2()))
+//					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrLine2()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrPincode()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrState()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrTaluka()))
@@ -492,7 +477,7 @@ public class InstuteController {
 									String ETNameReplacement = instituteGlobalEntrity.getInstName();
 									String processedMailBodyContent = ETBody.replace(ETTargetName, ETNameReplacement);
 
-									String mailid = instituteGlobalEntrity.getAmdEmail();
+									String mailid = instituteGlobalEntrity.getInstEmail();
 
 									requestJson = new JSONObject();
 									requestJson.put("senderMailId", mailid);
@@ -501,6 +486,9 @@ public class InstuteController {
 									requestJson.put("enableHtml", true);
 									
 								} catch (Exception e) {
+									if(e.getMessage().equals("No Data Present")) {
+										throw new CustomException(e.getMessage());
+									}
 									throw new CustomException("Institute Updated Successfully But Email Service Is Not Running!");
 								}
 								try {
