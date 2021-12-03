@@ -273,8 +273,9 @@ public class InstuteController {
 
 							HttpEntity request = new HttpEntity(headers);
 							ResponseEntity<InstituteGlobalEntity> responseEmailTemp = new RestTemplate().exchange(
-									"http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/Institute_Create",
+									"http://localhost:8090/dev/emailTemplate/getPrimaryETByAction/Institute_Create",
 									HttpMethod.GET, request, InstituteGlobalEntity.class);
+							
 							String ETSubject = responseEmailTemp.getBody().getEtSubject();
 							String ETBody = responseEmailTemp.getBody().getEtBody();
 
@@ -298,6 +299,9 @@ public class InstuteController {
 							requestJson.put("body", processedMailBodyContent);
 							requestJson.put("enableHtml", true);
 						} catch (Exception e) {
+							if(e.getMessage().equals("No Data Present")) {
+								throw new CustomException(e.getMessage());
+							}
 							throw new CustomException("Institute Added Successfully But Email Service Is Not Running!");
 						}
 						try {

@@ -352,7 +352,7 @@ public class EmailTemplateController {
 	@GetMapping("/getPrimaryETByAction/{action}")
 	public EmailTemplateEntity getPrimaryETByAction(@PathVariable("action") String action) {
 		
-		LOGGER.info("Inside - EmailTemplateController.emailTemplateGetAll()");
+		LOGGER.info("Inside - EmailTemplateController.getPrimaryETByAction()");
 		try {
 
 				List<EmailTemplateEntity> findAllByIdAndDelete = emailTemplateRepo.getPrimaryETByAction(action,1);
