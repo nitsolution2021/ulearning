@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +34,7 @@ import org.ulearn.licenseservice.repository.LicenseRepo;
 import org.ulearn.licenseservice.validation.FieldValidation;
 
 import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 
 @Service
@@ -113,22 +115,19 @@ public class LicenseService {
 						try {
 							
 							Unirest.setTimeouts(0, 0);
-							HttpResponse<String> response = Unirest.get("http://65.1.66.115:8087/dev/institute/view/"+ save.getInstId())
+							 HttpResponse<JsonNode> asJson = Unirest.get("http://65.1.66.115:8087/dev/institute/view/"+ save.getInstId())
 							  .header("Authorization", token)
-							  .asString();
-
-//							 emailId = response.getBody().getInstEmail();
-//							 amdFname = response.getBody().getInstituteAdmin().getAmdFname();
-//							 amdLname = response.getBody().getInstituteAdmin().getAmdLname();	
-							 LOGGER.info("Inside the LicenseController Update License"+response.getBody());
+							  .asJson();
+							 org.json.JSONObject object = asJson.getBody().getObject();
+							 emailId =object.getString("instEmail");
+							 JSONArray jsonArray = object.getJSONArray("instituteAdmin");
+							 org.json.JSONObject jsonObject = jsonArray.getJSONObject(0);
+							 amdFname=jsonObject.getString("amdFname");
+							 amdLname = jsonObject.getString("amdLname");
+							 LOGGER.info("Inside the LicenseController Update License"+object.getString("instEmail"));
 						}
 						catch(Exception e) {
-							if(save.equals(null)) {
-								throw new CustomException("License have added but there is a problem in institute view.please check.");
-							}
-							else {
-								throw new CustomException("Error from institute view.");
-							}
+							throw new CustomException(e.getMessage());
 							
 						}
 						
@@ -309,10 +308,16 @@ public class LicenseService {
 							String amdFname;
 							String amdLname;
 							try {
-								ResponseEntity<LicenseGlobalEntity> responseEmailTempForInstNameEmail=new RestTemplate().exchange("http://65.1.66.115:8087/dev/institute/view/"+save.getInstId(),  HttpMethod.GET, request, LicenseGlobalEntity.class);
-								 emailId = responseEmailTempForInstNameEmail.getBody().getInstituteAdmin().getAmdEmail();
-								 amdFname = responseEmailTempForInstNameEmail.getBody().getInstituteAdmin().getAmdFname();
-								 amdLname = responseEmailTempForInstNameEmail.getBody().getInstituteAdmin().getAmdLname();	
+								Unirest.setTimeouts(0, 0);
+								 HttpResponse<JsonNode> asJson = Unirest.get("http://65.1.66.115:8087/dev/institute/view/"+ save.getInstId())
+								  .header("Authorization", token)
+								  .asJson();
+								 org.json.JSONObject object = asJson.getBody().getObject();
+								 emailId =object.getString("instEmail");
+								 JSONArray jsonArray = object.getJSONArray("instituteAdmin");
+								 org.json.JSONObject jsonObject = jsonArray.getJSONObject(0);
+								 amdFname=jsonObject.getString("amdFname");
+								 amdLname = jsonObject.getString("amdLname");	
 							}
 							catch(Exception e) {
 								if(!save.equals(null)) {
