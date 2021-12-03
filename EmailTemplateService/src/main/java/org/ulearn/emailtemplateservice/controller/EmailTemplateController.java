@@ -190,7 +190,7 @@ public class EmailTemplateController {
 							if(save.equals(null)) {
 								throw new CustomException("Data Not Save Try Again");
 							}else {
-								return new GlobalResponse("Data Save Successfully","SUCCESS",200);
+								return new GlobalResponse("Data Updated Successfully","SUCCESS",200);
 							}	
 							
 						}else {
@@ -230,7 +230,7 @@ public class EmailTemplateController {
 						if(save.equals(null)) {
 							throw new CustomException("Data Not Save Try Again");
 						}else {
-							return new GlobalResponse("Data Save Successfully","SUCCESS",200);
+							return new GlobalResponse("Data Deleted Successfully","SUCCESS",200);
 						}	
 					}else {
 						throw new CustomException("Default Template Can't be Deleted");

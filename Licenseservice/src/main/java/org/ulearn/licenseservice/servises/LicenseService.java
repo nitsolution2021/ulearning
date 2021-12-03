@@ -281,7 +281,7 @@ public class LicenseService {
 							licenseUpdate.setIsDeleted(findById.get().getIsDeleted());
 							licenseUpdate.setCreatedOn(findById.get().getCreatedOn());
 							licenseUpdate.setUpdatedOn(new Date());
-							
+							LOGGER.info("licenseUpdate?????????: "+licenseUpdate.toString());
 							LicenseEntity save = LicenseRepo.save(licenseUpdate);
 							
 							//Set data for license log table
