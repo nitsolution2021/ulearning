@@ -3,7 +3,9 @@ package org.ulearn.licenseservice.entity;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -82,9 +84,51 @@ public class LicenseEntity {
 
 	
 
-	@OneToMany
-	@JoinColumn(name="INST_ID")
-	private List<InstituteEntity> instituteEntity = new ArrayList<>();
+	@OneToOne(optional=false)
+	@JoinColumn(name="INST_ID",insertable=false, updatable=false)
+	private InstituteEntity instituteEntity;
+
+
+
+	public LicenseEntity() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+
+
+	public LicenseEntity(Long lcId, Long instId, String lcName, Date lcCreatDate, String lcType, String lcStype,
+			String lcValidityType, Long lcValidityNum, Date lcEndDate, String lcComment, String lcStatus, int isActive,
+			int isDeleted, Date createdOn, Date updatedOn, InstituteEntity instituteEntity) {
+		super();
+		this.lcId = lcId;
+		this.instId = instId;
+		this.lcName = lcName;
+		this.lcCreatDate = lcCreatDate;
+		this.lcType = lcType;
+		this.lcStype = lcStype;
+		this.lcValidityType = lcValidityType;
+		this.lcValidityNum = lcValidityNum;
+		this.lcEndDate = lcEndDate;
+		this.lcComment = lcComment;
+		this.lcStatus = lcStatus;
+		this.isActive = isActive;
+		this.isDeleted = isDeleted;
+		this.createdOn = createdOn;
+		this.updatedOn = updatedOn;
+		this.instituteEntity = instituteEntity;
+	}
+
+
+
+	@Override
+	public String toString() {
+		return "LicenseEntity [lcId=" + lcId + ", instId=" + instId + ", lcName=" + lcName + ", lcCreatDate="
+				+ lcCreatDate + ", lcType=" + lcType + ", lcStype=" + lcStype + ", lcValidityType=" + lcValidityType
+				+ ", lcValidityNum=" + lcValidityNum + ", lcEndDate=" + lcEndDate + ", lcComment=" + lcComment
+				+ ", lcStatus=" + lcStatus + ", isActive=" + isActive + ", isDeleted=" + isDeleted + ", createdOn="
+				+ createdOn + ", updatedOn=" + updatedOn + ", instituteEntity=" + instituteEntity + "]";
+	}
 
 
 
@@ -268,61 +312,16 @@ public class LicenseEntity {
 
 
 
-	public List<InstituteEntity> getInstituteEntity() {
+	public InstituteEntity getInstituteEntity() {
 		return instituteEntity;
 	}
 
 
 
-	public void setInstituteEntity(List<InstituteEntity> instituteEntity) {
+	public void setInstituteEntity(InstituteEntity instituteEntity) {
 		this.instituteEntity = instituteEntity;
 	}
 
 
-
-	@Override
-	public String toString() {
-		return "LicenseEntity [lcId=" + lcId + ", instId=" + instId + ", lcName=" + lcName + ", lcCreatDate="
-				+ lcCreatDate + ", lcType=" + lcType + ", lcStype=" + lcStype + ", lcValidityType=" + lcValidityType
-				+ ", lcValidityNum=" + lcValidityNum + ", lcEndDate=" + lcEndDate + ", lcComment=" + lcComment
-				+ ", lcStatus=" + lcStatus + ", isActive=" + isActive + ", isDeleted=" + isDeleted + ", createdOn="
-				+ createdOn + ", updatedOn=" + updatedOn + ", instituteEntity=" + instituteEntity + "]";
-	}
-
-
-
-	public LicenseEntity() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
-
-
-	public LicenseEntity(Long lcId, Long instId, String lcName, Date lcCreatDate, String lcType, String lcStype,
-			String lcValidityType, Long lcValidityNum, Date lcEndDate, String lcComment, String lcStatus, int isActive,
-			int isDeleted, Date createdOn, Date updatedOn, List<InstituteEntity> instituteEntity) {
-		super();
-		this.lcId = lcId;
-		this.instId = instId;
-		this.lcName = lcName;
-		this.lcCreatDate = lcCreatDate;
-		this.lcType = lcType;
-		this.lcStype = lcStype;
-		this.lcValidityType = lcValidityType;
-		this.lcValidityNum = lcValidityNum;
-		this.lcEndDate = lcEndDate;
-		this.lcComment = lcComment;
-		this.lcStatus = lcStatus;
-		this.isActive = isActive;
-		this.isDeleted = isDeleted;
-		this.createdOn = createdOn;
-		this.updatedOn = updatedOn;
-		this.instituteEntity = instituteEntity;
-	} 
-
-
 	
-	
-	
-
 }
