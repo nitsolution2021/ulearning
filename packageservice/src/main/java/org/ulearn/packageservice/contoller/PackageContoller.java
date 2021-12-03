@@ -113,7 +113,7 @@ public class PackageContoller {
 		}
 
 	}
-	@RequestMapping(value = { "/list/{page}/{limit}/{sortName}/{sort}" }, method = RequestMethod.GET)
+	@GetMapping("/list/{page}/{limit}/{sortName}/{sort}")
 	public Map<String, Object> getInstutePagination(@PathVariable("page") int page, @PathVariable("limit") int limit,
 			@PathVariable("sort") String sort, @PathVariable("sortName") String sortName,
 			@RequestParam(defaultValue = "") Optional<String>keyword, @RequestParam Optional<String> sortBy)
@@ -200,6 +200,7 @@ public class PackageContoller {
 					& (fieldValidation.isEmpty(packageGlobalData.getPkCdate()))
 					& (fieldValidation.isEmpty(packageGlobalData.getPkValidityType()))) {
 				long defaultId=0;
+				//System.out.println(packageGlobalData);
 				PackageEntity newData=new PackageEntity();
 				newData.setPkFname(packageGlobalData.getPkFname());
 				newData.setPkName(packageGlobalData.getPkName());
@@ -209,102 +210,142 @@ public class PackageContoller {
 				newData.setInstId(packageGlobalData.getInstId());
 				newData.setPkComment(packageGlobalData.getPkComment());
 				newData.setPkCdate(packageGlobalData.getPkCdate());
-				if(packageRepo.existsById(packageGlobalData.getInstId()))
-				{
-					Optional<PackageEntity> oldPackageData=packageRepo.findById(packageGlobalData.getInstId());
-					PackageEntity packageData=oldPackageData.get();
-					long parentId=packageData.getInstId();
-					//System.out.println(parentId);
-					newData.setPkType("AddOn");
-					newData.setParentId(parentId);
-				}
-				else
-				{
-					newData.setPkType("New");
-					newData.setParentId(defaultId);
-				}
 				
-					//newData.setPkCdate(new Date());
-				if(licenseRepo.existsById(newData.getInstId()))
+				Optional<LicenseEntity> licData=licenseRepo.findById(packageGlobalData.getInstId());
+				LicenseEntity licenseEntity=licData.get();
+				long licenceValidityHours=0;
+				long packageValidityHours=0;
+				if(newData.getPkValidityType().equals("Days"))
 				{
-					//System.out.println(licenseRepo.existsById(newData.getInstId()));
-					throw new CustomException("License Not Found");
+					packageValidityHours=24*newData.getPkValidityNum();
+				}
+				if(newData.getPkValidityType().equals("Months"))
+				{
+					packageValidityHours=720*newData.getPkValidityNum();
+				}
+				if(newData.getPkValidityType().equals("Years"))
+				{
+					packageValidityHours=8640*newData.getPkValidityNum();
+				}
+				if(licenseEntity.getLcValidityType().equals("Days"))
+				{
+					licenceValidityHours=24*licenseEntity.getLcValidityNum();
+				}
+				if(licenseEntity.getLcValidityType().equals("Months"))
+				{
+					licenceValidityHours=720*licenseEntity.getLcValidityNum();
+				}
+				if(licenseEntity.getLcValidityType().equals("Years"))
+				{
+					licenceValidityHours=8640*licenseEntity.getLcValidityNum();
+				}
+				if(licenceValidityHours>=packageValidityHours)
+				{
+					if(packageRepo.existsById(packageGlobalData.getInstId()))
+					{
+						Optional<PackageEntity> oldPackageData=packageRepo.findById(packageGlobalData.getInstId());
+						PackageEntity packageData=oldPackageData.get();
+						if(packageData.getPkFname().equals(packageGlobalData.getPkFname()))
+						{
+							newData.setPkType("Addon Package");
+						}
+						else
+						{
+							newData.setPkType("New Package");
+						}
+						long parentId=packageData.getInstId();
+						newData.setParentId(parentId);
+					}
+					else
+					{
+						newData.setPkType("First Package");
+						newData.setParentId(defaultId);
+					}
+					
+					System.out.println(licenseRepo.existsById(newData.getInstId()));
+						//newData.setPkCdate(new Date());
+					if(!licenseRepo.existsById(newData.getInstId()))
+					{
+						
+						throw new CustomException("License Not Found");
+					}
+					else
+					{
+						
+						newData.setPkStatus("Active");
+						newData.setCreatedOn(new Date());
+						newData.setIsActive((long) 2);
+						newData.setIsDeleted((long) 0);
+						packageRepo.save(newData);
+						List<PackageEntity> recentPackageEntity=packageRepo.recentData();
+						//System.out.println(recentPackageEntity);
+						PackageEntity newPackageEntity=recentPackageEntity.get(0);
+						PackageLogEntity packageLogData=new PackageLogEntity();
+						packageLogData.setPkId(newPackageEntity.getPkId());
+						packageLogData.setPlAdate(newPackageEntity.getPkCdate());
+						packageLogData.setPlAction("Subscribtion Added");
+						packageLogData.setPlComment("Looking normal");
+						packageLogData.setPlCreat(new Date());
+						packageLogData.setPlStatus("Active");
+						packageLogRepo.save(packageLogData);
+						newPackageEntity.setIsActive((long) 1);
+						packageRepo.save(newPackageEntity);
+						//System.out.println(newPackageEntity);
+						
+						//<--Sent Email -->
+						try {
+							HttpHeaders headers = new HttpHeaders();
+							headers.set("Authorization", token);
+							headers.setContentType(MediaType.APPLICATION_JSON);
+							HttpEntity request = new HttpEntity(headers);
+							ResponseEntity<PackageGlobalTemplate> responseEmailTemp = new RestTemplate().exchange(
+									"http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/Package_Create",
+									HttpMethod.GET, request, PackageGlobalTemplate.class);
+							System.out.println(responseEmailTemp);
+							String ETSubject= responseEmailTemp.getBody().getEtSubject();
+							String ETBody=responseEmailTemp.getBody().getEtBody();
+							String ETAdminName="__$amdName$__";
+							String ETPackageFname="__$pkFname$__";
+							String ETPackageCdate="__$pkCdate$__";
+							String ETPackageValidityNo="__$pkValidityNum$__";
+							String ETPackgeValidityType="__$pkValidityType$__";
+							PackageEntity packageData=packageRepo.getById(newPackageEntity.getPkId());
+							InstituteEntity instituteData=instituteRepo.getById(newPackageEntity.getInstId());
+							String replace = ETBody.replace(ETPackageFname,instituteData.getInstituteAdmin().getAmdFname()+"  "
+															+instituteData.getInstituteAdmin().getAmdLname());
+							String replace1 = ETBody.replace(ETPackageFname,packageData.getPkFname());
+							String replace2 = replace.replace(ETPackageCdate,packageData.getPkCdate().toString() );
+							String replace3 = replace2.replace(ETPackageValidityNo,packageData.getPkValidityNum().toString() );
+							String replace4 = replace3.replace(ETPackgeValidityType,packageData.getPkValidityType() );
+							
+							InstituteEntity instData=instituteRepo.getById(newData.getInstId());
+							String mailId=instData.getInstEmail();
+							JSONObject requestJson = new JSONObject();
+							requestJson.put("senderMailId", mailId);
+							requestJson.put("subject", ETSubject);
+							requestJson.put("body", replace4);
+							//System.out.println(requestJson);
+							requestJson.put("enableHtml", true);
+							//log.info("requestJson "+requestJson.toString());
+							HttpEntity<String> entity = new HttpEntity(requestJson, headers);
+							ResponseEntity<String> response = new RestTemplate()
+									.postForEntity("http://65.1.66.115:8086/dev/login/sendMail/", entity, String.class);
+							
+						}
+						catch(Exception e)
+						{
+							throw new CustomException(e.getMessage());
+						}
+						
+						 return new GlobalResponse("Success", "Package Added Succesfully", 200);
+					}
 				}
 				else
 				{
-					
-					newData.setPkStatus("Active");
-					newData.setCreatedOn(new Date());
-					newData.setIsActive((long) 2);
-					newData.setIsDeleted((long) 0);
-					packageRepo.save(newData);
-					List<PackageEntity> recentPackageEntity=packageRepo.recentData();
-					//System.out.println(recentPackageEntity);
-					PackageEntity newPackageEntity=recentPackageEntity.get(0);
-					PackageLogEntity packageLogData=new PackageLogEntity();
-					packageLogData.setPkId(newPackageEntity.getPkId());
-					packageLogData.setPlAdate(newPackageEntity.getPkCdate());
-					packageLogData.setPlAction("Subscribtion Added");
-					packageLogData.setPlComment("Looking normal");
-					packageLogData.setPlCreat(new Date());
-					packageLogData.setPlStatus("Active");
-					packageLogRepo.save(packageLogData);
-					newPackageEntity.setIsActive((long) 1);
-					packageRepo.save(newPackageEntity);
-					//System.out.println(newPackageEntity);
-					
-					
-					
-					//<--Sent Email -->
-					try {
-						HttpHeaders headers = new HttpHeaders();
-						headers.set("Authorization", token);
-						headers.setContentType(MediaType.APPLICATION_JSON);
-						HttpEntity request = new HttpEntity(headers);
-						ResponseEntity<PackageGlobalTemplate> responseEmailTemp = new RestTemplate().exchange(
-								"http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/Package_Create",
-								HttpMethod.GET, request, PackageGlobalTemplate.class);
-						System.out.println(responseEmailTemp);
-						String ETSubject= responseEmailTemp.getBody().getEtSubject();
-						String ETBody=responseEmailTemp.getBody().getEtBody();
-						
-						String ETPackageFname="__$pkFname$__";
-						String ETPackageCdate="__$pkCdate$__";
-						String ETPackageValidityNo="__$pkValidityNum$__";
-						String ETPackgeValidityType="__$pkValidityType$__";
-						
-						PackageEntity packageData=packageRepo.getById(newPackageEntity.getPkId());
-						String ETPackageFnameResplaceString= packageData.getPkFname()+" "+
-						"PackageId"+packageData.getPkId();
-						String ETPackageCdateReplace=packageData.getPkCdate().toString();
-						String ETPackageValidityNoReplace=packageData.getPkValidityNum().toString();
-						String ETPackgeValidityTypereplace=packageData.getPkValidityType();
-						String pkData = ETBody.replace(ETPackageFname, ETPackageFnameResplaceString);
-						String pkCdate = pkData.replace(ETPackageCdate, ETPackageCdateReplace);
-						String pkValidityNo = pkData.replace(ETPackageValidityNo,
-								ETPackageValidityNoReplace);
-						String mailBody=pkData.replace(ETPackgeValidityType, ETPackgeValidityTypereplace);
-						InstituteEntity instData=instituteRepo.getById(newData.getInstId());
-						String mailId=instData.getInstEmail();
-						JSONObject requestJson = new JSONObject();
-						requestJson.put("senderMailId", mailId);
-						requestJson.put("subject", ETSubject);
-						requestJson.put("body", mailBody);
-						requestJson.put("enableHtml", true);
-						log.info("requestJson "+requestJson.toString());
-						HttpEntity<String> entity = new HttpEntity(requestJson, headers);
-						ResponseEntity<String> response = new RestTemplate()
-								.postForEntity("http://65.1.66.115:8086/dev/login/sendMail/", entity, String.class);
-						
-					}
-					catch(Exception e)
-					{
-						throw new CustomException(e.getMessage());
-					}
-					
-					 return new GlobalResponse("Success", "Package Added Succesfully", 200);
+					throw new CustomException("Package End Date Shoud Not Be Greater Than License End Date");
 				}
-			} else {
+			}
+				else {
 				throw new CustomException("Please Enter Valid Data");
 			}
 		} catch (Exception e) {
@@ -349,28 +390,19 @@ public class PackageContoller {
 							String ETSubject= responseEmailTemp.getBody().getEtSubject();
 							String ETBody=responseEmailTemp.getBody().getEtBody();
 							
+							String ETAdminName="__$amdName$__";
 							String ETPackageFname="__$pkFname$__";
-							String ETPackageCdate="__$pkCdate$__";
-							String ETPackageValidityNo="__$pkValidityNum$__";
-							String ETPackgeValidityType="__$pkValidityType$__";
-							
 							PackageEntity packageData=packageRepo.getById(pkId);
-							String ETPackageFnameResplaceString= packageData.getPkFname()+"     "+
-							"PackageId"+packageData.getPkId();
-							String ETPackageCdateReplace=packageData.getPkCdate().toString();
-							String ETPackageValidityNoReplace=packageData.getPkValidityNum().toString();
-							String ETPackgeValidityTypereplace=packageData.getPkValidityType();
-							String pkData = ETBody.replace(ETPackageFname, ETPackageFnameResplaceString);
-							String pkCdate = pkData.replace(ETPackageCdate, ETPackageCdateReplace);
-							String pkValidityNo = pkData.replace(ETPackageValidityNo,
-									ETPackageValidityNoReplace);
-							String mailBody=pkData.replace(ETPackgeValidityType, ETPackgeValidityTypereplace);
+							InstituteEntity instituteData=instituteRepo.getById(packageData.getInstId());
+							String replace = ETBody.replace(ETPackageFname,instituteData.getInstituteAdmin().getAmdFname()+"  "
+									+instituteData.getInstituteAdmin().getAmdLname());
+							String replace1 = ETBody.replace(ETPackageFname,packageData.getPkFname());
 							InstituteEntity instData=instituteRepo.getById(updatePackagedata.getInstId());
 							String mailId=instData.getInstEmail();
 							JSONObject requestJson = new JSONObject();
 							requestJson.put("senderMailId", mailId);
 							requestJson.put("subject", ETSubject);
-							requestJson.put("body", mailBody);
+							requestJson.put("body", replace1);
 							requestJson.put("enableHtml", true);
 							log.info("requestJson "+requestJson.toString());
 							HttpEntity<String> entity = new HttpEntity(requestJson, headers);
@@ -438,28 +470,22 @@ public class PackageContoller {
 								String ETSubject= responseEmailTemp.getBody().getEtSubject();
 								String ETBody=responseEmailTemp.getBody().getEtBody();
 								
+								String ETAdminName="__$amdName$__";
 								String ETPackageFname="__$pkFname$__";
-								String ETPackageCdate="__$pkCdate$__";
-								String ETPackageValidityNo="__$pkValidityNum$__";
-								String ETPackgeValidityType="__$pkValidityType$__";
-								
+								String ETADate="__$plAdate$__";
 								PackageEntity packageData=packageRepo.getById(pkId);
-								String ETPackageFnameResplaceString= packageData.getPkFname()+"     "+
-								"PackageId"+packageData.getPkId();
-								String ETPackageCdateReplace=packageData.getPkCdate().toString();
-								String ETPackageValidityNoReplace=packageData.getPkValidityNum().toString();
-								String ETPackgeValidityTypereplace=packageData.getPkValidityType();
-								String pkData = ETBody.replace(ETPackageFname, ETPackageFnameResplaceString);
-								String pkCdate = pkData.replace(ETPackageCdate, ETPackageCdateReplace);
-								String pkValidityNo = pkData.replace(ETPackageValidityNo,
-										ETPackageValidityNoReplace);
-								String mailBody=pkData.replace(ETPackgeValidityType, ETPackgeValidityTypereplace);
+								InstituteEntity instituteData=instituteRepo.getById(packageData.getInstId());
+								String replace = ETBody.replace(ETPackageFname,instituteData.getInstituteAdmin().getAmdFname()+"  "
+																+instituteData.getInstituteAdmin().getAmdLname());
+								String replace1 = ETBody.replace(ETPackageFname,packageData.getPkFname());
+								String replace2 = ETBody.replace(ETADate,packageLogEntity.getPlAdate().toString());
 								InstituteEntity instData=instituteRepo.getById(suspendedPackageData.getInstId());
 								String mailId=instData.getInstEmail();
 								JSONObject requestJson = new JSONObject();
 								requestJson.put("senderMailId", mailId);
 								requestJson.put("subject", ETSubject);
-								requestJson.put("body", mailBody);
+								requestJson.put("body", replace2);;
+								//requestJson.put("body", replace1);
 								requestJson.put("enableHtml", true);
 								log.info("requestJson "+requestJson.toString());
 								HttpEntity<String> entity = new HttpEntity(requestJson, headers);
