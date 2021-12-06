@@ -15,19 +15,19 @@ public interface InstituteRepo extends JpaRepository<InstituteEntity, Long> {
 	
 	Optional<InstituteEntity> findByInstEmail(String instEmail);	
 	
-	@Query(value = "SELECT instObj FROM InstituteEntity instObj INNER JOIN InstituteAdminEntity instAmdObj on instAmdObj.instId = instObj.instId WHERE instObj.isDeleted = 0")
+	@Query(value = "SELECT instObj FROM InstituteEntity instObj INNER JOIN InstituteAdminEntity instAmdObj on instAmdObj.instId = instObj.instId")
 	Page<InstituteEntity> findByAllInst(Pageable pagingSort);
 	
-	@Query(value = "SELECT instObj FROM InstituteEntity instObj WHERE instObj.isDeleted = 0 AND instObj.instStatus = 1")
+	@Query(value = "SELECT instObj FROM InstituteEntity instObj")
 	List<InstituteEntity> findByListInst();
 
 	@Query(value = "select * from tbl_institutes where INST_ID != ? and INST_NAME = ? and IS_DELETED = 0",nativeQuery = true)
 	List<InstituteEntity> findByInstUnqName(long instId,String instName); 
 	
-	@Query(value = "select instD from InstituteEntity instD where instD.instId != ?1 and instD.instEmail = ?2 and instD.isDeleted = 0")
+	@Query(value = "select instD from InstituteEntity instD where instD.instId != ?1 and instD.instEmail = ?2")
 	List<InstituteEntity> findByInstUnqEmail(long instId,String instEmail);
 	 
-	@Query(value = "select instAdrObj from InstituteEntity instD INNER JOIN InstituteAddressEntity instAdrObj on instAdrObj.instId = instD.instId INNER JOIN InstituteAdminEntity instAmdObj on instAmdObj.instId = instD.instId WHERE instD.isDeleted = 0")
+	@Query(value = "select instAdrObj from InstituteEntity instD INNER JOIN InstituteAddressEntity instAdrObj on instAdrObj.instId = instD.instId INNER JOIN InstituteAdminEntity instAmdObj on instAmdObj.instId = instD.instId")
 	List<InstituteGlobalEntity> findByAllInstQuery();	
 
 	@Query(value = "select * from tbl_institutes where IS_DELETED = 0",nativeQuery = true)
@@ -36,7 +36,7 @@ public interface InstituteRepo extends JpaRepository<InstituteEntity, Long> {
 	@Query(value = "select tbl_institutes.*,tbl_inst_addr.* from tbl_institutes INNER JOIN tbl_inst_addr on tbl_institutes.INST_ID = tbl_inst_addr.INST_ID",nativeQuery = true)
 	List<InstituteEntity> func();	
 //	instituteAdmin.amdUsername,
-	@Query("SELECT instObj FROM InstituteEntity instObj INNER JOIN InstituteAdminEntity instAmdObj on instAmdObj.instId = instObj.instId WHERE instObj.isDeleted = 0 AND CONCAT(instAmdObj.amdUsername,instObj.instName,instObj.instEmail,instObj.instMnum,instObj.instCnum) LIKE %?1%")
+	@Query("SELECT instObj FROM InstituteEntity instObj INNER JOIN InstituteAdminEntity instAmdObj on instAmdObj.instId = instObj.instId WHERE CONCAT(instAmdObj.amdUsername,instObj.instName,instObj.instEmail,instObj.instMnum,instObj.instCnum) LIKE %?1%")
     Page<InstituteEntity> Search(String sortKey, Pageable pageable);
 	
 	@Query("SELECT instObj FROM InstituteEntity instObj WHERE instObj.instId =?1 AND instObj.instEmail = ?2")

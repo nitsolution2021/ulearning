@@ -155,7 +155,7 @@ public class InstuteController {
 
 		try {
 			List<InstituteEntity> findAll = instituteRepo.findByListInst().stream()
-					.filter(Inst -> Inst.getIsDeleted() == 0).filter(Inst -> Inst.getIsActive() == 1)
+//					.filter(Inst -> Inst.getIsDeleted() == 0).filter(Inst -> Inst.getIsActive() == 1)
 					.filter(instituteLicense -> instituteLicense.getInstituteLicense() == null)
 					.collect(Collectors.toList());
 			if (findAll.size() <= 1) {
