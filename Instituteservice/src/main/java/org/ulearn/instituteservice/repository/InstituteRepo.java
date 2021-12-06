@@ -39,6 +39,9 @@ public interface InstituteRepo extends JpaRepository<InstituteEntity, Long> {
 	@Query("SELECT instObj FROM InstituteEntity instObj INNER JOIN InstituteAdminEntity instAmdObj on instAmdObj.instId = instObj.instId WHERE instObj.isDeleted = 0 AND CONCAT(instAmdObj.amdUsername,instObj.instName,instObj.instEmail,instObj.instMnum,instObj.instCnum) LIKE %?1%")
     Page<InstituteEntity> Search(String sortKey, Pageable pageable);
 	
+	@Query("SELECT instObj FROM InstituteEntity instObj WHERE instObj.instId =?1 AND instObj.instEmail = ?2")
+    List<InstituteEntity> findByIdAndEmail(long instId, String instEmail);
+	
 	
 
 		
