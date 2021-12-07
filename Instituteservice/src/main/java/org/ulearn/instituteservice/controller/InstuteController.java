@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -129,27 +130,85 @@ public class InstuteController {
 				if(findByIdAndEmail.size()<=1) {					
 					
 					JSONObject requestJson = null;
+					JSONObject requestJsons = null;
 					HttpHeaders headers = new HttpHeaders();
-					try {
-
+					HttpHeaders headersForSms = new HttpHeaders();
+					
+					try {							
 						headers.set("Authorization", token);
 						headers.setContentType(MediaType.APPLICATION_JSON);
 
 						HttpEntity request = new HttpEntity(headers);
+						
+					//	ResponseEntity<String> person =RestTemplate.postForEntity("http://sms.techno-soft.co.in/api/mt/SendSMS?user=technosoft_dev&password=Techno@8585&senderid=uLearn&channel=Promo&DCS=0&flashsms=0&number=917699983717&text=test message&route=##&peid=##",HttpMethod.POST, headers,String.class);
+												
+						
+//						Start fast2sms
+//						headersForSms.set("Authorization", "gRdDP5EMSnQtkmuse41hjpIOo6Bb0XcN2rxKlZ8FJwGLY3zC9ANeazHgiPS7pZVjdUX0fb2rGTWskQIu");
+//						End Start fast2sms
+						
+//						HttpEntity requestForSms = new HttpEntity<>(headersForSms);
+						
+//						Start fast2sms
+//						requestJsons = new JSONObject();
+//						requestJsons.put("route", "q");
+//						requestJsons.put("message", "Testing Ahadul");
+//						requestJsons.put("language", "english");
+//						requestJsons.put("flash", 0);
+//						requestJsons.put("numbers", "7699983717");
+//						HttpEntity requestForSms = new HttpEntity<>(requestJsons,headersForSms);
+//						End Start fast2sms
+						
+//						RestTemplate Template=new RestTemplate();
+//						String postForObject = Template.postForObject("http://sms.techno-soft.co.in/api/mt/SendSMS?user=technosoft_dev&password=Techno@8585&senderid=uLearn&channel=Promo&DCS=0&flashsms=0&number=917699983717&text=test message&route=##&peid=##", requestForSms, String.class);
+//						String postForObject = Template.postForObject("https://www.fast2sms.com/dev/bulkV2", requestForSms, String.class);
+						
+						
 						ResponseEntity<InstituteGlobalEntity> responseEmailTemp = new RestTemplate().exchange(
 								"http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/Institute_Credentials",
 								HttpMethod.GET, request, InstituteGlobalEntity.class);
 						
 						String ETSubject = responseEmailTemp.getBody().getEtSubject();
 						String ETBody = responseEmailTemp.getBody().getEtBody();
-
+						
+						String Password = null;
+						int length = 10;
+					    boolean useLetters = true;
+					    boolean useNumbers = false;
+					    Password = RandomStringUtils.random(length, useLetters, useNumbers);
+					    
+					    String HashPassword=passwordEncoder.encode(Password);
+//					    LOGGER.info("Inside - InstituteController.postInstituteCredentials()"+Password);
+					    LOGGER.info("Inside - InstituteController.postInstituteCredentials()---"+HashPassword);
+						
+					    InstituteAdminEntity getById = instituteAdminRepo.getById(findByIdAndEmail.get(0).getInstId());
+//						InstituteAdminEntity filterInsAmdDetails = new InstituteAdminEntity();
+						if(getById.getInstId() != null) {
+							
+//							getById.setAmdId(findByIdAndEmail.get(0).getInstituteAdmin().get(0).getAmdId());
+//						filterInsAmdDetails.setAmdFname(findByIdAndEmail.get(0).getInstituteAdmin().get(0).getAmdFname());
+//						filterInsAmdDetails.setAmdLname(findByIdAndEmail.get(0).getInstituteAdmin().get(0).getAmdLname());
+//						filterInsAmdDetails.setAmdDob(findByIdAndEmail.get(0).getInstituteAdmin().get(0).getAmdDob());
+//						filterInsAmdDetails.setAmdMnum(findByIdAndEmail.get(0).getInstituteAdmin().get(0).getAmdMnum());
+//						filterInsAmdDetails.setAmdEmail(findByIdAndEmail.get(0).getInstituteAdmin().get(0).getAmdEmail());
+//						filterInsAmdDetails.setAmdUsername(findByIdAndEmail.get(0).getInstituteAdmin().get(0).getAmdUsername());
+//						filterInsAmdDetails.setAmdPassword(Password);
+//						filterInsAmdDetails.setAmdPpic(findByIdAndEmail.get(0).getInstituteAdmin().get(0).getAmdPpic());
+//						filterInsAmdDetails.setInstId(findByIdAndEmail.get(0).getInstituteAdmin().get(0).getInstId());
+//						filterInsAmdDetails.setCreatedOn(findByIdAndEmail.get(0).getInstituteAdmin().get(0).getCreatedOn());
+							getById.setAmdPassword(HashPassword);					
+							getById.setUpdatedOn(new Date());
+						InstituteAdminEntity InsAmdDetails = instituteAdminRepo.save(getById);
+						LOGGER.info("Inside - InstituteController.postInstituteCredentials()++"+InsAmdDetails);
+						}
+						
 						String ETTargetName = "__$name$__";
 						String ETTargetUsername = "__$username$__";
 						String ETTargetPassword = "__$password$__";
 						String ETNameReplacement = findByIdAndEmail.get(0).getInstituteAdmin().get(0).getAmdFname() + " "
 								+ findByIdAndEmail.get(0).getInstituteAdmin().get(0).getAmdLname();
 						String ETUsernameReplacement = findByIdAndEmail.get(0).getInstituteAdmin().get(0).getAmdUsername();
-						String ETPasswordReplacement = findByIdAndEmail.get(0).getInstituteAdmin().get(0).getAmdPassword();
+						String ETPasswordReplacement = Password;
 
 						String processedName = ETBody.replace(ETTargetName, ETNameReplacement);
 						String processedUsername = processedName.replace(ETTargetUsername, ETUsernameReplacement);
@@ -162,13 +221,11 @@ public class InstuteController {
 						requestJson.put("subject", ETSubject);
 						requestJson.put("body", processedMailBodyContent);
 						requestJson.put("enableHtml", true);
-					} catch (Exception e) {
-						
-						LOGGER.info("Inside - InstituteController.postInstituteCredentials()"+e.getMessage().toCharArray());
-//						if(e.getMessage().equals("No Data Present")) {
+					} catch (Exception e) {												
+						if(e.getMessage().equals("No Data Present")) {
 							throw new CustomException(e.getMessage());
-//						}
-//						throw new CustomException("Email Service Is Not Running!");
+						}
+						throw new CustomException("Email Service Is Not Running!");
 					}
 					try {
 						HttpEntity<String> entity = new HttpEntity(requestJson, headers);

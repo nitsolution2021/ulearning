@@ -73,7 +73,7 @@ public class InstituteService {
 				findAll = instituteRepo.findByAllInst(isDeleted, pagingSort);
 
 			} else {
-				findAll = instituteRepo.Search(keyword.get(), pagingSort);
+				findAll = instituteRepo.Search(isDeleted, keyword.get(), pagingSort);
 
 			}
 
