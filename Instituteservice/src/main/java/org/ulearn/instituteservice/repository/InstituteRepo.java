@@ -15,8 +15,8 @@ public interface InstituteRepo extends JpaRepository<InstituteEntity, Long> {
 	
 	Optional<InstituteEntity> findByInstEmail(String instEmail);	
 	
-	@Query(value = "SELECT instObj FROM InstituteEntity instObj INNER JOIN InstituteAdminEntity instAmdObj on instAmdObj.instId = instObj.instId")
-	Page<InstituteEntity> findByAllInst(Pageable pagingSort);
+	@Query(value = "SELECT instObj FROM InstituteEntity instObj INNER JOIN InstituteAdminEntity instAmdObj on instAmdObj.instId = instObj.instId WHERE instObj.isDeleted = ?1")
+	Page<InstituteEntity> findByAllInst(int isDeleted,Pageable pagingSort);
 	
 	@Query(value = "SELECT instObj FROM InstituteEntity instObj")
 	List<InstituteEntity> findByListInst();

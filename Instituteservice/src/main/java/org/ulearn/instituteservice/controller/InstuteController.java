@@ -43,6 +43,7 @@ import org.ulearn.instituteservice.exception.CustomException;
 import org.ulearn.instituteservice.repository.InstituteAddressRepo;
 import org.ulearn.instituteservice.repository.InstituteAdminRepo;
 import org.ulearn.instituteservice.repository.InstituteRepo;
+import org.ulearn.instituteservice.servises.InstituteService;
 import org.ulearn.instituteservice.validation.FieldValidation;
 
 @RestController
@@ -51,6 +52,9 @@ public class InstuteController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(InstuteController.class);
 
+	@Autowired 
+	private InstituteService instituteService;
+	
 	@Autowired
 	private InstituteRepo instituteRepo;
 
@@ -67,82 +71,27 @@ public class InstuteController {
 	private BCryptPasswordEncoder passwordEncoder;
 
 	@GetMapping("/list")
-	public Map<String, Object> getInstute(@RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy) {
+	public Map<String, Object> getInstute(@RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy,
+			@RequestParam(defaultValue = "0") Integer isDeleted) {
 		LOGGER.info("Inside - InstituteController.getInstute()");
 
-		int Limit = 10;
-
-		try {
-			Pageable pagingSort = PageRequest.of(page.orElse(0), Limit, Sort.Direction.DESC, sortBy.orElse("instId"));
-			Page<InstituteEntity> findAll = instituteRepo.findByAllInst(pagingSort);
-
-			int totalPage = findAll.getTotalPages() - 1;
-			if (totalPage < 0) {
-				totalPage = 0;
-			}
-			Map<String, Object> response = new HashMap<>();
-			response.put("data", findAll.getContent());
-			response.put("currentPage", findAll.getNumber());
-			response.put("total", findAll.getTotalElements());
-			response.put("totalPage", totalPage);
-			response.put("perPage", findAll.getSize());
-			response.put("perPageElement", findAll.getNumberOfElements());
-
-			if (findAll.getSize() <= 1) {
-				throw new CustomException("Institute Not Found!");
-			} else {
-				return response;
-			}
+		try {			
+			return this.instituteService.getInstuteList(page,sortBy,isDeleted);					
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
 		}
 
 	}
 
-	@RequestMapping(value = { "/list/{page}/{limit}/{sortName}/{sort}" }, method = RequestMethod.GET)
+	@RequestMapping(value = { "/list/{page}/{limit}/{sortName}/{sort}/{isDeleted}" }, method = RequestMethod.GET)
 	public Map<String, Object> getInstutePagination(@PathVariable("page") int page, @PathVariable("limit") int limit,
-			@PathVariable("sort") String sort, @PathVariable("sortName") String sortName,
+			@PathVariable("sort") String sort, @PathVariable("sortName") String sortName,@PathVariable("isDeleted") int isDeleted,
 			@RequestParam(defaultValue = "") Optional<String> keyword, @RequestParam Optional<String> sortBy) {
 
 		LOGGER.info("Inside - InstituteController.getInstutePagination()");
 
-		try {
-			Pageable pagingSort = null;
-
-			if (sort == "ASC") {
-				pagingSort = PageRequest.of(page, limit, Sort.Direction.ASC, sortBy.orElse(sortName));
-			} else {
-				pagingSort = PageRequest.of(page, limit, Sort.Direction.DESC, sortBy.orElse(sortName));
-			}
-			String keywordVal = keyword.get();
-			Page<InstituteEntity> findAll = null;
-			
-			if (keyword.get().isEmpty()) {
-				findAll = instituteRepo.findByAllInst(pagingSort);
-				
-			} else {
-				findAll = instituteRepo.Search(keyword.get(), pagingSort);
-				
-			}
-
-			int totalPage = findAll.getTotalPages() - 1;
-			if (totalPage < 0) {
-				totalPage = 0;
-			}
-
-			Map<String, Object> response = new HashMap<>();
-			response.put("data", findAll.getContent());
-			response.put("currentPage", findAll.getNumber());
-			response.put("total", findAll.getTotalElements());
-			response.put("totalPage", totalPage);
-			response.put("perPage", findAll.getSize());
-			response.put("perPageElement", findAll.getNumberOfElements());
-
-			if (findAll.getSize() <= 1) {
-				throw new CustomException("Institute Not Found!");
-			} else {
-				return response;
-			}
+		try {			
+			return this.instituteService.getInstuteListWithPaginagtion(page,limit,sort,sortName,isDeleted,keyword,sortBy);
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
 		}
@@ -178,7 +127,6 @@ public class InstuteController {
 				
 				List<InstituteEntity> findByIdAndEmail = instituteRepo.findByIdAndEmail(instituteEntrity.getInstId(),instituteEntrity.getInstEmail());
 				if(findByIdAndEmail.size()<=1) {					
-//					LOGGER.info("Inside - InstituteController.postInstituteCredentials()---"+findByIdAndEmail.get(0).getInstEmail());
 					
 					JSONObject requestJson = null;
 					HttpHeaders headers = new HttpHeaders();
@@ -189,7 +137,7 @@ public class InstuteController {
 
 						HttpEntity request = new HttpEntity(headers);
 						ResponseEntity<InstituteGlobalEntity> responseEmailTemp = new RestTemplate().exchange(
-								"http://localhost:8090/dev/emailTemplate/getPrimaryETByAction/Institute_Credentials",
+								"http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/Institute_Credentials",
 								HttpMethod.GET, request, InstituteGlobalEntity.class);
 						
 						String ETSubject = responseEmailTemp.getBody().getEtSubject();
@@ -215,10 +163,19 @@ public class InstuteController {
 						requestJson.put("body", processedMailBodyContent);
 						requestJson.put("enableHtml", true);
 					} catch (Exception e) {
-						if(e.getMessage().equals("No Data Present")) {
+						
+						LOGGER.info("Inside - InstituteController.postInstituteCredentials()"+e.getMessage().codePointBefore(1));
+//						if(e.getMessage().equals("No Data Present")) {
 							throw new CustomException(e.getMessage());
-						}
-						throw new CustomException("Something Went To Wrong!");
+//						}
+//						throw new CustomException("Email Service Is Not Running!");
+					}
+					try {
+						HttpEntity<String> entity = new HttpEntity(requestJson, headers);
+						ResponseEntity<String> response = new RestTemplate()
+								.postForEntity("http://65.1.66.115:8086/dev/login/sendMail/", entity, String.class);
+					} catch (Exception e) {
+						throw new CustomException("Login Service Is Not Running");
 					}
 				}
 			}
@@ -331,7 +288,7 @@ public class InstuteController {
 
 							HttpEntity request = new HttpEntity(headers);
 							ResponseEntity<InstituteGlobalEntity> responseEmailTemp = new RestTemplate().exchange(
-									"http://localhost:8090/dev/emailTemplate/getPrimaryETByAction/Institute_Create",
+									"http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/Institute_Create",
 									HttpMethod.GET, request, InstituteGlobalEntity.class);
 							
 							String ETSubject = responseEmailTemp.getBody().getEtSubject();
