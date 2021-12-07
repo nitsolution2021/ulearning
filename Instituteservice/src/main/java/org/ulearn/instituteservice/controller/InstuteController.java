@@ -164,7 +164,7 @@ public class InstuteController {
 						requestJson.put("enableHtml", true);
 					} catch (Exception e) {
 						
-						LOGGER.info("Inside - InstituteController.postInstituteCredentials()"+e.getMessage().codePointBefore(1));
+						LOGGER.info("Inside - InstituteController.postInstituteCredentials()"+e.getMessage().toCharArray());
 //						if(e.getMessage().equals("No Data Present")) {
 							throw new CustomException(e.getMessage());
 //						}
