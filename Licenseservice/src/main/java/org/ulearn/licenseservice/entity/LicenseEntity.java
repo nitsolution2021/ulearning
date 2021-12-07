@@ -29,7 +29,7 @@ public class LicenseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "LC_ID")
-	private Long lcId;
+	private int lcId;
 	
 	//@NotEmpty(message = "Please select any institute name")
 	@Column(name = "INST_ID")
@@ -57,7 +57,7 @@ public class LicenseEntity {
 	
 	//@NotEmpty(message = "License validity number can not be null ")
 	@Column(name = "LC_VALIDITY_NUM")
-	private Long lcValidityNum;
+	private int lcValidityNum;
 	
 	@JsonFormat(shape = Shape.STRING, pattern = "yyyy/MM/dd")
 	@Column(name = "LC_EDATE")
@@ -97,8 +97,8 @@ public class LicenseEntity {
 
 
 
-	public LicenseEntity(Long lcId, Long instId, String lcName, Date lcCreatDate, String lcType, String lcStype,
-			String lcValidityType, Long lcValidityNum, Date lcEndDate, String lcComment, String lcStatus, int isActive,
+	public LicenseEntity(int lcId, Long instId, String lcName, Date lcCreatDate, String lcType, String lcStype,
+			String lcValidityType, int lcValidityNum, Date lcEndDate, String lcComment, String lcStatus, int isActive,
 			int isDeleted, Date createdOn, Date updatedOn, InstituteEntity instituteEntity) {
 		super();
 		this.lcId = lcId;
@@ -132,13 +132,13 @@ public class LicenseEntity {
 
 
 
-	public Long getLcId() {
+	public int getLcId() {
 		return lcId;
 	}
 
 
 
-	public void setLcId(Long lcId) {
+	public void setLcId(int lcId) {
 		this.lcId = lcId;
 	}
 
@@ -216,13 +216,13 @@ public class LicenseEntity {
 
 
 
-	public Long getLcValidityNum() {
+	public int getLcValidityNum() {
 		return lcValidityNum;
 	}
 
 
 
-	public void setLcValidityNum(Long lcValidityNum) {
+	public void setLcValidityNum(int lcValidityNum) {
 		this.lcValidityNum = lcValidityNum;
 	}
 

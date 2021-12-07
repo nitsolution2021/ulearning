@@ -43,7 +43,7 @@ public class LicenseService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(LicenseController.class);
 	
 	@Autowired 
-	public LicenseRepo LicenseRepo;
+	public LicenseRepo licenseRepo;
 	
 	@Autowired
 	public FieldValidation fieldValidation;
@@ -64,7 +64,7 @@ public class LicenseService {
 					fieldValidation.isEmpty(license.getLcValidityNum()) & 
 					fieldValidation.isEmpty(license.getLcEndDate())) {
 					
-					Optional<LicenseEntity> findByInstId = LicenseRepo.findByInstId(license.getInstId());
+					Optional<LicenseEntity> findByInstId = licenseRepo.findByInstId(license.getInstId());
 					if(!findByInstId.isPresent()) {
 						
 					
@@ -87,13 +87,13 @@ public class LicenseService {
 						
 						
 						//Insert data into license table
-						LicenseEntity save = LicenseRepo.save(licenseAdd);
+						LicenseEntity save = licenseRepo.save(licenseAdd);
 						
 						//Set data for license log table
 						
 						LicenseLogEntity licenseLogAdd = new LicenseLogEntity();
 						
-						licenseLogAdd.setLcIdFk(save.getLcId().intValue());
+						licenseLogAdd.setLcIdFk(save.getLcId());
 						licenseLogAdd.setLlAction("Add license");
 						licenseLogAdd.setLlValidityType(save.getLcValidityType());
 						licenseLogAdd.setLlValidityNum(Integer.parseInt(save.getLcValidityNum()+""));
@@ -124,7 +124,7 @@ public class LicenseService {
 							 org.json.JSONObject jsonObject = jsonArray.getJSONObject(0);
 							 amdFname=jsonObject.getString("amdFname");
 							 amdLname = jsonObject.getString("amdLname");
-							 LOGGER.info("Inside the LicenseController Update License"+object.getString("instEmail"));
+//							 LOGGER.info("Inside the LicenseController Update License"+object.getString("instEmail"));
 						}
 						catch(Exception e) {
 							throw new CustomException(e.getMessage());
@@ -183,34 +183,6 @@ public class LicenseService {
 							
 						}
 						
-//						ResponseEntity<LicenseGlobalEntity> responseEmailTempForInstNameEmail=new RestTemplate().exchange("http://65.1.66.115:8087/dev/institute/view/"+save.getInstId(),  HttpMethod.GET, request, LicenseGlobalEntity.class);
-//						String emailId = responseEmailTempForInstNameEmail.getBody().getInstituteAdmin().getAmdEmail();
-//						String amdFname = responseEmailTempForInstNameEmail.getBody().getInstituteAdmin().getAmdFname();
-//						String amdLname = responseEmailTempForInstNameEmail.getBody().getInstituteAdmin().getAmdLname();
-//						
-//						
-//						//HttpEntity request = new HttpEntity(headers);
-//						ResponseEntity<LicenseGlobalEntity> responseEmailTemp = new RestTemplate().exchange("http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/License_Create",
-//								HttpMethod.GET, request, LicenseGlobalEntity.class);
-//						String ETSubject = responseEmailTemp.getBody().getEtSubject();
-//						String ETBody = responseEmailTemp.getBody().getEtBody();
-//
-//						String ETTargetName = "<<_name_>>";
-//						
-//						String ETNameReplacement = amdFname +" "+ amdLname;
-//
-//						String processedName = ETBody.replace(ETTargetName, ETNameReplacement);
-//
-//						JSONObject requestJson = new JSONObject();
-//						requestJson.put("senderMailId", emailId);
-//						requestJson.put("subject", ETSubject);
-//						requestJson.put("body", processedName);
-//						requestJson.put("enableHtml", true);
-//
-//						HttpEntity<String> entity = new HttpEntity(requestJson, headers);
-//						ResponseEntity<String> response = new RestTemplate().postForEntity("http://65.1.66.115:8086/dev/login/sendMail/", entity, String.class);
-						
-						
 
 						if (!save.equals(null)) {
 							return new GlobalResponse("SUCCESS","License Added successfully",200);
@@ -232,7 +204,7 @@ public class LicenseService {
 		
 	}
 
-	public GlobalResponse updateLicense(long licenseId, LicenseEntity licenseForUpdate, String token) {
+	public GlobalResponse updateLicense(int licenseId, LicenseEntity licenseForUpdate, String token) {
 		// TODO Auto-generated method stub
 		
 		try {
@@ -244,19 +216,16 @@ public class LicenseService {
 			
 
 					
-					Optional<LicenseEntity> findById = this.LicenseRepo.findById(licenseId);
+					Optional<LicenseEntity> findById = this.licenseRepo.findById(licenseId);
 					
 					if(findById.isPresent()) {
-						if(findById.get().getLcId().equals(licenseId)) {
-							
-								
 							
 							Long instituteId= null;
 							if( findById.get().getInstId().equals(licenseForUpdate.getInstId())) {
 								 instituteId = licenseForUpdate.getInstId();
 							}
 							else {
-								Optional<LicenseEntity> findByInstId = LicenseRepo.findByInstId(licenseForUpdate.getInstId());
+								Optional<LicenseEntity> findByInstId = licenseRepo.findByInstId(licenseForUpdate.getInstId());
 								if(!findByInstId.isPresent()) {
 									instituteId = licenseForUpdate.getInstId();
 								}
@@ -285,13 +254,13 @@ public class LicenseService {
 							licenseUpdate.setCreatedOn(findById.get().getCreatedOn());
 							licenseUpdate.setUpdatedOn(new Date());
 							
-							LicenseEntity save = LicenseRepo.save(licenseUpdate);					
+							LicenseEntity save = licenseRepo.save(licenseUpdate);					
 							
 							//Set data for license log table
 							
 							LicenseLogEntity licenseLogAdd = new LicenseLogEntity();
 							
-							licenseLogAdd.setLcIdFk(save.getLcId().intValue());
+							licenseLogAdd.setLcIdFk(save.getLcId());
 							licenseLogAdd.setLlAction("Update license");
 							licenseLogAdd.setLlValidityType(save.getLcValidityType());
 							licenseLogAdd.setLlValidityNum(Integer.parseInt(save.getLcValidityNum()+""));
@@ -388,16 +357,12 @@ public class LicenseService {
 							
 							
 							if(!save.equals(null)) {
-								return new GlobalResponse("SUCCESS","Update Successfull",200);
+								return new GlobalResponse("SUCCESS","License Update Successfull",200);
 							}
 							else {
 								throw new CustomException("Update not successfull");
 							}
 							
-						}
-						else {
-							throw new CustomException("License id not matched");
-						}
 					}
 					else {
 						throw new CustomException("License not found for this Id  "+licenseId);
@@ -421,7 +386,7 @@ public class LicenseService {
 			
 			Pageable pagingSort = PageRequest.of(page.orElse(0), Limit, Sort.Direction.DESC,
 					sortBy.orElse("createdOn"));
-			Page<LicenseEntity> findAll = LicenseRepo.findAll(pagingSort);
+			Page<LicenseEntity> findAll = licenseRepo.findAll(pagingSort);
 			
 			int totalPage=findAll.getTotalPages()-1;
 			if(totalPage < 0) {
@@ -469,9 +434,9 @@ public class LicenseService {
 	
 				Page<LicenseEntity> findAll = null;
 				if (keyword.isPresent()) {
-					findAll = LicenseRepo.Search(keyword.get(), pagingSort);
+					findAll = licenseRepo.Search(keyword.get(), pagingSort);
 				} else {
-					findAll = LicenseRepo.findByAllLicense(pagingSort);
+					findAll = licenseRepo.findByAllLicense(pagingSort);
 				}
 				int totalPage=findAll.getTotalPages()-1;
 				if(totalPage < 0) {
@@ -497,12 +462,12 @@ public class LicenseService {
 
 	}
 
-	public Optional<LicenseEntity> getLicense(long lcId) {
+	public Optional<LicenseEntity> getLicense(int lcId) {
 		// TODO Auto-generated method stub
 		
 		try {
 			
-			Optional<LicenseEntity> findById = LicenseRepo.findById(lcId);
+			Optional<LicenseEntity> findById = licenseRepo.findById(lcId);
 			if(findById.isPresent()) {
 				return findById;
 			}
@@ -517,13 +482,16 @@ public class LicenseService {
 		
 	}
 
-	public GlobalResponse addSuspendLicense(int lcId, LicenseLogEntity licenseLogEntitySuspend) {
+	public GlobalResponse addSuspendLicense(int lcId, LicenseLogEntity licenseLogEntitySuspend,String token) {
 		// TODO Auto-generated method stub
 		
 		try {
 			
 			if(fieldValidation.isEmpty(licenseLogEntitySuspend.getLlEdate()) 
 					& fieldValidation.isEmpty(licenseLogEntitySuspend.getLlComment())) {
+				
+				LicenseEntity findById = this.licenseRepo.getById(lcId);			
+				if(findById.getIsActive() != 0) {
 				
 				Optional<LicenseLogEntity> findByLcId = licenseLogRepo.findByLcId(lcId,"Add suspend");
 				if (findByLcId.isPresent()) {
@@ -541,12 +509,100 @@ public class LicenseService {
 					
 					LicenseLogEntity save = licenseLogRepo.save(licenseLogEntityForSuspend);
 					
+						String lStatus = "Suspending";					
+						findById.setLcStatus(lStatus);
+						licenseRepo.save(findById);
+						
+//					For sending mail	
+						HttpHeaders headers = new HttpHeaders();
+						headers.set("Authorization", token);
+						headers.setContentType(MediaType.APPLICATION_JSON);
+						
+						HttpEntity request=new HttpEntity(headers);
+						
+						String emailId="";
+						String amdFname="";
+						String amdLname="";
+						try {
+							
+							Unirest.setTimeouts(0, 0);
+							 HttpResponse<JsonNode> asJson = Unirest.get("http://65.1.66.115:8087/dev/institute/view/"+ findById.getInstId())
+							  .header("Authorization", token)
+							  .asJson();
+							 org.json.JSONObject object = asJson.getBody().getObject();
+							 emailId =object.getString("instEmail");
+							 JSONArray jsonArray = object.getJSONArray("instituteAdmin");
+							 org.json.JSONObject jsonObject = jsonArray.getJSONObject(0);
+							 amdFname=jsonObject.getString("amdFname");
+							 amdLname = jsonObject.getString("amdLname");
+//							 LOGGER.info("Inside the LicenseController Update License"+object.getString("instEmail"));
+						}
+						catch(Exception e) {
+							throw new CustomException(e.getMessage());
+							
+						}
+						
+						
+						String ETSubject;
+						String ETBody;
+						String ETTargetName;
+						String licenseSuspendDate;
+						String ETNameReplacement;
+						String ETDateReplacement;
+						String processedDate;
+						String processedName;
+						//HttpEntity request = new HttpEntity(headers);
+						
+						try {
+							
+							ResponseEntity<LicenseGlobalEntity> responseEmailTemp = new RestTemplate().exchange("http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/Add_Suspend_License",HttpMethod.GET, request, LicenseGlobalEntity.class);
+							 ETSubject = responseEmailTemp.getBody().getEtSubject();
+							 ETBody = responseEmailTemp.getBody().getEtBody();
+
+							 ETTargetName = "__$name$__";
+							 licenseSuspendDate = "__$date$__";
+							
+							 ETNameReplacement = amdFname +" "+ amdLname;
+							 ETDateReplacement = licenseLogEntitySuspend.getLlEdate().toString();
+							 processedDate = ETBody.replace(licenseSuspendDate, ETDateReplacement);
+							 processedName = processedDate.replace(ETTargetName, ETNameReplacement);
+							 
+						}
+						catch(Exception e) {
+
+								throw new CustomException("Error from mail template.");
+						}
+						
+
+						try {
+							
+							JSONObject requestJson = new JSONObject();
+							requestJson.put("senderMailId", emailId);
+							requestJson.put("subject", ETSubject);
+							requestJson.put("body", processedName);
+							requestJson.put("enableHtml", true);
+
+							HttpEntity<String> entity = new HttpEntity(requestJson, headers);
+							ResponseEntity<String> response = new RestTemplate().postForEntity("http://65.1.66.115:8086/dev/login/sendMail/", entity, String.class);
+						}
+						catch(Exception e) {
+							
+								throw new CustomException("Error from sendMail.");
+							
+						}
+						
+//						End send mail
+					
 					if (!save.equals(null)) {
-						return new GlobalResponse("SUCCESS","This license has been suspended for this date.",200);
+						return new GlobalResponse("SUCCESS","This license will be suspend for the selected date.",200);
 					}
 					else {
 						throw new CustomException("Suspend date not add.. ");
 					}
+				}
+				}
+				else {
+					throw new CustomException("This license has not active.");
 				}
 			}
 			else {

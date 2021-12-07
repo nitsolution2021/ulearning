@@ -64,7 +64,7 @@ public class LicenseController {
 	}
 	
 	@PutMapping("/update/{licenseId}")
-	public GlobalResponse updateLicense(@PathVariable() long licenseId, @RequestBody LicenseEntity licenseForUpdate,@RequestHeader("Authorization") String token) {
+	public GlobalResponse updateLicense(@PathVariable() int licenseId, @RequestBody LicenseEntity licenseForUpdate,@RequestHeader("Authorization") String token) {
 		
 		LOGGER.info("Inside the LicenseController Update License");
 		try {
@@ -111,7 +111,7 @@ public class LicenseController {
 	}
 	
 	@GetMapping("/view/{lcId}")
-	public Optional<LicenseEntity> getLicense(@PathVariable() long lcId){
+	public Optional<LicenseEntity> getLicense(@PathVariable("lcId") int lcId){
 		
 		LOGGER.info("Inside the LicenseController view License by id");
 		
@@ -127,12 +127,12 @@ public class LicenseController {
 	}
 	
 	@PostMapping("/suspend/{lcId}")
-	public GlobalResponse addSuspend(@PathVariable() int lcId, @RequestBody LicenseLogEntity licenseLogEntitySuspend) {
+	public GlobalResponse addSuspend(@PathVariable("lcId") int lcId, @RequestBody LicenseLogEntity licenseLogEntitySuspend,@RequestHeader("Authorization") String token) {
 		
 		LOGGER.info("Inside the suspend License");
 		try {
 			
-			return this.licenseService.addSuspendLicense(lcId,licenseLogEntitySuspend);
+			return this.licenseService.addSuspendLicense(lcId,licenseLogEntitySuspend,token);
 		} catch (Exception e) {
 			// TODO: handle exception
 			throw new CustomException(e.getMessage());
