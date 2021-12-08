@@ -33,8 +33,8 @@ public interface EmailTemplateRepo extends JpaRepository<EmailTemplateEntity, Lo
 	@Query(value = "select obj from EmailTemplateEntity obj where obj.etAction = ?1 and obj.isPrimary = ?2")
 	public List<EmailTemplateEntity> getPrimaryETByAction(String etAction, int isPrimary);
 	
-	@Query("SELECT Obj FROM EmailTemplateEntity Obj WHERE Obj.isDeleted = 0 and Obj.etName LIKE %?1%")
-    Page<EmailTemplateEntity> Search(String sortKey, Pageable pageable);
+	@Query("SELECT Obj FROM EmailTemplateEntity Obj WHERE Obj.isDeleted = ?2 and Obj.etName LIKE %?1%")
+    Page<EmailTemplateEntity> Search(String sortKey,int isDelete, Pageable pageable);
 	
 	public Optional<EmailTemplateEntity> findByEtName(String etName);
 	

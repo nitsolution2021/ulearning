@@ -247,15 +247,15 @@ public class EmailTemplateController {
 		}
 	}
 	
-	@GetMapping("/getAll/template")
-	public Map<String, Object> emailTemplateGetAll(@RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy) {
+	@GetMapping("/getAll/template/{delete}")
+	public Map<String, Object> emailTemplateGetAll(@PathVariable("delete") int isDelete,@RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy) {
 		
 		LOGGER.info("Inside - EmailTemplateController.emailTemplateGetAll()");
 		try {
 			int Limit = 10;
 				Pageable pagingSort = PageRequest.of(page.orElse(0), Limit, Sort.Direction.DESC,
 						sortBy.orElse("createdOn"));
-				Page<EmailTemplateEntity> findAll = emailTemplateRepo.findAllAndDelete(0,pagingSort);
+				Page<EmailTemplateEntity> findAll = emailTemplateRepo.findAllAndDelete(isDelete,pagingSort);
 				
 				int totalPage=findAll.getTotalPages()-1;
 				if(totalPage < 0) {
@@ -288,8 +288,8 @@ public class EmailTemplateController {
 		
 	}
 	
-	@GetMapping(value = { "/getAll/template/{page}/{limit}/{sortName}/{sort}" })
-	public Map<String, Object> emailTemplateGetAllPagination(@PathVariable("page") int page, @PathVariable("limit") int limit,
+	@GetMapping(value = { "/getAll/template/{delete}/{page}/{limit}/{sortName}/{sort}" })
+	public Map<String, Object> emailTemplateGetAllPagination(@PathVariable("delete") int isDelete, @PathVariable("page") int page, @PathVariable("limit") int limit,
 			@PathVariable("sort") String sort, @PathVariable("sortName") String sortName,
 			@RequestParam(defaultValue = "") Optional<String>keyword, @RequestParam Optional<String> sortBy) {
 		
@@ -305,9 +305,9 @@ public class EmailTemplateController {
 
 			Page<EmailTemplateEntity> findAll = null;
 			if (keyword.isPresent()) {
-				findAll = emailTemplateRepo.Search(keyword.get(), pagingSort);
+				findAll = emailTemplateRepo.Search(keyword.get(), isDelete, pagingSort);
 			} else {
-				findAll = emailTemplateRepo.findAll(pagingSort);
+				findAll = emailTemplateRepo.findAllAndDelete(isDelete,pagingSort);
 			}
 			int totalPage=findAll.getTotalPages()-1;
 			if(totalPage < 0) {
