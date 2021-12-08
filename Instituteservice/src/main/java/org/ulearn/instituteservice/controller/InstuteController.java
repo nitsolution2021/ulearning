@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,7 @@ import org.ulearn.instituteservice.exception.CustomException;
 import org.ulearn.instituteservice.repository.InstituteAddressRepo;
 import org.ulearn.instituteservice.repository.InstituteAdminRepo;
 import org.ulearn.instituteservice.repository.InstituteRepo;
+import org.ulearn.instituteservice.servises.InstituteService;
 import org.ulearn.instituteservice.validation.FieldValidation;
 
 @RestController
@@ -51,6 +53,9 @@ public class InstuteController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(InstuteController.class);
 
+	@Autowired 
+	private InstituteService instituteService;
+	
 	@Autowired
 	private InstituteRepo instituteRepo;
 
@@ -67,82 +72,27 @@ public class InstuteController {
 	private BCryptPasswordEncoder passwordEncoder;
 
 	@GetMapping("/list")
-	public Map<String, Object> getInstute(@RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy) {
+	public Map<String, Object> getInstute(@RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy,
+			@RequestParam(defaultValue = "0") Integer isDeleted) {
 		LOGGER.info("Inside - InstituteController.getInstute()");
 
-		int Limit = 10;
-
-		try {
-			Pageable pagingSort = PageRequest.of(page.orElse(0), Limit, Sort.Direction.DESC, sortBy.orElse("instId"));
-			Page<InstituteEntity> findAll = instituteRepo.findByAllInst(pagingSort);
-
-			int totalPage = findAll.getTotalPages() - 1;
-			if (totalPage < 0) {
-				totalPage = 0;
-			}
-			Map<String, Object> response = new HashMap<>();
-			response.put("data", findAll.getContent());
-			response.put("currentPage", findAll.getNumber());
-			response.put("total", findAll.getTotalElements());
-			response.put("totalPage", totalPage);
-			response.put("perPage", findAll.getSize());
-			response.put("perPageElement", findAll.getNumberOfElements());
-
-			if (findAll.getSize() < 1) {
-				throw new CustomException("Institute Not Found!");
-			} else {
-				return response;
-			}
+		try {			
+			return this.instituteService.getInstuteList(page,sortBy,isDeleted);					
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
 		}
 
 	}
 
-	@RequestMapping(value = { "/list/{page}/{limit}/{sortName}/{sort}" }, method = RequestMethod.GET)
+	@RequestMapping(value = { "/list/{page}/{limit}/{sortName}/{sort}/{isDeleted}" }, method = RequestMethod.GET)
 	public Map<String, Object> getInstutePagination(@PathVariable("page") int page, @PathVariable("limit") int limit,
-			@PathVariable("sort") String sort, @PathVariable("sortName") String sortName,
+			@PathVariable("sort") String sort, @PathVariable("sortName") String sortName,@PathVariable("isDeleted") int isDeleted,
 			@RequestParam(defaultValue = "") Optional<String> keyword, @RequestParam Optional<String> sortBy) {
 
 		LOGGER.info("Inside - InstituteController.getInstutePagination()");
 
-		try {
-			Pageable pagingSort = null;
-
-			if (sort == "ASC") {
-				pagingSort = PageRequest.of(page, limit, Sort.Direction.ASC, sortBy.orElse(sortName));
-			} else {
-				pagingSort = PageRequest.of(page, limit, Sort.Direction.DESC, sortBy.orElse(sortName));
-			}
-			String keywordVal = keyword.get();
-			Page<InstituteEntity> findAll = null;
-			
-			if (keyword.get().isEmpty()) {
-				findAll = instituteRepo.findByAllInst(pagingSort);
-				
-			} else {
-				findAll = instituteRepo.Search(keyword.get(), pagingSort);
-				
-			}
-
-			int totalPage = findAll.getTotalPages() - 1;
-			if (totalPage < 0) {
-				totalPage = 0;
-			}
-
-			Map<String, Object> response = new HashMap<>();
-			response.put("data", findAll.getContent());
-			response.put("currentPage", findAll.getNumber());
-			response.put("total", findAll.getTotalElements());
-			response.put("totalPage", totalPage);
-			response.put("perPage", findAll.getSize());
-			response.put("perPageElement", findAll.getNumberOfElements());
-
-			if (findAll.getSize() < 1) {
-				throw new CustomException("Institute Not Found!");
-			} else {
-				return response;
-			}
+		try {			
+			return this.instituteService.getInstuteListWithPaginagtion(page,limit,sort,sortName,isDeleted,keyword,sortBy);
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
 		}
@@ -158,7 +108,7 @@ public class InstuteController {
 					.filter(Inst -> Inst.getIsDeleted() == 0).filter(Inst -> Inst.getIsActive() == 1)
 					.filter(instituteLicense -> instituteLicense.getInstituteLicense() == null)
 					.collect(Collectors.toList());
-			if (findAll.size() < 1) {
+			if (findAll.size() <= 1) {
 				throw new CustomException("Institute Not Found!");
 			} else {
 				return findAll;
@@ -167,6 +117,131 @@ public class InstuteController {
 			throw new CustomException(e.getMessage());
 		}
 
+	}
+	
+	@PostMapping("/credentialssent")
+	public GlobalResponse postInstituteCredentials(@RequestBody InstituteEntity instituteEntrity,@RequestHeader("Authorization") String token) {
+		LOGGER.info("Inside - InstituteController.postInstituteCredentials()");
+				
+		try {
+			if ((fieldValidation.isEmpty(instituteEntrity.getInstId())) & (fieldValidation.isEmail(instituteEntrity.getInstEmail()))){
+				
+				List<InstituteEntity> findByIdAndEmail = instituteRepo.findByIdAndEmail(instituteEntrity.getInstId(),instituteEntrity.getInstEmail());
+				if(findByIdAndEmail.size()<=1) {					
+					
+					JSONObject requestJson = null;
+					JSONObject requestJsons = null;
+					HttpHeaders headers = new HttpHeaders();
+					HttpHeaders headersForSms = new HttpHeaders();
+					
+					try {							
+						headers.set("Authorization", token);
+						headers.setContentType(MediaType.APPLICATION_JSON);
+
+						HttpEntity request = new HttpEntity(headers);
+						
+					//	ResponseEntity<String> person =RestTemplate.postForEntity("http://sms.techno-soft.co.in/api/mt/SendSMS?user=technosoft_dev&password=Techno@8585&senderid=uLearn&channel=Promo&DCS=0&flashsms=0&number=917699983717&text=test message&route=##&peid=##",HttpMethod.POST, headers,String.class);
+												
+						
+//						Start fast2sms
+//						headersForSms.set("Authorization", "gRdDP5EMSnQtkmuse41hjpIOo6Bb0XcN2rxKlZ8FJwGLY3zC9ANeazHgiPS7pZVjdUX0fb2rGTWskQIu");
+//						End Start fast2sms
+						
+//						HttpEntity requestForSms = new HttpEntity<>(headersForSms);
+						
+//						Start fast2sms
+//						requestJsons = new JSONObject();
+//						requestJsons.put("route", "q");
+//						requestJsons.put("message", "Testing Ahadul");
+//						requestJsons.put("language", "english");
+//						requestJsons.put("flash", 0);
+//						requestJsons.put("numbers", "7699983717");
+//						HttpEntity requestForSms = new HttpEntity<>(requestJsons,headersForSms);
+//						End Start fast2sms
+						
+//						RestTemplate Template=new RestTemplate();
+//						String postForObject = Template.postForObject("http://sms.techno-soft.co.in/api/mt/SendSMS?user=technosoft_dev&password=Techno@8585&senderid=uLearn&channel=Promo&DCS=0&flashsms=0&number=917699983717&text=test message&route=##&peid=##", requestForSms, String.class);
+//						String postForObject = Template.postForObject("https://www.fast2sms.com/dev/bulkV2", requestForSms, String.class);
+						
+						
+						ResponseEntity<InstituteGlobalEntity> responseEmailTemp = new RestTemplate().exchange(
+								"http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/Institute_Credentials",
+								HttpMethod.GET, request, InstituteGlobalEntity.class);
+						
+						String ETSubject = responseEmailTemp.getBody().getEtSubject();
+						String ETBody = responseEmailTemp.getBody().getEtBody();
+						
+						String Password = null;
+						int length = 10;
+					    boolean useLetters = true;
+					    boolean useNumbers = false;
+					    Password = RandomStringUtils.random(length, useLetters, useNumbers);
+					    
+					    String HashPassword=passwordEncoder.encode(Password);
+//					    LOGGER.info("Inside - InstituteController.postInstituteCredentials()"+Password);
+					    LOGGER.info("Inside - InstituteController.postInstituteCredentials()---"+HashPassword);
+						
+					    InstituteAdminEntity getById = instituteAdminRepo.getById(findByIdAndEmail.get(0).getInstId());
+//						InstituteAdminEntity filterInsAmdDetails = new InstituteAdminEntity();
+						if(getById.getInstId() != null) {
+							
+//							getById.setAmdId(findByIdAndEmail.get(0).getInstituteAdmin().get(0).getAmdId());
+//						filterInsAmdDetails.setAmdFname(findByIdAndEmail.get(0).getInstituteAdmin().get(0).getAmdFname());
+//						filterInsAmdDetails.setAmdLname(findByIdAndEmail.get(0).getInstituteAdmin().get(0).getAmdLname());
+//						filterInsAmdDetails.setAmdDob(findByIdAndEmail.get(0).getInstituteAdmin().get(0).getAmdDob());
+//						filterInsAmdDetails.setAmdMnum(findByIdAndEmail.get(0).getInstituteAdmin().get(0).getAmdMnum());
+//						filterInsAmdDetails.setAmdEmail(findByIdAndEmail.get(0).getInstituteAdmin().get(0).getAmdEmail());
+//						filterInsAmdDetails.setAmdUsername(findByIdAndEmail.get(0).getInstituteAdmin().get(0).getAmdUsername());
+//						filterInsAmdDetails.setAmdPassword(Password);
+//						filterInsAmdDetails.setAmdPpic(findByIdAndEmail.get(0).getInstituteAdmin().get(0).getAmdPpic());
+//						filterInsAmdDetails.setInstId(findByIdAndEmail.get(0).getInstituteAdmin().get(0).getInstId());
+//						filterInsAmdDetails.setCreatedOn(findByIdAndEmail.get(0).getInstituteAdmin().get(0).getCreatedOn());
+							getById.setAmdPassword(HashPassword);					
+							getById.setUpdatedOn(new Date());
+						InstituteAdminEntity InsAmdDetails = instituteAdminRepo.save(getById);
+						LOGGER.info("Inside - InstituteController.postInstituteCredentials()++"+InsAmdDetails);
+						}
+						
+						String ETTargetName = "__$name$__";
+						String ETTargetUsername = "__$username$__";
+						String ETTargetPassword = "__$password$__";
+						String ETNameReplacement = findByIdAndEmail.get(0).getInstituteAdmin().get(0).getAmdFname() + " "
+								+ findByIdAndEmail.get(0).getInstituteAdmin().get(0).getAmdLname();
+						String ETUsernameReplacement = findByIdAndEmail.get(0).getInstituteAdmin().get(0).getAmdUsername();
+						String ETPasswordReplacement = Password;
+
+						String processedName = ETBody.replace(ETTargetName, ETNameReplacement);
+						String processedUsername = processedName.replace(ETTargetUsername, ETUsernameReplacement);
+						String processedMailBodyContent = processedUsername.replace(ETTargetPassword,
+								ETPasswordReplacement);
+						String mailid = findByIdAndEmail.get(0).getInstEmail();
+
+						requestJson = new JSONObject();
+						requestJson.put("senderMailId", mailid);
+						requestJson.put("subject", ETSubject);
+						requestJson.put("body", processedMailBodyContent);
+						requestJson.put("enableHtml", true);
+					} catch (Exception e) {												
+						if(e.getMessage().equals("No Data Present")) {
+							throw new CustomException(e.getMessage());
+						}
+						throw new CustomException("Email Service Is Not Running!");
+					}
+					try {
+						HttpEntity<String> entity = new HttpEntity(requestJson, headers);
+						ResponseEntity<String> response = new RestTemplate()
+								.postForEntity("http://65.1.66.115:8086/dev/login/sendMail/", entity, String.class);
+					} catch (Exception e) {
+						throw new CustomException("Login Service Is Not Running");
+					}
+				}
+			}
+			return new GlobalResponse("SUCCESS", 200, "You Have Successfully Sent A Credentials");		
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+		
+		
 	}
 
 	@PostMapping("/add")
@@ -183,7 +258,7 @@ public class InstuteController {
 
 			if ((fieldValidation.isEmpty(instituteGlobalEntrity.getInstCnum()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstName()))
-					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstEmail()))
+					& (fieldValidation.isEmail(instituteGlobalEntrity.getInstEmail()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstEndDate()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstGstNum()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstMnum()))
@@ -193,7 +268,6 @@ public class InstuteController {
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrCountry()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrDistrict()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrLine1()))
-//					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrLine2()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrPincode()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrState()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrTaluka()))
@@ -201,7 +275,7 @@ public class InstuteController {
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdFname()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdLname()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdDob()))
-					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdEmail()))
+					& (fieldValidation.isEmail(instituteGlobalEntrity.getAmdEmail()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdUsername()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdPassword()))) {
 				if (!findByInstituteName.isPresent()) {
@@ -271,30 +345,29 @@ public class InstuteController {
 
 							HttpEntity request = new HttpEntity(headers);
 							ResponseEntity<InstituteGlobalEntity> responseEmailTemp = new RestTemplate().exchange(
-									"http://localhost:8090/dev/emailTemplate/getPrimaryETByAction/Institute_Create",
+									"http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/Institute_Create",
 									HttpMethod.GET, request, InstituteGlobalEntity.class);
 							
 							String ETSubject = responseEmailTemp.getBody().getEtSubject();
 							String ETBody = responseEmailTemp.getBody().getEtBody();
 
 							String ETTargetName = "__$name$__";
-							String ETTargetUsername = "__$username$__";
-							String ETTargetPassword = "__$password$__";
+//							String ETTargetUsername = "__$username$__";
+//							String ETTargetPassword = "__$password$__";
 							String ETNameReplacement = instituteGlobalEntrity.getAmdFname() + " "
 									+ instituteGlobalEntrity.getAmdLname();
-							String ETUsernameReplacement = instituteGlobalEntrity.getAmdUsername();
-							String ETPasswordReplacement = instituteGlobalEntrity.getAmdPassword();
+//							String ETUsernameReplacement = instituteGlobalEntrity.getAmdUsername();
+//							String ETPasswordReplacement = instituteGlobalEntrity.getAmdPassword();
 
 							String processedName = ETBody.replace(ETTargetName, ETNameReplacement);
-							String processedUsername = processedName.replace(ETTargetUsername, ETUsernameReplacement);
-							String processedMailBodyContent = processedUsername.replace(ETTargetPassword,
-									ETPasswordReplacement);
+//							String processedUsername = processedName.replace(ETTargetUsername, ETUsernameReplacement);
+//							String processedMailBodyContent = processedUsername.replace(ETTargetPassword,ETPasswordReplacement);
 							String mailid = instituteGlobalEntrity.getInstEmail();
 
 							requestJson = new JSONObject();
 							requestJson.put("senderMailId", mailid);
 							requestJson.put("subject", ETSubject);
-							requestJson.put("body", processedMailBodyContent);
+							requestJson.put("body", processedName);
 							requestJson.put("enableHtml", true);
 						} catch (Exception e) {
 							if(e.getMessage().equals("No Data Present")) {
@@ -349,7 +422,7 @@ public class InstuteController {
 		try {
 			if ((fieldValidation.isEmpty(instituteGlobalEntrity.getInstCnum()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstName()))
-					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstEmail()))
+					& (fieldValidation.isEmail(instituteGlobalEntrity.getInstEmail()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstEndDate()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstGstNum()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstMnum()))
@@ -357,8 +430,7 @@ public class InstuteController {
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstPanNum()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrCountry()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrDistrict()))
-					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrLine1()))
-//					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrLine2()))
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrLine1()))					
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrPincode()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrState()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrTaluka()))
@@ -366,7 +438,7 @@ public class InstuteController {
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdFname()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdLname()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdDob()))
-					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdEmail()))
+					& (fieldValidation.isEmail(instituteGlobalEntrity.getAmdEmail()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdUsername()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdPassword()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAmdId()))
