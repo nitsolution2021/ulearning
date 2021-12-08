@@ -288,7 +288,7 @@ public class EmailTemplateController {
 		
 	}
 	
-	@GetMapping(value = { "/getAll/template/{delete}/{page}/{limit}/{sortName}/{sort}" })
+	@GetMapping(value = { "/getAll/template/{page}/{limit}/{sortName}/{sort}/{delete}" })
 	public Map<String, Object> emailTemplateGetAllPagination(@PathVariable("delete") int isDelete, @PathVariable("page") int page, @PathVariable("limit") int limit,
 			@PathVariable("sort") String sort, @PathVariable("sortName") String sortName,
 			@RequestParam(defaultValue = "") Optional<String>keyword, @RequestParam Optional<String> sortBy) {
@@ -372,9 +372,9 @@ public class EmailTemplateController {
 		
 		LOGGER.info("Inside - EmailTemplateController.viewTemplate()");
 		try {
-			List<EmailTemplateEntity> findByIdAndDelete = emailTemplateRepo.findByIdAndDelete(0, id);
-			if(findByIdAndDelete.size()>0) {
-				return findByIdAndDelete.get(0);
+			Optional<EmailTemplateEntity> findByIdAndDelete = emailTemplateRepo.findById(id);
+			if(findByIdAndDelete.isPresent()) {
+				return findByIdAndDelete.get();
 			}else {
 				throw new CustomException("No Data Found");
 			}
