@@ -18,8 +18,8 @@ public interface LicenseRepo extends JpaRepository<LicenseEntity, Integer> {
 
 	Optional<LicenseEntity> findByInstId(Long instId);
 	
-	@Query("SELECT licObj FROM LicenseEntity licObj WHERE licObj.isDeleted = ?1 AND CONCAT(licObj.lcName, licObj.lcCreatDate, licObj.lcValidityNum, licObj.lcValidityType, instituteEntity.instName, licObj.lcEndDate, licObj.lcStype,licObj.lcStatus) LIKE %?2%")
-	Page<LicenseEntity> Search(int isDeleted,String keyword, Pageable pagingSort);
+	@Query("SELECT licObj FROM LicenseEntity licObj WHERE CONCAT(licObj.lcName, licObj.lcCreatDate, licObj.lcValidityNum, licObj.lcValidityType, instituteEntity.instName, licObj.lcEndDate, licObj.lcStype,licObj.lcStatus) LIKE %?1% AND licObj.isDeleted = ?2")
+	Page<LicenseEntity> Search(String keyword,int isDeleted, Pageable pagingSort);
 
 	
 //	@Query(value = "SELECT licenseObj,instituteObj.INST_NAME FROM tbl_inst_license licenseObj, tbl_institutes instituteObj WHERE licenseObj.isDeleted = 0 and instituteObj.INST_ID =licenseObj.INST_ID")
