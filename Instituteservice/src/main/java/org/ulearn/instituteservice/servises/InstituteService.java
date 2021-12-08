@@ -100,9 +100,9 @@ public class InstituteService {
 			} else {
 				pagingSort = PageRequest.of(page, limit, Sort.Direction.DESC, sortBy.orElse(sortName));
 			}
-			String keywordVal = keyword.get();
+			
 			Page<InstituteEntity> findAll = null;
-			LOGGER.info("Inside - InstituteController.getInstute()"+sort+""+pagingSort);
+			
 			if (keyword.get().isEmpty()) {
 				findAll = instituteRepo.findByAllInst(isDeleted, pagingSort);
 
