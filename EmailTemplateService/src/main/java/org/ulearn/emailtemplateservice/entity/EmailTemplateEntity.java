@@ -27,6 +27,7 @@ public class EmailTemplateEntity {
 	@Column(name = "IS_PRIMARY") private int isPrimary;
 	@Column(name = "ET_ORDER") private Long etOrder;
 	@Column(name = "ET_TAGS") private String etTags;
+	@Column(name = "ET_TAGS_NAME") private String etTagsName;
 	@Column(name = "CREATED_ON") private Date createdOn;
 	@Column(name = "UPDATED_ON") private Date updatedOn;
 	public EmailTemplateEntity() {
