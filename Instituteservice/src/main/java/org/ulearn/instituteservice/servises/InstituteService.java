@@ -243,11 +243,9 @@ public class InstituteService {
 
 	}
 
-	
-	
 	public List<InstituteEntity> getListInstuteService() {
-		
-		try {				
+
+		try {
 			List<InstituteEntity> findAll = instituteRepo.findByListInst().stream()
 					.filter(Inst -> Inst.getIsDeleted() == 0).filter(Inst -> Inst.getIsActive() == 1)
 					.filter(instituteLicense -> instituteLicense.getInstituteLicense() == null)
@@ -264,7 +262,7 @@ public class InstituteService {
 
 	public GlobalResponse postInstituteDetailsService(@Valid InstituteGlobalEntity instituteGlobalEntrity,
 			String token) {
-		try {			
+		try {
 
 			Optional<InstituteEntity> findByInstituteName = instituteRepo
 					.findByInstName(instituteGlobalEntrity.getInstName());
@@ -362,7 +360,7 @@ public class InstituteService {
 							ResponseEntity<InstituteGlobalEntity> responseEmailTemp = new RestTemplate().exchange(
 									"http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/Institute_Create",
 									HttpMethod.GET, request, InstituteGlobalEntity.class);
-							
+
 							String ETSubject = responseEmailTemp.getBody().getEtSubject();
 							String ETBody = responseEmailTemp.getBody().getEtBody();
 
@@ -385,7 +383,7 @@ public class InstituteService {
 							requestJson.put("body", processedName);
 							requestJson.put("enableHtml", true);
 						} catch (Exception e) {
-							if(e.getMessage().equals("No Data Present")) {
+							if (e.getMessage().equals("No Data Present")) {
 								throw new CustomException(e.getMessage());
 							}
 							throw new CustomException("Institute Added Successfully But Email Service Is Not Running!");
@@ -413,7 +411,7 @@ public class InstituteService {
 	}
 
 	public Optional<InstituteEntity> viewInstituteDetailsService(long instId) {
-		try {			
+		try {
 			Optional<InstituteEntity> findById = this.instituteRepo.findById(instId);
 			if (!(findById.isPresent())) {
 				throw new CustomException("Institute Not Found!");
@@ -429,7 +427,7 @@ public class InstituteService {
 
 	public GlobalResponse putInstituteDetailsService(@Valid InstituteGlobalEntity instituteGlobalEntrity, long instId,
 			String token) {
-		try {			
+		try {
 			if ((fieldValidation.isEmpty(instituteGlobalEntrity.getInstCnum()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstName()))
 					& (fieldValidation.isEmail(instituteGlobalEntrity.getInstEmail()))
@@ -440,7 +438,7 @@ public class InstituteService {
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstPanNum()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrCountry()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrDistrict()))
-					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrLine1()))					
+					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrLine1()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrPincode()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrState()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getAdrTaluka()))
@@ -550,7 +548,9 @@ public class InstituteService {
 									headers.setContentType(MediaType.APPLICATION_JSON);
 
 									HttpEntity request = new HttpEntity(headers);
-									ResponseEntity<InstituteGlobalEntity> responseEmailTemp = new RestTemplate().exchange("http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/Institute_Update",
+									ResponseEntity<InstituteGlobalEntity> responseEmailTemp = new RestTemplate()
+											.exchange(
+													"http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/Institute_Update",
 													HttpMethod.GET, request, InstituteGlobalEntity.class);
 									String ETSubject = responseEmailTemp.getBody().getEtSubject();
 									String ETBody = responseEmailTemp.getBody().getEtBody();
@@ -566,19 +566,21 @@ public class InstituteService {
 									requestJson.put("subject", ETSubject);
 									requestJson.put("body", processedMailBodyContent);
 									requestJson.put("enableHtml", true);
-									
+
 								} catch (Exception e) {
-									if(e.getMessage().equals("No Data Present")) {
+									if (e.getMessage().equals("No Data Present")) {
 										throw new CustomException(e.getMessage());
 									}
-									throw new CustomException("Institute Updated Successfully But Email Service Is Not Running!");
+									throw new CustomException(
+											"Institute Updated Successfully But Email Service Is Not Running!");
 								}
 								try {
 									HttpEntity<String> entity = new HttpEntity(requestJson, headers);
 									ResponseEntity<String> response = new RestTemplate().postForEntity(
 											"http://65.1.66.115:8086/dev/login/sendMail/", entity, String.class);
 								} catch (Exception e) {
-									throw new CustomException("Institute Updated Successfully But Email Service Is Not Running!");
+									throw new CustomException(
+											"Institute Updated Successfully But Email Service Is Not Running!");
 								}
 							}
 							return new GlobalResponse("SUCCESS", 200, "Institute Updated Successfully");
@@ -599,7 +601,5 @@ public class InstituteService {
 			throw new CustomException(e.getMessage());
 		}
 	}
-	
-	
-	
+
 }
