@@ -96,7 +96,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		}catch(Exception e) {
 			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
 			response.setContentType("application/json");
-            response.getWriter().write("{ \"statuss\" : 500 , \"messagee\" : \"Token not valid\"}");
+            response.getWriter().write("{ \"statuss\" : 500 , \"messagee\" : \""+e.getMessage()+"\"}");
 //			throw new CustomeException(e.getMessage());
 		}
 		
