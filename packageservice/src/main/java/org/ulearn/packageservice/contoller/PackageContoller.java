@@ -399,7 +399,7 @@ public class PackageContoller {
 							licenceValidityHours = 8640 * licenseEntity.getLcValidityNum();
 						}
 						if (licenceValidityHours >= packageValidityHours) {
-							updatePackagedata.setPkStatus("Updated");
+							updatePackagedata.setPkStatus("Active");
 							updatePackagedata.setCreatedOn(dbData.getCreatedOn());
 							updatePackagedata.setPkId(dbData.getPkId());
 							updatePackagedata.setPkCdate(dbData.getPkCdate());
