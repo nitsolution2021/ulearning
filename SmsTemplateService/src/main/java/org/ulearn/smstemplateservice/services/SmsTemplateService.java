@@ -3,6 +3,7 @@ package org.ulearn.smstemplateservice.services;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -382,6 +383,7 @@ public class SmsTemplateService {
 	}
 
 	public SmsTemplateEntity getPrimaryETByAction(String action) {
+		LOGGER.info("Inside - SmsTemplateService.getPrimaryETByAction()");
 		try {
 			List<SmsTemplateEntity> find = smsTemplateRepo.getPrimarySTByAction(action, 1);
 			if (find.size() > 0) {
@@ -392,6 +394,37 @@ public class SmsTemplateService {
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
 		}
+	}
+
+	public List<Map<String, String>> getTags(String action) {
+		LOGGER.info("Inside - SmsTemplateService.getTags()");
+		try {
+			Optional<SmsTemplateEntity> findTagByActionAndType = smsTemplateRepo.findTagByActionAndType(action, "DEFAULT");
+			if (findTagByActionAndType.isPresent()) {
+				SmsTemplateEntity smsTemplateEntity = findTagByActionAndType.get();
+				String stTags = smsTemplateEntity.getStTags();
+				String[] split = stTags.split(",");
+				
+				String stTagsName = smsTemplateEntity.getStTagsName();
+				String[] split2 = stTagsName.split(",");
+				
+				List<Map<String, String>> list = new ArrayList<>();
+				
+				for(int i=0; i < split.length; i++) {
+					
+					Map<String , String> map = new HashMap<String, String>();
+					map.put("value", split[i]);
+					map.put("name", split2[i]);
+					list.add(map);
+				}
+				return list;
+			} else {
+				throw new CustomException("Data not present");
+			}
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+		
 	}
 
 }

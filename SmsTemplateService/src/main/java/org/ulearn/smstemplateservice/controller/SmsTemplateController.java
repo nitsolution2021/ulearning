@@ -126,6 +126,16 @@ public class SmsTemplateController {
 		}
 	}
 	
+	@GetMapping("/getTags/{action}")
+	public List<Map<String, String>> getTags(@PathVariable String action) {
+		LOGGER.info("Inside - SmsTemplateController.getTags()");
+		try {
+			return smsTemplateService.getTags(action);
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+	}
+	
 	
 	
 }
