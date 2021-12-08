@@ -44,11 +44,11 @@ public class SmsTemplateController {
 		}
 	}
 	
-	@GetMapping("/list")
-	public Map<String, Object> getSmsTemplate(@RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy) {
+	@GetMapping("/list/{delete}")
+	public Map<String, Object> getSmsTemplate(@PathVariable int delete, @RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy) {
 		LOGGER.info("Inside - SmsTemplateController.getSmsTemplate()");
 		try {
-			return smsTemplateService.getSmsTemplate(page, sortBy);
+			return smsTemplateService.getSmsTemplate(delete, page, sortBy);
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
 		}
@@ -111,6 +111,16 @@ public class SmsTemplateController {
 		LOGGER.info("Inside - SmsTemplateController.setDefaultSmsTemplate()");
 		try {
 			return smsTemplateService.setDefaultSmsTemplate(stId, stAction);
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+	}
+	
+	@GetMapping("/getPrimarySTByAction/{action}")
+	public SmsTemplateEntity getPrimaryETByAction(@PathVariable String action) {
+		LOGGER.info("Inside - SmsTemplateController.getPrimaryETByAction()");
+		try {
+			return smsTemplateService.getPrimaryETByAction(action);
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
 		}
