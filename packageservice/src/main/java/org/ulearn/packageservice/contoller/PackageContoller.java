@@ -132,7 +132,7 @@ public class PackageContoller {
 			Page<PackageEntity> findAll =null;
 			if(!keyword.get().isEmpty())
 			{
-				findAll= packageRepo.Search(keyword.get(),pageSort,isDelete);
+				findAll= packageRepo.Search(keyword.get(),isDelete,pageSort);
 			}
 			else
 			{
@@ -217,9 +217,6 @@ public class PackageContoller {
 					
 					List<LicenseEntity> licenseData=licenseRepo.findInst(newData.getInstId());
 					int licenseExixtense=0;
-//					LicenseEntity licenseEntity=licenseData.get(0);
-//					System.out.println(licenseEntity);
-//					System.out.println(newData.getInstId());
 					LicenseEntity licenseEntity=new LicenseEntity();
 					for(int i=0;i<licenseData.size();i++)
 					{
@@ -227,7 +224,7 @@ public class PackageContoller {
 						
 						if(licenseEntity.getInstId()==newData.getInstId())
 						{
-							//LicenseEntity licenseEntity1=
+							
 							licenseExixtense++;
 						}
 					}
@@ -353,7 +350,7 @@ public class PackageContoller {
 							}
 							catch(Exception e)
 							{
-								throw new CustomException(e.getMessage());
+								throw new CustomException("Email Service Not Running");
 							}
 							
 						}
@@ -364,12 +361,12 @@ public class PackageContoller {
 					}
 					else
 					{
-						throw new CustomException("License not found");
+						throw new CustomException("License Not Found");
 					}
 				}
 				else
 				{
-					throw new CustomException("Institute Not found");
+					throw new CustomException("institute Not found");
 				}
 			}
 			else 
@@ -400,6 +397,51 @@ public class PackageContoller {
 						if (dbData.getInstId() != updatePackagedata.getInstId()) {
 							throw new CustomException("Institute id cannot updated");
 						}
+						List<LicenseEntity> licenseData=licenseRepo.findInst(updatePackagedata.getInstId());
+						int licenseExixtense=0;
+//						LicenseEntity licenseEntity=licenseData.get(0);
+//						System.out.println(licenseEntity);
+//						System.out.println(newData.getInstId());
+						LicenseEntity licenseEntity=new LicenseEntity();
+						for(int i=0;i<licenseData.size();i++)
+						{
+							 licenseEntity=licenseData.get(i);
+							
+							if(licenseEntity.getInstId()==updatePackagedata.getInstId())
+							{
+								//LicenseEntity licenseEntity1=
+								licenseExixtense++;
+							}
+						}
+						
+						long packageValidityHours=0;
+						long licenceValidityHours=0;
+						if(updatePackagedata.getPkValidityType().equals("Days"))
+						{
+							packageValidityHours=24*updatePackagedata.getPkValidityNum();
+						}
+						if(updatePackagedata.getPkValidityType().equals("Months"))
+						{
+							packageValidityHours=720*updatePackagedata.getPkValidityNum();
+						}
+						if(updatePackagedata.getPkValidityType().equals("Years"))
+						{
+							packageValidityHours=8640*updatePackagedata.getPkValidityNum();
+						}
+						if(licenseEntity.getLcValidityType().equals("Days"))
+						{
+							licenceValidityHours=24*licenseEntity.getLcValidityNum();
+						}
+						if(licenseEntity.getLcValidityType().equals("Months"))
+						{
+							licenceValidityHours=720*licenseEntity.getLcValidityNum();
+						}
+						if(licenseEntity.getLcValidityType().equals("Years"))
+						{
+							licenceValidityHours=8640*licenseEntity.getLcValidityNum();
+						}
+						if(licenceValidityHours>=packageValidityHours)
+						{
 						updatePackagedata.setCreatedOn(dbData.getCreatedOn());
 						updatePackagedata.setPkId(dbData.getPkId());
 						updatePackagedata.setPkCdate(dbData.getPkCdate());
@@ -450,7 +492,13 @@ public class PackageContoller {
 						}
 						
 						return new GlobalResponse("Success", "Subcription Package Update Succcessfully",200);
-					} else {
+					}
+						else
+						{
+							throw new CustomException("Subcribtion Plan Should Not Be Exceed License Plan");
+						}
+					}
+						else {
 						throw new CustomException("Please Enter The Valid Information");
 					}
 				} else {
