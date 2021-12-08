@@ -440,7 +440,7 @@ public class LicenseService {
 					
 				} else {
 					
-					findAll = licenseRepo.Search(isDeleted,keyword.get(), pagingSort);
+					findAll = licenseRepo.Search(keyword.get(), isDeleted,pagingSort);
 				}
 				
 				int totalPage=findAll.getTotalPages()-1;
