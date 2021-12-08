@@ -1,10 +1,11 @@
 package org.ulearn.packageservice.entity;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -12,12 +13,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @Entity
-@Table(name="tbl_inst_addr")
-public class InstituteAddressEntity implements Serializable{
+@Table(name = "tbl_inst_addr")
+public class InstituteAddressEntity {
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "ADR_ID")
-
 	private Long adrId;
 	
 	@Column(name = "INST_ID")
@@ -254,5 +255,5 @@ public class InstituteAddressEntity implements Serializable{
 				+ ", isActive=" + isActive + ", isDeleted=" + isDeleted + ", createdOn=" + createdOn + ", updatedOn="
 				+ updatedOn + "]";
 	}
-	
+
 }

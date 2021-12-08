@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
@@ -44,8 +45,8 @@ public class PackageEntity implements Serializable{
 	@Column(name = "PK_CDATE")@JsonFormat(shape = Shape.STRING,pattern = "yyyy/MM/dd") Date pkCdate;
 	@Column(name = "PK_COMMENT") @NotEmpty(message = "Write some comment on that package") String pkComment;
 	@Column(name = "PARENT_ID")private Long parentId;
-	@Column(name = "IS_ACTIVE") private Long isActive;
-	@Column(name = "IS_DELETED") private Long isDeleted;
+	@Column(name = "IS_ACTIVE") private int isActive;
+	@Column(name = "IS_DELETED") private int isDeleted;
 	@Column(name = "PK_STATUS")private String pkStatus;
 	@Column(name = "CREATED_ON") private Date createdOn;
 	@Column(name = "UPDATED_ON") private Date updatedOn;
@@ -58,8 +59,8 @@ public class PackageEntity implements Serializable{
 			@Positive(message = "Package nusers is required") Long pkNusers,
 			@NotEmpty(message = "Package validity type is required") String pkValidityType,
 			@Positive(message = "Package validity no required") Long pkValidityNum, Date pkCdate,
-			@NotEmpty(message = "Write some comment on that package") String pkComment, Long parentId, Long isActive,
-			Long isDeleted, String pkStatus, Date createdOn, Date updatedOn, InstituteEntity instituteEntity) {
+			@NotEmpty(message = "Write some comment on that package") String pkComment, Long parentId, int isActive,
+			int isDeleted, String pkStatus, Date createdOn, Date updatedOn, InstituteEntity instituteEntity) {
 		super();
 		this.pkId = pkId;
 		this.instId = instId;
@@ -149,16 +150,16 @@ public class PackageEntity implements Serializable{
 	public void setParentId(Long parentId) {
 		this.parentId = parentId;
 	}
-	public Long getIsActive() {
+	public int getIsActive() {
 		return isActive;
 	}
-	public void setIsActive(Long isActive) {
+	public void setIsActive(int isActive) {
 		this.isActive = isActive;
 	}
-	public Long getIsDeleted() {
+	public int getIsDeleted() {
 		return isDeleted;
 	}
-	public void setIsDeleted(Long isDeleted) {
+	public void setIsDeleted(int isDeleted) {
 		this.isDeleted = isDeleted;
 	}
 	public String getPkStatus() {
@@ -196,4 +197,3 @@ public class PackageEntity implements Serializable{
 	}
 	
 }
-	

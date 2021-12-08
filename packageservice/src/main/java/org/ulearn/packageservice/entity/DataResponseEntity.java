@@ -37,5 +37,4 @@ public class DataResponseEntity implements Serializable{
 	public String toString() {
 		return "DataResponseEntity [packageData=" + packageData + ", instituteData=" + instituteData + "]";
 	}
-	
 }
