@@ -37,6 +37,7 @@ public interface EmailTemplateRepo extends JpaRepository<EmailTemplateEntity, Lo
     Page<EmailTemplateEntity> Search(String sortKey,int isDelete, Pageable pageable);
 	
 	public Optional<EmailTemplateEntity> findByEtName(String etName);
+	public Optional<EmailTemplateEntity> findById(Long etId);
 	
 	
 }
