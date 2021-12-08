@@ -421,7 +421,7 @@ public class LicenseService {
 	}
 	
 	public Map<String, Object> forGetLicensePagination(int page, int limit, Optional<String> sortBy, String sortName,
-			String sort, Optional<String> keyword) {
+			String sort,int isDeleted, Optional<String> keyword) {
 		// TODO Auto-generated method stub
 		try {
 				Pageable pagingSort = null;
@@ -433,11 +433,16 @@ public class LicenseService {
 				}
 	
 				Page<LicenseEntity> findAll = null;
-				if (keyword.isPresent()) {
-					findAll = licenseRepo.Search(keyword.get(), pagingSort);
+				
+				if (keyword.get().isEmpty()) {
+				
+					findAll = licenseRepo.findByAllLicense(isDeleted,pagingSort);
+					
 				} else {
-					findAll = licenseRepo.findByAllLicense(pagingSort);
+					
+					findAll = licenseRepo.Search(keyword.get(), isDeleted,pagingSort);
 				}
+				
 				int totalPage=findAll.getTotalPages()-1;
 				if(totalPage < 0) {
 					totalPage=0;

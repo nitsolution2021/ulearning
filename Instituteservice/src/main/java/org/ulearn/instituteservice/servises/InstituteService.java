@@ -1,5 +1,6 @@
 package org.ulearn.instituteservice.servises;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -94,19 +95,19 @@ public class InstituteService {
 
 			Pageable pagingSort = null;
 
-			if (sort == "ASC") {
+			if (sort.equals("ASC")) {
 				pagingSort = PageRequest.of(page, limit, Sort.Direction.ASC, sortBy.orElse(sortName));
 			} else {
 				pagingSort = PageRequest.of(page, limit, Sort.Direction.DESC, sortBy.orElse(sortName));
 			}
-			String keywordVal = keyword.get();
+			
 			Page<InstituteEntity> findAll = null;
-
+			
 			if (keyword.get().isEmpty()) {
 				findAll = instituteRepo.findByAllInst(isDeleted, pagingSort);
 
 			} else {
-				findAll = instituteRepo.Search(isDeleted, keyword.get(), pagingSort);
+				findAll = instituteRepo.Search(keyword.get(), isDeleted,pagingSort);
 
 			}
 
@@ -246,9 +247,9 @@ public class InstituteService {
 	public List<InstituteEntity> getListInstuteService() {
 
 		try {
-			List<InstituteEntity> findAll = instituteRepo.findByListInst().stream()
+			List<InstituteEntity> findAll = instituteRepo.findByListInst().stream() 
 					.filter(Inst -> Inst.getIsDeleted() == 0).filter(Inst -> Inst.getIsActive() == 1)
-					.filter(instituteLicense -> instituteLicense.getInstituteLicense() == null)
+					.filter(instituteLicense -> instituteLicense.getInstituteLicense() == null)					
 					.collect(Collectors.toList());
 			if (findAll.size() <= 1) {
 				throw new CustomException("Institute Not Found!");

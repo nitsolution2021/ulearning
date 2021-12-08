@@ -95,14 +95,14 @@ public class LicenseController {
 		
 	}
 	
-	@RequestMapping(value = { "/list/{page}/{limit}/{sortName}/{sort}" }, method = RequestMethod.GET)
+	@RequestMapping(value = { "/list/{page}/{limit}/{sortName}/{sort}/{isDeleted}" }, method = RequestMethod.GET)
 	public Map<String, Object> getLicensePagination(@PathVariable("page") int page, @PathVariable("limit") int limit,
-			@PathVariable("sort") String sort, @PathVariable("sortName") String sortName,
+			@PathVariable("sort") String sort, @PathVariable("sortName") String sortName, @PathVariable("isDeleted") int isDeleted,
 			@RequestParam(defaultValue = "") Optional<String>keyword, @RequestParam Optional<String> sortBy) {
 		LOGGER.info("Inside - LicenseController.getLicensePagination()");
 		
 		try {
-			return licenseService.forGetLicensePagination(page,limit,sortBy,sortName,sort,keyword);
+			return licenseService.forGetLicensePagination(page,limit,sortBy,sortName,sort,isDeleted,keyword);
 			
 		} catch (Exception e) {
 			// TODO: handle exception
