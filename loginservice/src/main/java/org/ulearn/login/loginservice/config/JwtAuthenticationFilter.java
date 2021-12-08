@@ -8,6 +8,9 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -45,6 +48,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	
 	
 	UserDetails userDetails;
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 	
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException{
@@ -96,7 +101,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		}catch(Exception e) {
 			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
 			response.setContentType("application/json");
-            response.getWriter().write("{ \"statuss\" : 500 , \"messagee\" : \"Token not valid\"}");
+            response.getWriter().write("{ \"statuss\" : 500 , \"messagee\" : \""+e.getMessage()+"\"}");
+            LOGGER.info(e.getMessage());
+            LOGGER.info(e.toString());
 //			throw new CustomeException(e.getMessage());
 		}
 		
