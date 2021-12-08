@@ -369,7 +369,7 @@ public class PackageContoller {
 				}
 				else
 				{
-					throw new CustomException("Ins Not found");
+					throw new CustomException("Institute Not found");
 				}
 			}
 			else 
