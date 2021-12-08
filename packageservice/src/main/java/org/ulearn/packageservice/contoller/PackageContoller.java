@@ -20,8 +20,6 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -76,13 +74,14 @@ public class PackageContoller {
 
 	@Autowired
 	private InstituteRepo instituteRepo;
-	
+
 	@Autowired
 	private LicenseRepo licenseRepo;
 	private static final Logger log = LoggerFactory.getLogger(PackageContoller.class);
 
 	@GetMapping("/list/{isDelete}")
-	public Map<String, Object> getInstute(@RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy,@PathVariable int isDelete) {
+	public Map<String, Object> getInstute(@RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy,
+			@PathVariable int isDelete) {
 		log.info("Inside - InstituteController.getpackage()");
 
 		int Limit = 10;
@@ -90,10 +89,10 @@ public class PackageContoller {
 		try {
 			Pageable pagingSort = PageRequest.of(page.orElse(0), Limit, Sort.Direction.DESC,
 					sortBy.orElse("createdOn"));
-			Page<PackageEntity> findAll = packageRepo.findByListpackage(pagingSort,isDelete);			
-			int totalPage=findAll.getTotalPages()-1;
-			if(totalPage < 0) {
-				totalPage=0;
+			Page<PackageEntity> findAll = packageRepo.findByListpackage(pagingSort, isDelete);
+			int totalPage = findAll.getTotalPages() - 1;
+			if (totalPage < 0) {
+				totalPage = 0;
 			}
 			Map<String, Object> response = new HashMap<>();
 			response.put("data", findAll.getContent());
@@ -113,34 +112,28 @@ public class PackageContoller {
 		}
 
 	}
+
 	@GetMapping("/list/{page}/{limit}/{sortName}/{sort}/{isDelete}")
 	public Map<String, Object> getInstutePagination(@PathVariable("page") int page, @PathVariable("limit") int limit,
 			@PathVariable("sort") String sort, @PathVariable("sortName") String sortName,
-			@RequestParam(defaultValue = "") Optional<String>keyword, @RequestParam Optional<String> sortBy,@PathVariable int isDelete)
-	{
-		try
-		{
-			Pageable pageSort=null;
-			if(sort.equals("ASC"))
-					{
-						pageSort= PageRequest.of(page, limit, Sort.Direction.ASC, sortBy.orElse(sortName));
-					}
-					else
-					{
-						pageSort= PageRequest.of(page, limit, Sort.Direction.DESC, sortBy.orElse(sortName));
-					}
-			Page<PackageEntity> findAll =null;
-			if(!keyword.get().isEmpty())
-			{
-				findAll= packageRepo.Search(keyword.get(),isDelete,pageSort);
+			@RequestParam(defaultValue = "") Optional<String> keyword, @RequestParam Optional<String> sortBy,
+			@PathVariable int isDelete) {
+		try {
+			Pageable pageSort = null;
+			if (sort.equals("ASC")) {
+				pageSort = PageRequest.of(page, limit, Sort.Direction.ASC, sortBy.orElse(sortName));
+			} else {
+				pageSort = PageRequest.of(page, limit, Sort.Direction.DESC, sortBy.orElse(sortName));
 			}
-			else
-			{
-				findAll=packageRepo.findByListpackage(pageSort,isDelete);
+			Page<PackageEntity> findAll = null;
+			if (!keyword.get().isEmpty()) {
+				findAll = packageRepo.Search(keyword.get(), isDelete, pageSort);
+			} else {
+				findAll = packageRepo.findByListpackage(pageSort, isDelete);
 			}
-			int totalPage=findAll.getTotalPages()-1;
-			if(totalPage < 0) {
-				totalPage=0;
+			int totalPage = findAll.getTotalPages() - 1;
+			if (totalPage < 0) {
+				totalPage = 0;
 			}
 			Map<String, Object> response = new HashMap<>();
 			response.put("data", findAll.getContent());
@@ -155,12 +148,11 @@ public class PackageContoller {
 			} else {
 				return response;
 			}
-		}
-		catch(Exception e)
-		{
+		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
 		}
 	}
+
 	@GetMapping("/view/{pkId}")
 	public Optional<?> viewPackagedata(@PathVariable long pkId) {
 		try {
@@ -168,9 +160,9 @@ public class PackageContoller {
 			if (pkId != 0) {
 				if (packageRepo.existsById(pkId)) {
 					PackageEntity packageData = packageRepo.getById(pkId);
-					InstituteEntity instituteEntity= instituteRepo.getById(packageData.getInstId());
-					//insttituteEntity.setPackageEntity((List<PackageEntity>) packageData);
-					DataResponseEntity dataResponseEntity=new DataResponseEntity();
+					InstituteEntity instituteEntity = instituteRepo.getById(packageData.getInstId());
+					// insttituteEntity.setPackageEntity((List<PackageEntity>) packageData);
+					DataResponseEntity dataResponseEntity = new DataResponseEntity();
 					dataResponseEntity.setInstituteData(instituteEntity);
 					dataResponseEntity.setPackageData(packageData);
 					return Optional.of(dataResponseEntity);
@@ -185,6 +177,7 @@ public class PackageContoller {
 			throw new CustomException(e.getMessage());
 		}
 	}
+
 	@PostMapping("/add")
 	public GlobalResponse addPackagedata(@Valid @RequestBody PackageGlobalTemplate packageGlobalData,
 			@RequestHeader("Authorization") String token) {
@@ -193,15 +186,15 @@ public class PackageContoller {
 			log.info("Inside-PackageController.addPackagedata");
 			if ((fieldValidation.isEmpty(packageGlobalData.getInstId()))
 					& (fieldValidation.isEmpty(packageGlobalData.getPkComment()))
-					& (fieldValidation.isEmpty(packageGlobalData.getPkFname())) 
+					& (fieldValidation.isEmpty(packageGlobalData.getPkFname()))
 					& (fieldValidation.isEmpty(packageGlobalData.getPkName()))
 					& (fieldValidation.isEmpty(packageGlobalData.getPkNusers()))
 					& (fieldValidation.isEmpty(packageGlobalData.getPkValidityNum()))
 					& (fieldValidation.isEmpty(packageGlobalData.getPkCdate()))
 					& (fieldValidation.isEmpty(packageGlobalData.getPkValidityType()))) {
-				long defaultId=0;
-				//System.out.println(packageGlobalData);
-				PackageEntity newData=new PackageEntity();
+				long defaultId = 0;
+				// System.out.println(packageGlobalData);
+				PackageEntity newData = new PackageEntity();
 				newData.setPkFname(packageGlobalData.getPkFname());
 				newData.setPkName(packageGlobalData.getPkName());
 				newData.setPkNusers(packageGlobalData.getPkNusers());
@@ -210,93 +203,74 @@ public class PackageContoller {
 				newData.setInstId(packageGlobalData.getInstId());
 				newData.setPkComment(packageGlobalData.getPkComment());
 				newData.setPkCdate(packageGlobalData.getPkCdate());
-				int defalultParent=0;
-				if(instituteRepo.existsById(newData.getInstId()))
-				{
-					
-					
-					List<LicenseEntity> licenseData=licenseRepo.findInst(newData.getInstId());
-					int licenseExixtense=0;
-					LicenseEntity licenseEntity=new LicenseEntity();
-					for(int i=0;i<licenseData.size();i++)
-					{
-						 licenseEntity=licenseData.get(i);
-						
-						if(licenseEntity.getInstId()==newData.getInstId())
-						{
-							
+				int defalultParent = 0;
+				if (instituteRepo.existsById(newData.getInstId())) {
+
+					List<LicenseEntity> licenseData = licenseRepo.findInst(newData.getInstId());
+					int licenseExixtense = 0;
+					LicenseEntity licenseEntity = new LicenseEntity();
+					for (int i = 0; i < licenseData.size(); i++) {
+						licenseEntity = licenseData.get(i);
+
+						if (licenseEntity.getInstId() == newData.getInstId()) {
+
 							licenseExixtense++;
 						}
 					}
-					if(licenseExixtense!=0)
-					{
-						//packageRepo.save(newData);
-						
-						List<PackageEntity> packData=packageRepo.instData(newData.getInstId()); 
-						//System.out.println(licenseExixtense);
-						int packageExixtense=0;
-						for(int i=0;i<packData.size();i++)
-						{
-							PackageEntity packageEntity=packData.get(i);
-							if(packageEntity.getInstId()==newData.getInstId())
-							{
+					if (licenseExixtense != 0) {
+						// packageRepo.save(newData);
+
+						List<PackageEntity> packData = packageRepo.instData(newData.getInstId());
+						// System.out.println(licenseExixtense);
+						int packageExixtense = 0;
+						for (int i = 0; i < packData.size(); i++) {
+							PackageEntity packageEntity = packData.get(i);
+							if (packageEntity.getInstId() == newData.getInstId()) {
 								//
 								packageExixtense++;
 								newData.setParentId(packageEntity.getPkId());
-							}
-							else
-							{
+							} else {
 								System.out.println("hi");
-								//newData.setPkType("NewPackage");
+								// newData.setPkType("NewPackage");
 								newData.setParentId(defaultId);
 							}
 						}
-						if(packageExixtense!=0)
-						{
+						if (packageExixtense != 0) {
 							newData.setPkType("SubPackage");
-						}
-						else
-						{
+						} else {
 							newData.setPkType("NewPackage");
 						}
-						long licenceValidityHours=0;
-						long packageValidityHours=0;
-						if(newData.getPkValidityType().equals("Days"))
-						{
-							packageValidityHours=24*newData.getPkValidityNum();
+						long licenceValidityHours = 0;
+						long packageValidityHours = 0;
+						if (newData.getPkValidityType().equals("Days")) {
+							packageValidityHours = 24 * newData.getPkValidityNum();
 						}
-						if(newData.getPkValidityType().equals("Months"))
-						{
-							packageValidityHours=720*newData.getPkValidityNum();
+						if (newData.getPkValidityType().equals("Months")) {
+							packageValidityHours = 720 * newData.getPkValidityNum();
 						}
-						if(newData.getPkValidityType().equals("Years"))
-						{
-							packageValidityHours=8640*newData.getPkValidityNum();
+						if (newData.getPkValidityType().equals("Years")) {
+							packageValidityHours = 8640 * newData.getPkValidityNum();
 						}
-						if(licenseEntity.getLcValidityType().equals("Days"))
-						{
-							licenceValidityHours=24*licenseEntity.getLcValidityNum();
+						if (licenseEntity.getLcValidityType().equals("Days")) {
+							licenceValidityHours = 24 * licenseEntity.getLcValidityNum();
 						}
-						if(licenseEntity.getLcValidityType().equals("Months"))
-						{
-							licenceValidityHours=720*licenseEntity.getLcValidityNum();
+						if (licenseEntity.getLcValidityType().equals("Months")) {
+							licenceValidityHours = 720 * licenseEntity.getLcValidityNum();
 						}
-						if(licenseEntity.getLcValidityType().equals("Years"))
-						{
-							licenceValidityHours=8640*licenseEntity.getLcValidityNum();
+						if (licenseEntity.getLcValidityType().equals("Years")) {
+							licenceValidityHours = 8640 * licenseEntity.getLcValidityNum();
 						}
-						if(licenceValidityHours>=packageValidityHours)
-						{
-							//return new GlobalResponse("Success", "okk", 200);
+						if (licenceValidityHours >= packageValidityHours) {
+							// return new GlobalResponse("Success", "okk", 200);
 							newData.setPkStatus("Active");
 							newData.setCreatedOn(new Date());
 							newData.setIsActive(2);
 							newData.setIsDeleted(0);
 							packageRepo.save(newData);
-							List<PackageEntity> recentPackageEntity=packageRepo.recentData();
-							//System.out.println(recentPackageEntity);
-							PackageEntity newPackageEntity=recentPackageEntity.get(0);
-							PackageLogEntity packageLogData=new PackageLogEntity();
+							List<PackageEntity> recentPackageEntity = packageRepo.recentData();
+							// System.out.println(recentPackageEntity);
+							PackageEntity newPackageEntity = recentPackageEntity.get(0);
+							PackageLogEntity packageLogData = new PackageLogEntity();
 							packageLogData.setPkId(newPackageEntity.getPkId());
 							packageLogData.setPlAdate(newPackageEntity.getPkCdate());
 							packageLogData.setPlAction("Subscribtion Added");
@@ -317,64 +291,56 @@ public class PackageContoller {
 										"http://65.1.66.115:8085/dev/emailTemplate/getPrimaryETByAction/Package_Create",
 										HttpMethod.GET, request, PackageGlobalTemplate.class);
 								System.out.println(responseEmailTemp);
-								String ETSubject= responseEmailTemp.getBody().getEtSubject();
-								String ETBody=responseEmailTemp.getBody().getEtBody();
-								String ETAdminFname="__$amdFname$__";
-								String ETPackageFname="__$pkFname$__";
-								String ETPackageCdate="__$pkCdate$__";
-								String ETPackageValidityNo="__$pkValidityNum$__";
-								String ETPackgeValidityType="__$pkValidityType$__";
-								PackageEntity packageData=packageRepo.getById(newPackageEntity.getPkId());
-								InstituteEntity instituteData=instituteRepo.getById(newPackageEntity.getInstId());
-								String replace = ETBody.replace(ETAdminFname,instituteData.getInstituteAdmin().getAmdFname());
-								String replace1 = replace.replace(ETPackageFname,packageData.getPkFname());
-								String replace2 = replace1.replace(ETPackageCdate,packageData.getPkCdate().toString() );
-								String replace3 = replace2.replace(ETPackageValidityNo,packageData.getPkValidityNum().toString() );
-								String replace4 = replace3.replace(ETPackgeValidityType,packageData.getPkValidityType() );
-								
-								InstituteEntity instData=instituteRepo.getById(newData.getInstId());
-								String mailId=instData.getInstEmail();
+								String ETSubject = responseEmailTemp.getBody().getEtSubject();
+								String ETBody = responseEmailTemp.getBody().getEtBody();
+								String ETAdminFname = "__$amdFname$__";
+								String ETPackageFname = "__$pkFname$__";
+								String ETPackageCdate = "__$pkCdate$__";
+								String ETPackageValidityNo = "__$pkValidityNum$__";
+								String ETPackgeValidityType = "__$pkValidityType$__";
+								PackageEntity packageData = packageRepo.getById(newPackageEntity.getPkId());
+								InstituteEntity instituteData = instituteRepo.getById(newPackageEntity.getInstId());
+								String replace = ETBody.replace(ETAdminFname,
+										instituteData.getInstituteAdmin().getAmdFname());
+								String replace1 = replace.replace(ETPackageFname, packageData.getPkFname());
+								String replace2 = replace1.replace(ETPackageCdate, packageData.getPkCdate().toString());
+								String replace3 = replace2.replace(ETPackageValidityNo,
+										packageData.getPkValidityNum().toString());
+								String replace4 = replace3.replace(ETPackgeValidityType,
+										packageData.getPkValidityType());
+
+								InstituteEntity instData = instituteRepo.getById(newData.getInstId());
+								String mailId = instData.getInstEmail();
 								JSONObject requestJson = new JSONObject();
 								requestJson.put("senderMailId", mailId);
 								requestJson.put("subject", ETSubject);
 								requestJson.put("body", replace4);
-								//System.out.println(requestJson);
+								// System.out.println(requestJson);
 								requestJson.put("enableHtml", true);
-								//log.info("requestJson "+requestJson.toString());
+								// log.info("requestJson "+requestJson.toString());
 								HttpEntity<String> entity = new HttpEntity(requestJson, headers);
-								ResponseEntity<String> response = new RestTemplate()
-										.postForEntity("http://65.1.66.115:8085/dev/login/sendMail/", entity, String.class);
-								//packageRepo.save(newData);
+								ResponseEntity<String> response = new RestTemplate().postForEntity(
+										"http://65.1.66.115:8085/dev/login/sendMail/", entity, String.class);
+								// packageRepo.save(newData);
 								return new GlobalResponse("Success", "Package Added Succesfully", 200);
-								
-							}
-							catch(Exception e)
-							{
+
+							} catch (Exception e) {
 								throw new CustomException("Email Service Not Running");
 							}
-							
-						}
-						else
-						{
+
+						} else {
 							throw new CustomException("Subcribtion Plan Should not be exceed License Plan");
 						}
-					}
-					else
-					{
+					} else {
 						throw new CustomException("License Not Found");
 					}
-				}
-				else
-				{
+				} else {
 					throw new CustomException("institute Not found");
 				}
-			}
-			else 
-			{
+			} else {
 				throw new CustomException("Please Enter Valid Data");
 			}
-		}
-		 catch (Exception e) {
+		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
 		}
 	}
@@ -397,108 +363,98 @@ public class PackageContoller {
 						if (dbData.getInstId() != updatePackagedata.getInstId()) {
 							throw new CustomException("Institute id cannot updated");
 						}
-						List<LicenseEntity> licenseData=licenseRepo.findInst(updatePackagedata.getInstId());
-						int licenseExixtense=0;
+						List<LicenseEntity> licenseData = licenseRepo.findInst(updatePackagedata.getInstId());
+						int licenseExixtense = 0;
 //						LicenseEntity licenseEntity=licenseData.get(0);
 //						System.out.println(licenseEntity);
 //						System.out.println(newData.getInstId());
-						LicenseEntity licenseEntity=new LicenseEntity();
-						for(int i=0;i<licenseData.size();i++)
-						{
-							 licenseEntity=licenseData.get(i);
-							
-							if(licenseEntity.getInstId()==updatePackagedata.getInstId())
-							{
-								//LicenseEntity licenseEntity1=
+						LicenseEntity licenseEntity = new LicenseEntity();
+						for (int i = 0; i < licenseData.size(); i++) {
+							licenseEntity = licenseData.get(i);
+
+							if (licenseEntity.getInstId() == updatePackagedata.getInstId()) {
+								// LicenseEntity licenseEntity1=
 								licenseExixtense++;
 							}
 						}
-						
-						long packageValidityHours=0;
-						long licenceValidityHours=0;
-						if(updatePackagedata.getPkValidityType().equals("Days"))
-						{
-							packageValidityHours=24*updatePackagedata.getPkValidityNum();
+
+						long packageValidityHours = 0;
+						long licenceValidityHours = 0;
+						if (updatePackagedata.getPkValidityType().equals("Days")) {
+							packageValidityHours = 24 * updatePackagedata.getPkValidityNum();
 						}
-						if(updatePackagedata.getPkValidityType().equals("Months"))
-						{
-							packageValidityHours=720*updatePackagedata.getPkValidityNum();
+						if (updatePackagedata.getPkValidityType().equals("Months")) {
+							packageValidityHours = 720 * updatePackagedata.getPkValidityNum();
 						}
-						if(updatePackagedata.getPkValidityType().equals("Years"))
-						{
-							packageValidityHours=8640*updatePackagedata.getPkValidityNum();
+						if (updatePackagedata.getPkValidityType().equals("Years")) {
+							packageValidityHours = 8640 * updatePackagedata.getPkValidityNum();
 						}
-						if(licenseEntity.getLcValidityType().equals("Days"))
-						{
-							licenceValidityHours=24*licenseEntity.getLcValidityNum();
+						if (licenseEntity.getLcValidityType().equals("Days")) {
+							licenceValidityHours = 24 * licenseEntity.getLcValidityNum();
 						}
-						if(licenseEntity.getLcValidityType().equals("Months"))
-						{
-							licenceValidityHours=720*licenseEntity.getLcValidityNum();
+						if (licenseEntity.getLcValidityType().equals("Months")) {
+							licenceValidityHours = 720 * licenseEntity.getLcValidityNum();
 						}
-						if(licenseEntity.getLcValidityType().equals("Years"))
-						{
-							licenceValidityHours=8640*licenseEntity.getLcValidityNum();
+						if (licenseEntity.getLcValidityType().equals("Years")) {
+							licenceValidityHours = 8640 * licenseEntity.getLcValidityNum();
 						}
-						if(licenceValidityHours>=packageValidityHours)
-						{
-						updatePackagedata.setCreatedOn(dbData.getCreatedOn());
-						updatePackagedata.setPkId(dbData.getPkId());
-						updatePackagedata.setPkCdate(dbData.getPkCdate());
-						updatePackagedata.setIsActive(dbData.getIsActive());
-						updatePackagedata.setIsDeleted(dbData.getIsDeleted());
-						updatePackagedata.setUpdatedOn(new Date());
-						packageRepo.save(updatePackagedata);
-						try {
-							HttpHeaders headers = new HttpHeaders();
-							headers.set("Authorization", token);
-							headers.setContentType(MediaType.APPLICATION_JSON);
-							HttpEntity request = new HttpEntity(headers);
-							ResponseEntity<PackageGlobalTemplate> responseEmailTemp = new RestTemplate().exchange(
-									"http://65.1.66.115:8085/dev/emailTemplate/getPrimaryETByAction/Package_Update",
-									HttpMethod.GET, request, PackageGlobalTemplate.class);
-							System.out.println(responseEmailTemp);
-							String ETSubject= responseEmailTemp.getBody().getEtSubject();
-							String ETBody=responseEmailTemp.getBody().getEtBody();
-							
-							String ETAdminFname="__$amdFname$__";
-							String ETPackageFname="__$pkFname$__";
-							String ETPackageCdate="__$pkCdate$__";
-							String ETPackageValidityNo="__$pkValidityNum$__";
-							String ETPackgeValidityType="__$pkValidityType$__";
-							PackageEntity packageData=packageRepo.getById(pkId);
-							InstituteEntity instituteData=instituteRepo.getById(packageData.getInstId());
-							String replace = ETBody.replace(ETAdminFname,instituteData.getInstituteAdmin().getAmdFname());
-							String replace1 = replace.replace(ETPackageFname,packageData.getPkFname());
-							String replace2 = replace1.replace(ETPackageCdate,packageData.getPkCdate().toString() );
-							String replace3 = replace2.replace(ETPackageValidityNo,packageData.getPkValidityNum().toString() );
-							String replace4 = replace3.replace(ETPackgeValidityType,packageData.getPkValidityType() );
-							InstituteEntity instData=instituteRepo.getById(updatePackagedata.getInstId());
-							String mailId=instData.getInstEmail();
-							JSONObject requestJson = new JSONObject();
-							requestJson.put("senderMailId", mailId);
-							requestJson.put("subject", ETSubject);
-							requestJson.put("body", replace4);
-							requestJson.put("enableHtml", true);
-							log.info("requestJson "+requestJson.toString());
-							HttpEntity<String> entity = new HttpEntity(requestJson, headers);
-							ResponseEntity<String> response = new RestTemplate()
-									.postForEntity("http://65.1.66.115:8085/dev/login/sendMail/", entity, String.class);
-							
-						}
-						catch(Exception e)
-						{
-							throw new CustomException(e.getMessage());
-						}
-						
-						return new GlobalResponse("Success", "Subcription Package Update Succcessfully",200);
-					}
-						else
-						{
+						if (licenceValidityHours >= packageValidityHours) {
+							updatePackagedata.setPkStatus("Updated");
+							updatePackagedata.setCreatedOn(dbData.getCreatedOn());
+							updatePackagedata.setPkId(dbData.getPkId());
+							updatePackagedata.setPkCdate(dbData.getPkCdate());
+							updatePackagedata.setIsActive(dbData.getIsActive());
+							updatePackagedata.setIsDeleted(dbData.getIsDeleted());
+							updatePackagedata.setUpdatedOn(new Date());
+							packageRepo.save(updatePackagedata);
+							try {
+								HttpHeaders headers = new HttpHeaders();
+								headers.set("Authorization", token);
+								headers.setContentType(MediaType.APPLICATION_JSON);
+								HttpEntity request = new HttpEntity(headers);
+								ResponseEntity<PackageGlobalTemplate> responseEmailTemp = new RestTemplate().exchange(
+										"http://65.1.66.115:8085/dev/emailTemplate/getPrimaryETByAction/Package_Update",
+										HttpMethod.GET, request, PackageGlobalTemplate.class);
+								System.out.println(responseEmailTemp);
+								String ETSubject = responseEmailTemp.getBody().getEtSubject();
+								String ETBody = responseEmailTemp.getBody().getEtBody();
+
+								String ETAdminFname = "__$amdFname$__";
+								String ETPackageFname = "__$pkFname$__";
+								String ETPackageCdate = "__$pkCdate$__";
+								String ETPackageValidityNo = "__$pkValidityNum$__";
+								String ETPackgeValidityType = "__$pkValidityType$__";
+								PackageEntity packageData = packageRepo.getById(pkId);
+								InstituteEntity instituteData = instituteRepo.getById(packageData.getInstId());
+								String replace = ETBody.replace(ETAdminFname,
+										instituteData.getInstituteAdmin().getAmdFname());
+								String replace1 = replace.replace(ETPackageFname, packageData.getPkFname());
+								String replace2 = replace1.replace(ETPackageCdate, packageData.getPkCdate().toString());
+								String replace3 = replace2.replace(ETPackageValidityNo,
+										packageData.getPkValidityNum().toString());
+								String replace4 = replace3.replace(ETPackgeValidityType,
+										packageData.getPkValidityType());
+								InstituteEntity instData = instituteRepo.getById(updatePackagedata.getInstId());
+								String mailId = instData.getInstEmail();
+								JSONObject requestJson = new JSONObject();
+								requestJson.put("senderMailId", mailId);
+								requestJson.put("subject", ETSubject);
+								requestJson.put("body", replace4);
+								requestJson.put("enableHtml", true);
+								log.info("requestJson " + requestJson.toString());
+								HttpEntity<String> entity = new HttpEntity(requestJson, headers);
+								ResponseEntity<String> response = new RestTemplate().postForEntity(
+										"http://65.1.66.115:8085/dev/login/sendMail/", entity, String.class);
+
+							} catch (Exception e) {
+								throw new CustomException(e.getMessage());
+							}
+
+							return new GlobalResponse("Success", "Subcription Package Update Succcessfully", 200);
+						} else {
 							throw new CustomException("Subcribtion Plan Should Not Be Exceed License Plan");
 						}
-					}
-						else {
+					} else {
 						throw new CustomException("Please Enter The Valid Information");
 					}
 				} else {
@@ -511,148 +467,120 @@ public class PackageContoller {
 			throw new CustomException(e.getMessage());
 		}
 	}
+
 	@PostMapping("/suspended/{pkId}")
-	public GlobalResponse suspend(@PathVariable long pkId,@RequestBody PackageLogEntity packageLogEntity,
-			@RequestHeader("Authorization") String token)
-	{
-		try
-		{
+	public GlobalResponse suspend(@PathVariable long pkId, @RequestBody PackageLogEntity packageLogEntity,
+			@RequestHeader("Authorization") String token) {
+		try {
 			log.info("Inside-packageController.suspend()");
-				if(packageRepo.existsById(pkId))
-				{
-					PackageEntity suspendedPackageData=packageRepo.getById(pkId);
-					int isActive=0; 
-					if(suspendedPackageData.getIsActive()!=isActive)
-					{
-						if((fieldValidation.isEmpty(packageLogEntity.getPlAdate()))
-								& (fieldValidation.isEmpty(packageLogEntity.getPlComment())))
-						{
-							
-							PackageLogEntity logData=new PackageLogEntity();
-							logData.setPkId(pkId);
-							logData.setPlAction("Suspended");
-							logData.setPlAdate(packageLogEntity.getPlAdate());
-							logData.setPlComment(packageLogEntity.getPlComment());
-							logData.setPlCreat(new Date());
-							logData.setPlStatus("Running");
-							logData.setPlUpdate(null);
-							packageLogRepo.save(logData);
-							suspendedPackageData.setPkStatus("Suspended");
-							suspendedPackageData.setIsActive(isActive);
-							packageRepo.save(suspendedPackageData);
-							
-							try {
-								HttpHeaders headers = new HttpHeaders();
-								headers.set("Authorization", token);
-								headers.setContentType(MediaType.APPLICATION_JSON);
-								HttpEntity request = new HttpEntity(headers);
-								ResponseEntity<PackageGlobalTemplate> responseEmailTemp = new RestTemplate().exchange(
-										"http://65.1.66.115:8085/dev/emailTemplate/getPrimaryETByAction/Package_Suspend",
-										HttpMethod.GET, request, PackageGlobalTemplate.class);
-								System.out.println(responseEmailTemp);
-								String ETSubject= responseEmailTemp.getBody().getEtSubject();
-								String ETBody=responseEmailTemp.getBody().getEtBody();
-								
-								String ETAdminFname="__$amdFname$__";
-								String ETPackageFname="__$pkFname$__";
-								String ETPLAdate="__$plAdate$__";
-								PackageEntity packageData=packageRepo.getById(pkId);
-								InstituteEntity instituteData=instituteRepo.getById(packageData.getInstId());
-								String replace = ETBody.replace(ETAdminFname,instituteData.getInstituteAdmin().getAmdFname());
-								String replace1 = replace.replace(ETPackageFname,packageData.getPkFname());
-								String replace2 = replace1.replace(ETPLAdate,packageData.getPkCdate().toString() );
-								InstituteEntity instData=instituteRepo.getById(suspendedPackageData.getInstId());
-								String mailId=instData.getInstEmail();
-								JSONObject requestJson = new JSONObject();
-								requestJson.put("senderMailId", mailId);
-								requestJson.put("subject", ETSubject);
-								requestJson.put("body", replace2);;
-								//requestJson.put("body", replace1);
-								requestJson.put("enableHtml", true);
-								log.info("requestJson "+requestJson.toString());
-								HttpEntity<String> entity = new HttpEntity(requestJson, headers);
-								ResponseEntity<String> response = new RestTemplate()
-										.postForEntity("http://65.1.66.115:8085/dev/login/sendMail/", entity, String.class);
-								
-							}
-							catch(Exception e)
-							{
-								throw new CustomException(e.getMessage());
-							}
-							
-							return new GlobalResponse("Success", "PackageId Is Suspended",200);
+			if (packageRepo.existsById(pkId)) {
+				PackageEntity suspendedPackageData = packageRepo.getById(pkId);
+				int isActive = 0;
+				if (suspendedPackageData.getIsActive() != isActive) {
+					if ((fieldValidation.isEmpty(packageLogEntity.getPlAdate()))
+							& (fieldValidation.isEmpty(packageLogEntity.getPlComment()))) {
+
+						PackageLogEntity logData = new PackageLogEntity();
+						logData.setPkId(pkId);
+						logData.setPlAction("Suspended");
+						logData.setPlAdate(packageLogEntity.getPlAdate());
+						logData.setPlComment(packageLogEntity.getPlComment());
+						logData.setPlCreat(new Date());
+						logData.setPlStatus("Running");
+						logData.setPlUpdate(null);
+						packageLogRepo.save(logData);
+						suspendedPackageData.setPkStatus("Suspended");
+						suspendedPackageData.setIsActive(isActive);
+						packageRepo.save(suspendedPackageData);
+
+						try {
+							HttpHeaders headers = new HttpHeaders();
+							headers.set("Authorization", token);
+							headers.setContentType(MediaType.APPLICATION_JSON);
+							HttpEntity request = new HttpEntity(headers);
+							ResponseEntity<PackageGlobalTemplate> responseEmailTemp = new RestTemplate().exchange(
+									"http://65.1.66.115:8085/dev/emailTemplate/getPrimaryETByAction/Package_Suspend",
+									HttpMethod.GET, request, PackageGlobalTemplate.class);
+							System.out.println(responseEmailTemp);
+							String ETSubject = responseEmailTemp.getBody().getEtSubject();
+							String ETBody = responseEmailTemp.getBody().getEtBody();
+
+							String ETAdminFname = "__$amdFname$__";
+							String ETPackageFname = "__$pkFname$__";
+							String ETPLAdate = "__$plAdate$__";
+							PackageEntity packageData = packageRepo.getById(pkId);
+							InstituteEntity instituteData = instituteRepo.getById(packageData.getInstId());
+							String replace = ETBody.replace(ETAdminFname,
+									instituteData.getInstituteAdmin().getAmdFname());
+							String replace1 = replace.replace(ETPackageFname, packageData.getPkFname());
+							String replace2 = replace1.replace(ETPLAdate, packageData.getPkCdate().toString());
+							InstituteEntity instData = instituteRepo.getById(suspendedPackageData.getInstId());
+							String mailId = instData.getInstEmail();
+							JSONObject requestJson = new JSONObject();
+							requestJson.put("senderMailId", mailId);
+							requestJson.put("subject", ETSubject);
+							requestJson.put("body", replace2);
+							;
+							// requestJson.put("body", replace1);
+							requestJson.put("enableHtml", true);
+							log.info("requestJson " + requestJson.toString());
+							HttpEntity<String> entity = new HttpEntity(requestJson, headers);
+							ResponseEntity<String> response = new RestTemplate()
+									.postForEntity("http://65.1.66.115:8085/dev/login/sendMail/", entity, String.class);
+
+						} catch (Exception e) {
+							throw new CustomException(e.getMessage());
 						}
-						else
-						{
-							throw new CustomException("Invalid Field Data");
-						}
+
+						return new GlobalResponse("Success", "PackageId Is Suspended", 200);
+					} else {
+						throw new CustomException("Invalid Field Data");
 					}
-					else
-					{
-						throw new CustomException("Id Allready Suspended");
-					}
+				} else {
+					throw new CustomException("Id Allready Suspended");
 				}
-				else
-				{
-					throw new CustomException("No Record Found");
-				}
-		}
-		catch(Exception e)
-		{
+			} else {
+				throw new CustomException("No Record Found");
+			}
+		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
 		}
 	}
 
 	@GetMapping("/instList")
-	public List<?> ListOfInstData()
-	{
-		try
-		{
-			List<InstituteEntity> instData=instituteRepo.findAll();
+	public List<?> ListOfInstData() {
+		try {
+			List<InstituteEntity> instData = instituteRepo.findAll();
 			return instData;
-		}
-		catch(Exception e)
-		{
+		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
 		}
 	}
+
 	@GetMapping("/institutePackagelist/{instId}")
-	public InstituteEntity institutePackageList(@PathVariable long instId)
-	{
-		try
-		{
-			if(instId!=0)	
-			{
-				if(instituteRepo.existsById(instId))
-				{
-					InstituteEntity allPackagedata=instituteRepo.getById(instId);
+	public InstituteEntity institutePackageList(@PathVariable long instId) {
+		try {
+			if (instId != 0) {
+				if (instituteRepo.existsById(instId)) {
+					InstituteEntity allPackagedata = instituteRepo.getById(instId);
 					return allPackagedata;
-				}
-				else
-				{
+				} else {
 					throw new CustomException("No Package Found");
 				}
-			}
-			else
-			{
+			} else {
 				throw new CustomException("Invalid Data Input");
 			}
-		}
-		catch(Exception e)
-		{
+		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
 		}
 	}
+
 	@GetMapping("/listTemp")
-	public List<?> allListData()
-	{
-		try
-		{
-			List<InstituteEntity> packageData=instituteRepo.findAll();
+	public List<?> allListData() {
+		try {
+			List<InstituteEntity> packageData = instituteRepo.findAll();
 			return packageData;
-		}
-		catch(Exception e)
-		{
+		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
 		}
 	}
