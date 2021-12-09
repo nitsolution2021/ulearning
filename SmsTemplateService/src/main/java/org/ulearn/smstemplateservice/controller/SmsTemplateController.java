@@ -54,13 +54,13 @@ public class SmsTemplateController {
 		}
 	}
 	
-	@GetMapping(value = "/list/{page}/{limit}/{sortName}/{sort}")
-	public Map<String, Object> getSmsTemplatePagination(@PathVariable("page") int page, @PathVariable("limit") int limit,
+	@GetMapping(value = "/list/{page}/{limit}/{sortName}/{sort}/{delete}")
+	public Map<String, Object> getSmsTemplatePagination(@PathVariable("delete") int isDelete, @PathVariable("page") int page, @PathVariable("limit") int limit,
 			@PathVariable("sort") String sort, @PathVariable("sortName") String sortName,
 			@RequestParam(defaultValue = "") Optional<String> keyword, @RequestParam Optional<String> sortBy) {
 		LOGGER.info("Inside - SmsTemplateController.getSmsTemplatePagination()");
 		try {
-			return smsTemplateService.getSmsTemplatePagination(page, limit, sort, sortName, keyword, sortBy);
+			return smsTemplateService.getSmsTemplatePagination(page, limit, sort, sortName, keyword, sortBy, isDelete);
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
 		}

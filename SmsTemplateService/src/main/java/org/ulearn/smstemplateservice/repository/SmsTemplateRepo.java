@@ -17,8 +17,8 @@ public interface SmsTemplateRepo extends JpaRepository<SmsTemplateEntity, Long> 
 	
 	List<SmsTemplateEntity> findByStAction(String stAction);
 
-	@Query("SELECT Obj FROM SmsTemplateEntity Obj WHERE Obj.isDeleted = 0 and Obj.stName LIKE %?1%")
-	Page<SmsTemplateEntity> search(String string, Pageable pagingSort);
+	@Query("SELECT Obj FROM SmsTemplateEntity Obj WHERE Obj.isDeleted = ?2 and Obj.stName LIKE %?1%")
+	Page<SmsTemplateEntity> search(String string, int isDelete, Pageable pagingSort);
 	
 	Optional<SmsTemplateEntity> findByStName(String stName);
 

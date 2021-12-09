@@ -315,7 +315,7 @@ public class SmsTemplateService {
 	}
 
 	public Map<String, Object> getSmsTemplatePagination(int page, int limit, String sort, String sortName,
-			Optional<String> keyword, Optional<String> sortBy) {
+			Optional<String> keyword, Optional<String> sortBy, int isDelete) {
 		LOGGER.info("Inside - SmsTemplateService.getSmsTemplatePagination()");
 		try {
 			Pageable pagingSort = null;
@@ -331,9 +331,9 @@ public class SmsTemplateService {
 
 			Page<SmsTemplateEntity> findAll = null;
 			if (keyword.isPresent()) {
-				findAll = smsTemplateRepo.search(keyword.get(), pagingSort);
+				findAll = smsTemplateRepo.search(keyword.get(), isDelete, pagingSort);
 			} else {
-				findAll = smsTemplateRepo.findAll(pagingSort);
+				findAll = smsTemplateRepo.findAllAndDelete(isDelete, pagingSort);
 			}
 			int totalPage = findAll.getTotalPages() - 1;
 			if (totalPage < 0) {
