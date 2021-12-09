@@ -91,6 +91,17 @@ public class InstituteGlobalEntity {
 	private String etBody;
 	private String etType;
 	private String etAction;
+	private String etTagsName;
+	
+	private Long stId;
+	private String stName;
+	private String stSubject;
+	private String stBody;
+	private String stType;
+	private String stAction;
+	private String stTags;
+	private String stTempId;
+	private String stTagsName;
 	
 	
 	public InstituteGlobalEntity() {
@@ -103,13 +114,10 @@ public class InstituteGlobalEntity {
 			Date instEndDate, String instWebsite, @Email String instEmail,
 			@NotEmpty(message = "The Institute Contact Number is Required") String instCnum,
 			@NotEmpty(message = "The Institute Mobile Number is Required") String instMnum, Date isntRegDate,
-			@NotEmpty(message = "The Institute Logo is Required") String instLogo,
-			@NotEmpty(message = "The Institute Pan is Required") String instPanNum,
-			@NotEmpty(message = "The Institute GST Number is Required") String instGstNum,
-			@NotEmpty(message = "The Institute Status is Required") String instStatus, int isActive, int isDeleted,
-			Date createdOn, Date updatedOn, Long adrId, Long admId, String adrType,
-			@NotEmpty(message = "The Address Line 1 is Required") String adrLine1,
-			@NotEmpty(message = "The Address Line 2 is Required") String adrLine2,
+			String instLogo, @NotEmpty(message = "The Institute Pan is Required") String instPanNum,
+			@NotEmpty(message = "The Institute GST Number is Required") String instGstNum, String instStatus,
+			int isActive, int isDeleted, Date createdOn, Date updatedOn, Long adrId, Long admId, String adrType,
+			@NotEmpty(message = "The Address Line 1 is Required") String adrLine1, String adrLine2,
 			@Positive(message = "The Country is Required") Long adrCountry,
 			@Positive(message = "The State Name is Required") Long adrState,
 			@Positive(message = "The District is Required") Long adrDistrict,
@@ -122,7 +130,9 @@ public class InstituteGlobalEntity {
 			@NotEmpty(message = "Owner Mobile Number is Required") String amdMnum, @Email String amdEmail,
 			@NotEmpty(message = "Owner Username is Required") String amdUsername,
 			@NotEmpty(message = "Owner Password is Required") String amdPassword, String amdPpic, Long etId,
-			String etName, String etSubject, String etBody, String etType, String etAction) {
+			String etName, String etSubject, String etBody, String etType, String etAction, String etTagsName,
+			Long stId, String stName, String stSubject, String stBody, String stType, String stAction, String stTags,
+			String stTempId, String stTagsName) {
 		super();
 		this.instId = instId;
 		this.instName = instName;
@@ -169,6 +179,16 @@ public class InstituteGlobalEntity {
 		this.etBody = etBody;
 		this.etType = etType;
 		this.etAction = etAction;
+		this.etTagsName = etTagsName;
+		this.stId = stId;
+		this.stName = stName;
+		this.stSubject = stSubject;
+		this.stBody = stBody;
+		this.stType = stType;
+		this.stAction = stAction;
+		this.stTags = stTags;
+		this.stTempId = stTempId;
+		this.stTagsName = stTagsName;
 	}
 
 
@@ -186,7 +206,10 @@ public class InstituteGlobalEntity {
 				+ amdFname + ", amdLname=" + amdLname + ", amdDob=" + amdDob + ", amdMnum=" + amdMnum + ", amdEmail="
 				+ amdEmail + ", amdUsername=" + amdUsername + ", amdPassword=" + amdPassword + ", amdPpic=" + amdPpic
 				+ ", etId=" + etId + ", etName=" + etName + ", etSubject=" + etSubject + ", etBody=" + etBody
-				+ ", etType=" + etType + ", etAction=" + etAction + "]";
+				+ ", etType=" + etType + ", etAction=" + etAction + ", etTagsName=" + etTagsName + ", stId=" + stId
+				+ ", stName=" + stName + ", stSubject=" + stSubject + ", stBody=" + stBody + ", stType=" + stType
+				+ ", stAction=" + stAction + ", stTags=" + stTags + ", stTempId=" + stTempId + ", stTagsName="
+				+ stTagsName + "]";
 	}
 
 
@@ -640,5 +663,105 @@ public class InstituteGlobalEntity {
 	}
 
 
-		
+	public String getEtTagsName() {
+		return etTagsName;
+	}
+
+
+	public void setEtTagsName(String etTagsName) {
+		this.etTagsName = etTagsName;
+	}
+
+
+	public Long getStId() {
+		return stId;
+	}
+
+
+	public void setStId(Long stId) {
+		this.stId = stId;
+	}
+
+
+	public String getStName() {
+		return stName;
+	}
+
+
+	public void setStName(String stName) {
+		this.stName = stName;
+	}
+
+
+	public String getStSubject() {
+		return stSubject;
+	}
+
+
+	public void setStSubject(String stSubject) {
+		this.stSubject = stSubject;
+	}
+
+
+	public String getStBody() {
+		return stBody;
+	}
+
+
+	public void setStBody(String stBody) {
+		this.stBody = stBody;
+	}
+
+
+	public String getStType() {
+		return stType;
+	}
+
+
+	public void setStType(String stType) {
+		this.stType = stType;
+	}
+
+
+	public String getStAction() {
+		return stAction;
+	}
+
+
+	public void setStAction(String stAction) {
+		this.stAction = stAction;
+	}
+
+
+	public String getStTags() {
+		return stTags;
+	}
+
+
+	public void setStTags(String stTags) {
+		this.stTags = stTags;
+	}
+
+
+	public String getStTempId() {
+		return stTempId;
+	}
+
+
+	public void setStTempId(String stTempId) {
+		this.stTempId = stTempId;
+	}
+
+
+	public String getStTagsName() {
+		return stTagsName;
+	}
+
+
+	public void setStTagsName(String stTagsName) {
+		this.stTagsName = stTagsName;
+	}
+
+
+			
 }
