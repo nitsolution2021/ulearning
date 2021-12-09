@@ -16,7 +16,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-//@JsonIgnoreProperties({"hibernateLazyInitializer"})
 @Entity
 @Table(name = "tbl_inst_license")
 public class LicenseEntity {
@@ -78,20 +77,11 @@ public class LicenseEntity {
 	private Date updatedOn;
 
 	
-
-//	@OneToOne
-//	@JoinColumn(name="INST_ID")
-//	private InstituteEntity instituteEntity; 
-//	
-
-	
 	public LicenseEntity() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-
-	
 
 	public LicenseEntity(Long lcId, Long instId, String lcName, Date lcCreatDate, String lcType, String lcStype,
 			String lcValidityType, Long lcValidityNum, Date lcEndDate, String lcComment, String lcStatus, int isActive,
@@ -112,10 +102,7 @@ public class LicenseEntity {
 		this.isDeleted = isDeleted;
 		this.createdOn = createdOn;
 		this.updatedOn = updatedOn;
-//		this.instituteEntity = instituteEntity;
 	}
-
-
 
 
 	@Override
@@ -127,8 +114,6 @@ public class LicenseEntity {
 				+ createdOn + ", updatedOn=" + updatedOn  + "]";
 	}
 
-
-//	+ ", instituteEntity=" + instituteEntity
 
 	public Long getLcId() {
 		return lcId;
@@ -289,14 +274,6 @@ public class LicenseEntity {
 	public void setUpdatedOn(Date updatedOn) {
 		this.updatedOn = updatedOn;
 	}
-
-//	public InstituteEntity getInstituteEntity() {
-//		return instituteEntity;
-//	}
-//
-//	public void setInstituteEntity(InstituteEntity instituteEntity) {
-//		this.instituteEntity = instituteEntity;
-//	}
 
 	
 

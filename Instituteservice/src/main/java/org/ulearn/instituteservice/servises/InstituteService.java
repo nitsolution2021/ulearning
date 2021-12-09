@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.hibernate.query.criteria.internal.expression.function.AggregationFunction.COUNT;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,8 +93,11 @@ public class InstituteService {
 			int isDeleted, Optional<String> keyword, Optional<String> sortBy) {
 
 		try {
-
+			int CountData=(int) instituteRepo.count();			
 			Pageable pagingSort = null;
+			if(limit==0) {
+				limit=CountData;
+			}
 
 			if (sort.equals("ASC")) {
 				pagingSort = PageRequest.of(page, limit, Sort.Direction.ASC, sortBy.orElse(sortName));
@@ -248,8 +252,8 @@ public class InstituteService {
 
 		try {
 			List<InstituteEntity> findAll = instituteRepo.findByListInst().stream() 
-					.filter(Inst -> Inst.getIsDeleted() == 0).filter(Inst -> Inst.getIsActive() == 1)
-					.filter(instituteLicense -> instituteLicense.getInstituteLicense() == null)					
+//					.filter(Inst -> Inst.getIsDeleted() == 0).filter(Inst -> Inst.getIsActive() == 1)
+//					.filter(instituteLicense -> instituteLicense.getInstituteLicense() == null)					
 					.collect(Collectors.toList());
 			if (findAll.size() <= 1) {
 				throw new CustomException("Institute Not Found!");
