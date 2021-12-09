@@ -159,15 +159,15 @@ public class InstituteService {
 
 					JSONObject requestJson = null;
 					JSONObject requestJsons = null;
-					String processedSMSBodyContent= null;
-					String number=null;
-					HttpHeaders headers = new HttpHeaders();					
-					
+					String processedSMSBodyContent = null;
+					String number = null;
+					HttpHeaders headers = new HttpHeaders();
+
 					headers.set("Authorization", token);
 					headers.setContentType(MediaType.APPLICATION_JSON);
 
 					HttpEntity request = new HttpEntity(headers);
-					
+
 					String Password = null;
 					int length = 10;
 					boolean useLetters = true;
@@ -175,13 +175,13 @@ public class InstituteService {
 					Password = RandomStringUtils.random(length, useLetters, useNumbers);
 					String HashPassword = passwordEncoder.encode(Password);
 
-					try {						
+					try {
 						ResponseEntity<InstituteGlobalEntity> responseEmailTemp = new RestTemplate().exchange(
 								"http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/Institute_Credentials",
 								HttpMethod.GET, request, InstituteGlobalEntity.class);
 
 						String ETSubject = responseEmailTemp.getBody().getEtSubject();
-						String ETBody = responseEmailTemp.getBody().getEtBody();						
+						String ETBody = responseEmailTemp.getBody().getEtBody();
 
 						InstituteAdminEntity getById = instituteAdminRepo.getById(findByIdAndEmail.get(0).getInstId());
 						if (getById.getInstId() != null) {
@@ -223,7 +223,7 @@ public class InstituteService {
 					} catch (Exception e) {
 						throw new CustomException("Login Service Is Not Running!");
 					}
-					
+
 					try {
 						ResponseEntity<InstituteGlobalEntity> responseSmsTemp = new RestTemplate().exchange(
 								"http://65.1.66.115:8091/dev/smsTemplate/getPrimarySTByAction/Institute_Credentials",
@@ -231,11 +231,11 @@ public class InstituteService {
 
 						String STSubject = responseSmsTemp.getBody().getStSubject();
 						String STBody = responseSmsTemp.getBody().getStBody();
-						
+
 						String STTargetName = "__$name$__";
 						String STTargetUsername = "__$username$__";
 						String STTargetPassword = "__$password$__";
-						
+
 						String STNameReplacement = findByIdAndEmail.get(0).getInstituteAdmin().get(0).getAmdFname()
 								+ " " + findByIdAndEmail.get(0).getInstituteAdmin().get(0).getAmdLname();
 						String STUsernameReplacement = findByIdAndEmail.get(0).getInstituteAdmin().get(0)
@@ -244,28 +244,29 @@ public class InstituteService {
 
 						String processedName = STBody.replace(STTargetName, STNameReplacement);
 						String processedUsername = processedName.replace(STTargetUsername, STUsernameReplacement);
-						processedSMSBodyContent = processedUsername.replace(STTargetPassword,
-								STPasswordReplacement);
+						processedSMSBodyContent = processedUsername.replace(STTargetPassword, STPasswordReplacement);
 						number = findByIdAndEmail.get(0).getInstMnum();
-												
-						
+						number = number.substring(3);						
+
+
 					} catch (Exception e) {
 						throw new CustomException("SMS Service Is Not Running!");
 					}
 					try {
+						
 						String encode = UriUtils.encodePath(processedSMSBodyContent, "UTF-8");
-//						LOGGER.info("Inside - InstituteController.getInstute()---"+encode);
 						Unirest.setTimeouts(0, 0);
 						HttpResponse<JsonNode> asJson = Unirest.get(
-								"http://msg.jmdinfotek.in/api/mt/SendSMS?channel=Trans&DCS=0&flashsms=0&route=07&senderid=uLearn&user=technosoft_dev&password=Techno@8585&text="+encode+"&number=7699983717")
+								"http://msg.jmdinfotek.in/api/mt/SendSMS?channel=Trans&DCS=0&flashsms=0&route=07&senderid=uLearn&user=technosoft_dev&password=Techno@8585&text="
+										+ encode + "&number="+number)
 								.asJson();
-						
+
 						org.json.JSONObject object = asJson.getBody().getObject();
 						String ErrorCode = object.getString("ErrorCode");
-						LOGGER.info("Inside - InstituteController.getInstute()--//-"+ErrorCode);
+
 						if (ErrorCode.equals("006")) {
 							throw new CustomException("Invalid Template Text!");
-						}else if (!ErrorCode.equals("000")) {
+						} else if (!ErrorCode.equals("000")) {
 							throw new CustomException("Failed to Sent SMS!");
 						}
 					} catch (Exception e) {
