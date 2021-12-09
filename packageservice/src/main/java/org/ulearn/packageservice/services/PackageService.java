@@ -542,6 +542,7 @@ public class PackageService {
 						packageLogRepo.save(logData);
 						suspendedPackageData.setPkStatus("Suspended");
 						suspendedPackageData.setIsActive(isActive);
+						suspendedPackageData.setUpdatedOn(packageLogEntity.getPlAdate());
 						packageRepo.save(suspendedPackageData);
 						
 						try {
@@ -560,10 +561,11 @@ public class PackageService {
 							String ETPackageFname="__$pkFname$__";
 							String ETPLAdate="__$plAdate$__";
 							PackageEntity packageData=packageRepo.getById(pkId);
+							//Date data=packageData.getUpdatedOn();
 							InstituteEntity instituteData=instituteRepo.getById(packageData.getInstId());
 							String replace = ETBody.replace(ETAdminFname,instituteData.getInstituteAdmin().getAmdFname());
 							String replace1 = replace.replace(ETPackageFname,packageData.getPkFname());
-							String replace2 = replace1.replace(ETPLAdate,packageData.getPkCdate().toString() );
+							String replace2 = replace1.replace(ETPLAdate,packageData.getUpdatedOn().toString());
 							InstituteEntity instData=instituteRepo.getById(suspendedPackageData.getInstId());
 							String mailId=instData.getInstEmail();
 							JSONObject requestJson = new JSONObject();
