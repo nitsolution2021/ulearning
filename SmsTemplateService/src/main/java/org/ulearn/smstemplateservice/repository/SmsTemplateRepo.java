@@ -24,4 +24,13 @@ public interface SmsTemplateRepo extends JpaRepository<SmsTemplateEntity, Long> 
 
 	@Query(value = "select obj from SmsTemplateEntity obj where obj.stAction = ?1 and obj.stType = ?2")
 	List<SmsTemplateEntity> findByEtActionWithDefaultET(String stAction, String string);
+
+	@Query(value = "select obj from SmsTemplateEntity obj where obj.stAction = ?1 and obj.isPrimary = ?2")
+	List<SmsTemplateEntity> getPrimarySTByAction(String action, int i);
+
+	@Query(value = "select obj from SmsTemplateEntity obj where obj.isDeleted = ?1")
+	public Page<SmsTemplateEntity> findAllAndDelete(int delete, Pageable pagingSort);
+
+	@Query(value = "select obj from SmsTemplateEntity obj where obj.stAction = ?1 and obj.stType = ?2")
+	Optional<SmsTemplateEntity> findTagByActionAndType(String action, String type);
 }

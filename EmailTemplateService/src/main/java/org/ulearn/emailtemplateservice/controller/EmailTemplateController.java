@@ -288,7 +288,7 @@ public class EmailTemplateController {
 		
 	}
 	
-	@GetMapping(value = { "/getAll/template/{delete}/{page}/{limit}/{sortName}/{sort}" })
+	@GetMapping(value = { "/getAll/template/{page}/{limit}/{sortName}/{sort}/{delete}" })
 	public Map<String, Object> emailTemplateGetAllPagination(@PathVariable("delete") int isDelete, @PathVariable("page") int page, @PathVariable("limit") int limit,
 			@PathVariable("sort") String sort, @PathVariable("sortName") String sortName,
 			@RequestParam(defaultValue = "") Optional<String>keyword, @RequestParam Optional<String> sortBy) {
@@ -372,9 +372,9 @@ public class EmailTemplateController {
 		
 		LOGGER.info("Inside - EmailTemplateController.viewTemplate()");
 		try {
-			List<EmailTemplateEntity> findByIdAndDelete = emailTemplateRepo.findByIdAndDelete(0, id);
-			if(findByIdAndDelete.size()>0) {
-				return findByIdAndDelete.get(0);
+			Optional<EmailTemplateEntity> findByIdAndDelete = emailTemplateRepo.findById(id);
+			if(findByIdAndDelete.isPresent()) {
+				return findByIdAndDelete.get();
 			}else {
 				throw new CustomException("No Data Found");
 			}
@@ -383,6 +383,39 @@ public class EmailTemplateController {
 			throw new CustomException(e.getMessage());
 		}
 		
+	}
+	
+	@GetMapping("/getTags/{action}")
+	public List<Map<String, String>> getTags(@PathVariable String action) {
+		LOGGER.info("Inside - EmailTemplateController.getTags()");
+		try {
+			Optional<EmailTemplateEntity> findTagByActionAndType = emailTemplateRepo.findTagByActionAndType(action,
+					"DEFAULT");
+			if (findTagByActionAndType.isPresent()) {
+				EmailTemplateEntity emailTemplateEntity = findTagByActionAndType.get();
+				String etTags = emailTemplateEntity.getEtTags();
+				String[] split = etTags.split(",");
+
+				String etTagsName = emailTemplateEntity.getEtTagsName();
+				String[] split2 = etTagsName.split(",");
+
+				List<Map<String, String>> list = new ArrayList<>();
+
+				for (int i = 0; i < split.length; i++) {
+
+					Map<String, String> map = new HashMap<String, String>();
+					map.put("value", split[i]);
+					map.put("name", split2[i]);
+					list.add(map);
+				}
+				return list;
+			}
+			else {
+				throw new CustomException("Data not present");
+			}
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
 	}
 	
 

@@ -39,6 +39,8 @@ public class SmsTemplateEntity {
 	private String stTags;
 	@Column(name = "ST_TEMP_ID")
 	private String stTempId;
+	@Column(name = "ST_TAGS_NAME")
+	private String stTagsName;
 	@Column(name = "CREATED_ON")
 	private Date createdOn;
 	@Column(name = "UPDATED_ON")
@@ -50,8 +52,8 @@ public class SmsTemplateEntity {
 	}
 
 	public SmsTemplateEntity(Long stId, String stName, String stSubject, String stBody, String stType, String stAction,
-			int isActive, int isDeleted, int isPrimary, int stOrder, String stTags, String stTempId, Date createdOn,
-			Date updatedOn) {
+			int isActive, int isDeleted, int isPrimary, int stOrder, String stTags, String stTempId, String stTagsName,
+			Date createdOn, Date updatedOn) {
 		super();
 		this.stId = stId;
 		this.stName = stName;
@@ -65,6 +67,7 @@ public class SmsTemplateEntity {
 		this.stOrder = stOrder;
 		this.stTags = stTags;
 		this.stTempId = stTempId;
+		this.stTagsName = stTagsName;
 		this.createdOn = createdOn;
 		this.updatedOn = updatedOn;
 	}
@@ -74,7 +77,8 @@ public class SmsTemplateEntity {
 		return "SmsTemplateEntity [stId=" + stId + ", stName=" + stName + ", stSubject=" + stSubject + ", stBody="
 				+ stBody + ", stType=" + stType + ", stAction=" + stAction + ", isActive=" + isActive + ", isDeleted="
 				+ isDeleted + ", isPrimary=" + isPrimary + ", stOrder=" + stOrder + ", stTags=" + stTags + ", stTempId="
-				+ stTempId + ", createdOn=" + createdOn + ", updatedOn=" + updatedOn + "]";
+				+ stTempId + ", stTagsName=" + stTagsName + ", createdOn=" + createdOn + ", updatedOn=" + updatedOn
+				+ "]";
 	}
 
 	public Long getStId() {
@@ -171,6 +175,14 @@ public class SmsTemplateEntity {
 
 	public void setStTempId(String stTempId) {
 		this.stTempId = stTempId;
+	}
+
+	public String getStTagsName() {
+		return stTagsName;
+	}
+
+	public void setStTagsName(String stTagsName) {
+		this.stTagsName = stTagsName;
 	}
 
 	public Date getCreatedOn() {
