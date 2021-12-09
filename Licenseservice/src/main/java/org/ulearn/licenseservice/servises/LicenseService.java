@@ -422,10 +422,13 @@ public class LicenseService {
 	
 	public Map<String, Object> forGetLicensePagination(int page, int limit, Optional<String> sortBy, String sortName,
 			String sort,int isDeleted, Optional<String> keyword) {
-		// TODO Auto-generated method stub
+		
 		try {
 				Pageable pagingSort = null;
-	
+				int CountData=(int) licenseRepo.count();							
+				if(limit==0) {
+					limit=CountData;
+				}
 				if (sort.equals("ASC")) {
 					pagingSort = PageRequest.of(page, limit, Sort.Direction.ASC, sortBy.orElse(sortName));
 				} else {

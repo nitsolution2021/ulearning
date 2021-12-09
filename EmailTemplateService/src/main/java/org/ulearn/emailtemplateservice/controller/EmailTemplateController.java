@@ -296,7 +296,10 @@ public class EmailTemplateController {
 		LOGGER.info("Inside - EmailTemplateController.emailTemplateGetAllPagination()");
 		try {
 			Pageable pagingSort = null;
-
+			int CountData=(int) emailTemplateRepo.count();							
+			if(limit==0) {
+				limit=CountData;
+			}
 			if (sort.equals("ASC")) {
 				pagingSort = PageRequest.of(page, limit, Sort.Direction.ASC, sortBy.orElse(sortName));
 			} else {
