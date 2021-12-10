@@ -211,29 +211,33 @@ public class SmsTemplateService {
 		try {
 			Optional<SmsTemplateEntity> findById = smsTemplateRepo.findById(stId);
 			if (findById.isPresent()) {
-				if (findById.get().getIsPrimary() == 1) {
-					throw new CustomException("Primary Template Can't be Deleted");
-				}
-				SmsTemplateEntity smsTemplateEntity = new SmsTemplateEntity();
-				smsTemplateEntity.setCreatedOn(findById.get().getCreatedOn());
-				smsTemplateEntity.setIsActive(findById.get().getIsActive());
-				smsTemplateEntity.setIsDeleted(1);
-				smsTemplateEntity.setIsPrimary(0);
-				smsTemplateEntity.setStAction(findById.get().getStAction());
-				smsTemplateEntity.setStBody(findById.get().getStBody());
-				smsTemplateEntity.setStId(stId);
-				smsTemplateEntity.setStName(findById.get().getStName());
-				smsTemplateEntity.setStOrder(findById.get().getStOrder());
-				smsTemplateEntity.setStSubject(findById.get().getStSubject());
-				smsTemplateEntity.setStTags(findById.get().getStTags());
-				smsTemplateEntity.setStTempId(findById.get().getStTempId());
-				smsTemplateEntity.setStType(findById.get().getStType());
-				smsTemplateEntity.setUpdatedOn(new Date());
-				SmsTemplateEntity save = smsTemplateRepo.save(smsTemplateEntity);
-				if (!save.equals(null)) {
-					return new GlobalResponseEntity("SUCCESS", "SMS template deleted successfully", 200);
+				if (findById.get().getIsDeleted() == 0) {
+					if (findById.get().getIsPrimary() == 1) {
+						throw new CustomException("Primary Template Can't be Deleted");
+					}
+					SmsTemplateEntity smsTemplateEntity = new SmsTemplateEntity();
+					smsTemplateEntity.setCreatedOn(findById.get().getCreatedOn());
+					smsTemplateEntity.setIsActive(findById.get().getIsActive());
+					smsTemplateEntity.setIsDeleted(1);
+					smsTemplateEntity.setIsPrimary(0);
+					smsTemplateEntity.setStAction(findById.get().getStAction());
+					smsTemplateEntity.setStBody(findById.get().getStBody());
+					smsTemplateEntity.setStId(stId);
+					smsTemplateEntity.setStName(findById.get().getStName());
+					smsTemplateEntity.setStOrder(findById.get().getStOrder());
+					smsTemplateEntity.setStSubject(findById.get().getStSubject());
+					smsTemplateEntity.setStTags(findById.get().getStTags());
+					smsTemplateEntity.setStTempId(findById.get().getStTempId());
+					smsTemplateEntity.setStType(findById.get().getStType());
+					smsTemplateEntity.setUpdatedOn(new Date());
+					SmsTemplateEntity save = smsTemplateRepo.save(smsTemplateEntity);
+					if (!save.equals(null)) {
+						return new GlobalResponseEntity("SUCCESS", "SMS template deleted successfully", 200);
+					} else {
+						throw new CustomException("Internal server error");
+					}
 				} else {
-					throw new CustomException("Internal server error");
+					throw new CustomException("Deleted Template Can't  Delete Again");
 				}
 			} else {
 				throw new CustomException("Your requested id is not available");
