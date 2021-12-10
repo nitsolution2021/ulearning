@@ -189,7 +189,27 @@ public class LicenseService {
 						
 						//****----------   CODE ADDED BY SOUMEN   -------****//
 						String processedSMSBodyContent="";
-						String number="";
+						String number = "";
+						String stInstName = "";
+						String stInstMail = "";
+						String stLicnName = "";
+						String stLicnValidatyNum = "";
+						String stLicnValidatyType = "";
+						String stLicnCreateDate = "";
+						String stLicnEndDate = "";
+						String stLicnServerType = "";
+						String stLicnType = "";
+						
+						String stInstNameTags = "__$InstName$__";
+						String stInstMailTags = "__$InstMail$__";
+						String stLicnNameTags = "__$LicnName$__";
+						String stLicnValidatyNumTags = "__$LicnValidatyNum$__";
+						String stLicnValidatyTypeTags = "__$LicnValidatyTyp$__";
+						String stLicnCreateDateTags = "__$LicnCreateDate$__";
+						String stLicnEndDateTags = "__$LicnEndDate$__";
+						String stLicnServerTypeTags = "__$LicnServerType$__";
+						String stLicnTypeTags = "__$LicnType$__";
+						
 						try {
 							ResponseEntity<LicenseGlobalEntity> responseSmsTemp = new RestTemplate().exchange(
 									"http://65.1.66.115:8091/dev/smsTemplate/getPrimarySTByAction/License_Create",
@@ -201,9 +221,9 @@ public class LicenseService {
 							String STBody = responseSmsTemp.getBody().getStBody();
 							ETTargetName = "__$name$__";
 							
-							ETNameReplacement = amdFname +" "+ amdLname;
+							
 
-							processedSMSBodyContent = STBody.replace(ETTargetName, ETNameReplacement);
+							
 							Unirest.setTimeouts(0, 0);
 							 HttpResponse<JsonNode> asJson = Unirest.get("http://65.1.66.115:8087/dev/institute/view/"+ save.getInstId())
 							  .header("Authorization", token)
@@ -211,7 +231,31 @@ public class LicenseService {
 							 
 							 
 							 org.json.JSONObject object = asJson.getBody().getObject();
+							 ETNameReplacement = amdFname +" "+ amdLname;
 							 number = object.getString("instMnum");
+							 stInstName = object.getString("instName");
+							 stInstMail = object.getString("instEmail");
+							 stLicnName = save.getLcName();
+							 stLicnValidatyNum = save.getLcValidityNum() + "";
+							 stLicnValidatyType = save.getLcValidityType();
+							 stLicnCreateDate = save.getLcCreatDate()+"";
+							 stLicnEndDate = save.getLcEndDate()+"";
+							 stLicnServerType = save.getLcStype();
+							 stLicnType = save.getLcType();
+							 
+							 
+						
+									 String replace = STBody.replace(ETTargetName, ETNameReplacement);
+									 String replace2 = replace.replace(stInstNameTags, stInstName);
+									 String replace3 = replace2.replace(stInstMailTags, stInstMail);
+									 String replace4 = replace3.replace(stLicnNameTags, stLicnName);
+									 String replace5 = replace4.replace(stLicnValidatyNumTags, stLicnValidatyNum);
+									 String replace6 = replace5.replace(stLicnValidatyTypeTags, stLicnValidatyType);
+									 String replace7 = replace6.replace(stLicnCreateDateTags, stLicnCreateDate);
+									 String replace8 = replace7.replace(stLicnEndDateTags, stLicnEndDate);
+									 String replace9 = replace8.replace(stLicnServerTypeTags, stLicnServerType);
+									 processedSMSBodyContent = replace9.replace(stLicnTypeTags, stLicnType);
+							 
 							 LOGGER.info("asJson   "+number);
 							
 							
@@ -423,6 +467,25 @@ public class LicenseService {
 							//****----------   CODE ADDED BY SOUMEN   -------****//
 							String processedSMSBodyContent="";
 							String number="";
+							String stInstName = "";
+							String stInstMail = "";
+							String stLicnName = "";
+							String stLicnValidatyNum = "";
+							String stLicnValidatyType = "";
+							String stLicnCreateDate = "";
+							String stLicnEndDate = "";
+							String stLicnServerType = "";
+							String stLicnType = "";
+							
+							String stInstNameTags = "__$InstName$__";
+							String stInstMailTags = "__$InstMail$__";
+							String stLicnNameTags = "__$LicnName$__";
+							String stLicnValidatyNumTags = "__$LicnValidatyNum$__";
+							String stLicnValidatyTypeTags = "__$LicnValidatyTyp$__";
+							String stLicnCreateDateTags = "__$LicnCreateDate$__";
+							String stLicnEndDateTags = "__$LicnEndDate$__";
+							String stLicnServerTypeTags = "__$LicnServerType$__";
+							String stLicnTypeTags = "__$LicnType$__";
 							try {
 								ResponseEntity<LicenseGlobalEntity> responseSmsTemp = new RestTemplate().exchange(
 										"http://65.1.66.115:8091/dev/smsTemplate/getPrimarySTByAction/License_Create",
@@ -436,7 +499,7 @@ public class LicenseService {
 								
 								ETNameReplacement = amdFname +" "+ amdLname;
 
-								processedSMSBodyContent = STBody.replace(ETTargetName, ETNameReplacement);
+								
 								Unirest.setTimeouts(0, 0);
 								 HttpResponse<JsonNode> asJson = Unirest.get("http://65.1.66.115:8087/dev/institute/view/"+ save.getInstId())
 								  .header("Authorization", token)
@@ -446,6 +509,28 @@ public class LicenseService {
 								 org.json.JSONObject object = asJson.getBody().getObject();
 								 number = object.getString("instMnum");
 								 LOGGER.info("asJson   "+number);
+								 stInstName = object.getString("instName");
+								 stInstMail = object.getString("instEmail");
+								 stLicnName = save.getLcName();
+								 stLicnValidatyNum = save.getLcValidityNum() + "";
+								 stLicnValidatyType = save.getLcValidityType();
+								 stLicnCreateDate = save.getLcCreatDate()+"";
+								 stLicnEndDate = save.getLcEndDate()+"";
+								 stLicnServerType = save.getLcStype();
+								 stLicnType = save.getLcType();
+								 
+								 
+							
+										 String replace = STBody.replace(ETTargetName, ETNameReplacement);
+										 String replace2 = replace.replace(stInstNameTags, stInstName);
+										 String replace3 = replace2.replace(stInstMailTags, stInstMail);
+										 String replace4 = replace3.replace(stLicnNameTags, stLicnName);
+										 String replace5 = replace4.replace(stLicnValidatyNumTags, stLicnValidatyNum);
+										 String replace6 = replace5.replace(stLicnValidatyTypeTags, stLicnValidatyType);
+										 String replace7 = replace6.replace(stLicnCreateDateTags, stLicnCreateDate);
+										 String replace8 = replace7.replace(stLicnEndDateTags, stLicnEndDate);
+										 String replace9 = replace8.replace(stLicnServerTypeTags, stLicnServerType);
+										 processedSMSBodyContent = replace9.replace(stLicnTypeTags, stLicnType);
 								
 								
 							
@@ -648,7 +733,7 @@ public class LicenseService {
 					
 						String lStatus = "Suspending";					
 						findById.setLcStatus(lStatus);
-						licenseRepo.save(findById);
+						LicenseEntity save2 = licenseRepo.save(findById);
 						
 //					For sending mail	
 						HttpHeaders headers = new HttpHeaders();
@@ -733,6 +818,25 @@ public class LicenseService {
 						//****----------   CODE ADDED BY SOUMEN   -------****//
 						String processedSMSBodyContent="";
 						String number="";
+						String stInstName = "";
+						String stInstMail = "";
+						String stLicnName = "";
+						String stLicnValidatyNum = "";
+						String stLicnValidatyType = "";
+						String stLicnCreateDate = "";
+						String stLicnEndDate = "";
+						String stLicnServerType = "";
+						String stLicnType = "";
+						
+						String stInstNameTags = "__$InstName$__";
+						String stInstMailTags = "__$InstMail$__";
+						String stLicnNameTags = "__$LicnName$__";
+						String stLicnValidatyNumTags = "__$LicnValidatyNum$__";
+						String stLicnValidatyTypeTags = "__$LicnValidatyTyp$__";
+						String stLicnCreateDateTags = "__$LicnCreateDate$__";
+						String stLicnEndDateTags = "__$LicnEndDate$__";
+						String stLicnServerTypeTags = "__$LicnServerType$__";
+						String stLicnTypeTags = "__$LicnType$__";
 						try {
 							ResponseEntity<LicenseGlobalEntity> responseSmsTemp = new RestTemplate().exchange(
 									"http://65.1.66.115:8091/dev/smsTemplate/getPrimarySTByAction/License_Create",
@@ -746,7 +850,7 @@ public class LicenseService {
 							
 							ETNameReplacement = amdFname +" "+ amdLname;
 
-							processedSMSBodyContent = STBody.replace(ETTargetName, ETNameReplacement);
+						
 							Unirest.setTimeouts(0, 0);
 							 HttpResponse<JsonNode> asJson = Unirest.get("http://65.1.66.115:8087/dev/institute/view/"+ findById.getInstId())
 							  .header("Authorization", token)
@@ -756,6 +860,28 @@ public class LicenseService {
 							 org.json.JSONObject object = asJson.getBody().getObject();
 							 number = object.getString("instMnum");
 							 LOGGER.info("asJson   "+number);
+							 stInstName = object.getString("instName");
+							 stInstMail = object.getString("instEmail");
+							 stLicnName = save2.getLcName();
+							 stLicnValidatyNum = save2.getLcValidityNum() + "";
+							 stLicnValidatyType = save2.getLcValidityType();
+							 stLicnCreateDate = save2.getLcCreatDate()+"";
+							 stLicnEndDate = save2.getLcEndDate()+"";
+							 stLicnServerType = save2.getLcStype();
+							 stLicnType = save2.getLcType();
+							 
+							 
+						
+									 String replace = STBody.replace(ETTargetName, ETNameReplacement);
+									 String replace2 = replace.replace(stInstNameTags, stInstName);
+									 String replace3 = replace2.replace(stInstMailTags, stInstMail);
+									 String replace4 = replace3.replace(stLicnNameTags, stLicnName);
+									 String replace5 = replace4.replace(stLicnValidatyNumTags, stLicnValidatyNum);
+									 String replace6 = replace5.replace(stLicnValidatyTypeTags, stLicnValidatyType);
+									 String replace7 = replace6.replace(stLicnCreateDateTags, stLicnCreateDate);
+									 String replace8 = replace7.replace(stLicnEndDateTags, stLicnEndDate);
+									 String replace9 = replace8.replace(stLicnServerTypeTags, stLicnServerType);
+									 processedSMSBodyContent = replace9.replace(stLicnTypeTags, stLicnType);
 							
 							
 						
