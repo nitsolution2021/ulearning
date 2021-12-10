@@ -185,10 +185,12 @@ public class SmsTemplateService {
 
 		if (!fieldValidation.isEmpty(globalEntity.getStName())) {
 			throw new CustomException("Template Name required");
-		} else if (!fieldValidation.isEmpty(globalEntity.getStSubject())) {
-			// SMS template Subject represent SMS Header
-			throw new CustomException("SMS template header required");
-		} else if (!fieldValidation.isEmpty(globalEntity.getStBody())) {
+		} 
+//		else if (!fieldValidation.isEmpty(globalEntity.getStSubject())) {
+//			// SMS template Subject represent SMS Header
+//			throw new CustomException("SMS template header required");
+//		} 
+		else if (!fieldValidation.isEmpty(globalEntity.getStBody())) {
 			// SMS template Body represent SMS Content
 			throw new CustomException("SMS template content required");
 		} else if (!fieldValidation.isEmpty(globalEntity.getStAction())) {
@@ -209,29 +211,33 @@ public class SmsTemplateService {
 		try {
 			Optional<SmsTemplateEntity> findById = smsTemplateRepo.findById(stId);
 			if (findById.isPresent()) {
-				if (findById.get().getIsPrimary() == 1) {
-					throw new CustomException("Primary Template Can't be Deleted");
-				}
-				SmsTemplateEntity smsTemplateEntity = new SmsTemplateEntity();
-				smsTemplateEntity.setCreatedOn(findById.get().getCreatedOn());
-				smsTemplateEntity.setIsActive(findById.get().getIsActive());
-				smsTemplateEntity.setIsDeleted(1);
-				smsTemplateEntity.setIsPrimary(0);
-				smsTemplateEntity.setStAction(findById.get().getStAction());
-				smsTemplateEntity.setStBody(findById.get().getStBody());
-				smsTemplateEntity.setStId(stId);
-				smsTemplateEntity.setStName(findById.get().getStName());
-				smsTemplateEntity.setStOrder(findById.get().getStOrder());
-				smsTemplateEntity.setStSubject(findById.get().getStSubject());
-				smsTemplateEntity.setStTags(findById.get().getStTags());
-				smsTemplateEntity.setStTempId(findById.get().getStTempId());
-				smsTemplateEntity.setStType(findById.get().getStType());
-				smsTemplateEntity.setUpdatedOn(new Date());
-				SmsTemplateEntity save = smsTemplateRepo.save(smsTemplateEntity);
-				if (!save.equals(null)) {
-					return new GlobalResponseEntity("SUCCESS", "SMS template deleted successfully", 200);
+				if (findById.get().getIsDeleted() == 0) {
+					if (findById.get().getIsPrimary() == 1) {
+						throw new CustomException("Primary Template Can't be Deleted");
+					}
+					SmsTemplateEntity smsTemplateEntity = new SmsTemplateEntity();
+					smsTemplateEntity.setCreatedOn(findById.get().getCreatedOn());
+					smsTemplateEntity.setIsActive(findById.get().getIsActive());
+					smsTemplateEntity.setIsDeleted(1);
+					smsTemplateEntity.setIsPrimary(0);
+					smsTemplateEntity.setStAction(findById.get().getStAction());
+					smsTemplateEntity.setStBody(findById.get().getStBody());
+					smsTemplateEntity.setStId(stId);
+					smsTemplateEntity.setStName(findById.get().getStName());
+					smsTemplateEntity.setStOrder(findById.get().getStOrder());
+					smsTemplateEntity.setStSubject(findById.get().getStSubject());
+					smsTemplateEntity.setStTags(findById.get().getStTags());
+					smsTemplateEntity.setStTempId(findById.get().getStTempId());
+					smsTemplateEntity.setStType(findById.get().getStType());
+					smsTemplateEntity.setUpdatedOn(new Date());
+					SmsTemplateEntity save = smsTemplateRepo.save(smsTemplateEntity);
+					if (!save.equals(null)) {
+						return new GlobalResponseEntity("SUCCESS", "SMS template deleted successfully", 200);
+					} else {
+						throw new CustomException("Internal server error");
+					}
 				} else {
-					throw new CustomException("Internal server error");
+					throw new CustomException("Deleted Template Can't  Delete Again");
 				}
 			} else {
 				throw new CustomException("Your requested id is not available");
@@ -392,7 +398,7 @@ public class SmsTemplateService {
 			if (find.size() > 0) {
 				return find.get(0);
 			} else {
-				throw new CustomException("Data not found");
+				throw new CustomException("SMS Template Not Found");
 			}
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
