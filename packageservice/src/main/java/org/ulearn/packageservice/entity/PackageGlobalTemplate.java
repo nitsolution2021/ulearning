@@ -90,6 +90,15 @@ public class PackageGlobalTemplate {
 	private String etBody;
 	private String etType;
 	private String etAction;
+	private Long stId;
+	private String stName;
+	private String stSubject;
+	private String stBody;
+	private String stType;
+	private String stAction;
+	private String stTags;
+	private String stTempId;
+	private String stTagsName;
 	public PackageGlobalTemplate(Long instId, String instName, Date instEndDate, String instWebsite, String instEmail,
 			String instCnum, String instMnum, Date isntRegDate, String instLogo, String instPanNum, String instGstNum,
 			String instStatus, int instIsActive, int instIsDeleted, Date instCreatedOn, Date instUpdatedOn, Long pkId,
@@ -102,7 +111,8 @@ public class PackageGlobalTemplate {
 			Long packIsActive, Long packIsDeleted, String pkStatus, Date packCreatedOn, Date packUpdatedOn, Long admId,
 			String amdFname, String amdLname, Date amdDob, String amdMnum, String amdEmail, String amdUsername,
 			String amdPassword, String amdPpic, Date amdCreatedOn, Date amdUpdatedOn, Long etId, String etName,
-			String etSubject, String etBody, String etType, String etAction) {
+			String etSubject, String etBody, String etType, String etAction, Long stId, String stName, String stSubject,
+			String stBody, String stType, String stAction, String stTags, String stTempId, String stTagsName) {
 		super();
 		this.instId = instId;
 		this.instName = instName;
@@ -152,6 +162,15 @@ public class PackageGlobalTemplate {
 		this.etBody = etBody;
 		this.etType = etType;
 		this.etAction = etAction;
+		this.stId = stId;
+		this.stName = stName;
+		this.stSubject = stSubject;
+		this.stBody = stBody;
+		this.stType = stType;
+		this.stAction = stAction;
+		this.stTags = stTags;
+		this.stTempId = stTempId;
+		this.stTagsName = stTagsName;
 	}
 	public PackageGlobalTemplate() {
 		super();
@@ -445,6 +464,60 @@ public class PackageGlobalTemplate {
 	public void setEtAction(String etAction) {
 		this.etAction = etAction;
 	}
+	public Long getStId() {
+		return stId;
+	}
+	public void setStId(Long stId) {
+		this.stId = stId;
+	}
+	public String getStName() {
+		return stName;
+	}
+	public void setStName(String stName) {
+		this.stName = stName;
+	}
+	public String getStSubject() {
+		return stSubject;
+	}
+	public void setStSubject(String stSubject) {
+		this.stSubject = stSubject;
+	}
+	public String getStBody() {
+		return stBody;
+	}
+	public void setStBody(String stBody) {
+		this.stBody = stBody;
+	}
+	public String getStType() {
+		return stType;
+	}
+	public void setStType(String stType) {
+		this.stType = stType;
+	}
+	public String getStAction() {
+		return stAction;
+	}
+	public void setStAction(String stAction) {
+		this.stAction = stAction;
+	}
+	public String getStTags() {
+		return stTags;
+	}
+	public void setStTags(String stTags) {
+		this.stTags = stTags;
+	}
+	public String getStTempId() {
+		return stTempId;
+	}
+	public void setStTempId(String stTempId) {
+		this.stTempId = stTempId;
+	}
+	public String getStTagsName() {
+		return stTagsName;
+	}
+	public void setStTagsName(String stTagsName) {
+		this.stTagsName = stTagsName;
+	}
 	@Override
 	public String toString() {
 		return "PackageGlobalTemplate [instId=" + instId + ", instName=" + instName + ", instEndDate=" + instEndDate
@@ -461,8 +534,9 @@ public class PackageGlobalTemplate {
 				+ ", amdEmail=" + amdEmail + ", amdUsername=" + amdUsername + ", amdPassword=" + amdPassword
 				+ ", amdPpic=" + amdPpic + ", amdCreatedOn=" + amdCreatedOn + ", amdUpdatedOn=" + amdUpdatedOn
 				+ ", etId=" + etId + ", etName=" + etName + ", etSubject=" + etSubject + ", etBody=" + etBody
-				+ ", etType=" + etType + ", etAction=" + etAction + "]";
+				+ ", etType=" + etType + ", etAction=" + etAction + ", stId=" + stId + ", stName=" + stName
+				+ ", stSubject=" + stSubject + ", stBody=" + stBody + ", stType=" + stType + ", stAction=" + stAction
+				+ ", stTags=" + stTags + ", stTempId=" + stTempId + ", stTagsName=" + stTagsName + "]";
 	}
-	
 	
 }
