@@ -260,7 +260,7 @@ public class InstituteService {
 								"http://msg.jmdinfotek.in/api/mt/SendSMS?channel=Trans&DCS=0&flashsms=0&route=07&senderid=uLearn&user=technosoft_dev&password=Techno@8585&text="
 										+ encode + "&number="+number)
 								.asJson();
-
+						LOGGER.info("Inside - InstituteController.getInstute()"+asJson);
 						org.json.JSONObject object = asJson.getBody().getObject();
 						String ErrorCode = object.getString("ErrorCode");
 
