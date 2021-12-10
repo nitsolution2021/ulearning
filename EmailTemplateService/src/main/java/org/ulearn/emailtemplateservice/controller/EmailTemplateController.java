@@ -197,10 +197,10 @@ public class EmailTemplateController {
 							throw new CustomException("The Custome Template Action is Not Present in Default Action");
 						}
 					}else {
-						throw new CustomException("Id is Deleted");
+						throw new CustomException("Item is Deleted");
 					}
 				}else {
-					throw new CustomException("Id is Not Present");
+					throw new CustomException("Item is Not Present");
 				}
 			}else {
 				throw new CustomException("Validation Error");
@@ -237,10 +237,10 @@ public class EmailTemplateController {
 					}
 					
 				}else {
-					throw new CustomException("Id is Deleted");
+					throw new CustomException("Item is Deleted");
 				}
 			}else {
-				throw new CustomException("Id is Not Present");
+				throw new CustomException("Item is Not Present");
 			}
 		}catch(Exception e) {
 			throw new CustomException(e.getMessage());

@@ -23,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriUtils;
 import org.ulearn.licenseservice.controller.LicenseController;
 import org.ulearn.licenseservice.entity.GlobalResponse;
 import org.ulearn.licenseservice.entity.LicenseEntity;
@@ -141,7 +142,7 @@ public class LicenseService {
 						
 						try {
 							
-							ResponseEntity<LicenseGlobalEntity> responseEmailTemp = new RestTemplate().exchange("http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/License_Create",HttpMethod.GET, request, LicenseGlobalEntity.class);
+							ResponseEntity<LicenseGlobalEntity> responseEmailTemp = new RestTemplate().exchange("http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/Licens_Create",HttpMethod.GET, request, LicenseGlobalEntity.class);
 							 ETSubject = responseEmailTemp.getBody().getEtSubject();
 							 ETBody = responseEmailTemp.getBody().getEtBody();
 
@@ -152,6 +153,7 @@ public class LicenseService {
 							 processedName = ETBody.replace(ETTargetName, ETNameReplacement);
 						}
 						catch(Exception e) {
+							
 							if(!save.equals(null)) {
 								throw new CustomException("License have added but there is a problem in emailTemplate view.please check.");
 							}
@@ -174,6 +176,8 @@ public class LicenseService {
 							ResponseEntity<String> response = new RestTemplate().postForEntity("http://65.1.66.115:8086/dev/login/sendMail/", entity, String.class);
 						}
 						catch(Exception e) {
+							
+							
 							if(!save.equals(null)) {
 								throw new CustomException("License have added but there is a problem in sendMail.please check.");
 							}
@@ -182,6 +186,112 @@ public class LicenseService {
 							}
 							
 						}
+						
+						//****----------   CODE ADDED BY SOUMEN   -------****//
+						String processedSMSBodyContent="";
+						String number = "";
+						String stInstName = "";
+						String stInstMail = "";
+						String stLicnName = "";
+						String stLicnValidatyNum = "";
+						String stLicnValidatyType = "";
+						String stLicnCreateDate = "";
+						String stLicnEndDate = "";
+						String stLicnServerType = "";
+						String stLicnType = "";
+						
+						String stInstNameTags = "__$InstName$__";
+						String stInstMailTags = "__$InstMail$__";
+						String stLicnNameTags = "__$LicnName$__";
+						String stLicnValidatyNumTags = "__$LicnValidatyNum$__";
+						String stLicnValidatyTypeTags = "__$LicnValidatyTyp$__";
+						String stLicnCreateDateTags = "__$LicnCreateDate$__";
+						String stLicnEndDateTags = "__$LicnEndDate$__";
+						String stLicnServerTypeTags = "__$LicnServerType$__";
+						String stLicnTypeTags = "__$LicnType$__";
+						
+						try {
+							ResponseEntity<LicenseGlobalEntity> responseSmsTemp = new RestTemplate().exchange(
+									"http://65.1.66.115:8091/dev/smsTemplate/getPrimarySTByAction/License_Create",
+									HttpMethod.GET, request, LicenseGlobalEntity.class);
+
+							
+							
+//							String STSubject = responseSmsTemp.getBody().getStSubject();
+							String STBody = responseSmsTemp.getBody().getStBody();
+							ETTargetName = "__$name$__";
+							
+							
+
+							
+							Unirest.setTimeouts(0, 0);
+							 HttpResponse<JsonNode> asJson = Unirest.get("http://65.1.66.115:8087/dev/institute/view/"+ save.getInstId())
+							  .header("Authorization", token)
+							  .asJson();
+							 
+							 
+							 org.json.JSONObject object = asJson.getBody().getObject();
+							 ETNameReplacement = amdFname +" "+ amdLname;
+							 number = object.getString("instMnum");
+							 stInstName = object.getString("instName");
+							 stInstMail = object.getString("instEmail");
+							 stLicnName = save.getLcName();
+							 stLicnValidatyNum = save.getLcValidityNum() + "";
+							 stLicnValidatyType = save.getLcValidityType();
+							 stLicnCreateDate = save.getLcCreatDate()+"";
+							 stLicnEndDate = save.getLcEndDate()+"";
+							 stLicnServerType = save.getLcStype();
+							 stLicnType = save.getLcType();
+							 
+							 
+						
+									 String replace = STBody.replace(ETTargetName, ETNameReplacement);
+									 String replace2 = replace.replace(stInstNameTags, stInstName);
+									 String replace3 = replace2.replace(stInstMailTags, stInstMail);
+									 String replace4 = replace3.replace(stLicnNameTags, stLicnName);
+									 String replace5 = replace4.replace(stLicnValidatyNumTags, stLicnValidatyNum);
+									 String replace6 = replace5.replace(stLicnValidatyTypeTags, stLicnValidatyType);
+									 String replace7 = replace6.replace(stLicnCreateDateTags, stLicnCreateDate);
+									 String replace8 = replace7.replace(stLicnEndDateTags, stLicnEndDate);
+									 String replace9 = replace8.replace(stLicnServerTypeTags, stLicnServerType);
+									 processedSMSBodyContent = replace9.replace(stLicnTypeTags, stLicnType);
+							 
+							 LOGGER.info("asJson   "+number);
+							
+							
+						
+							number = number.substring(3);	
+							
+							
+
+
+						} catch (Exception e) {
+//							throw new CustomException("SMS Service Is Not Running!");
+							throw new CustomException(e.getMessage());
+						}
+						try {
+							
+							String encode = UriUtils.encodePath(processedSMSBodyContent, "UTF-8");
+							Unirest.setTimeouts(0, 0);
+							HttpResponse<JsonNode> asJson = Unirest.get(
+									"http://msg.jmdinfotek.in/api/mt/SendSMS?channel=Trans&DCS=0&flashsms=0&route=07&senderid=uLearn&user=technosoft_dev&password=Techno@8585&text="
+											+ encode + "&number="+ number)
+									.asJson();
+
+							org.json.JSONObject object = asJson.getBody().getObject();
+							String ErrorCode = object.getString("ErrorCode");
+
+							if (ErrorCode.equals("006")) {
+								throw new CustomException("Invalid Template Text!");
+							} else if (!ErrorCode.equals("000")) {
+								throw new CustomException("Failed to Sent SMS!");
+							}
+						} catch (Exception e) {
+							throw new CustomException(e.getMessage());
+//							throw new CustomException("Something Went To Wrong From SMS Gateway");
+						}
+						
+						//**** CLOSED ****//
 						
 
 						if (!save.equals(null)) {
@@ -354,6 +464,110 @@ public class LicenseService {
 							}
 							
 							
+							//****----------   CODE ADDED BY SOUMEN   -------****//
+							String processedSMSBodyContent="";
+							String number="";
+							String stInstName = "";
+							String stInstMail = "";
+							String stLicnName = "";
+							String stLicnValidatyNum = "";
+							String stLicnValidatyType = "";
+							String stLicnCreateDate = "";
+							String stLicnEndDate = "";
+							String stLicnServerType = "";
+							String stLicnType = "";
+							
+							String stInstNameTags = "__$InstName$__";
+							String stInstMailTags = "__$InstMail$__";
+							String stLicnNameTags = "__$LicnName$__";
+							String stLicnValidatyNumTags = "__$LicnValidatyNum$__";
+							String stLicnValidatyTypeTags = "__$LicnValidatyTyp$__";
+							String stLicnCreateDateTags = "__$LicnCreateDate$__";
+							String stLicnEndDateTags = "__$LicnEndDate$__";
+							String stLicnServerTypeTags = "__$LicnServerType$__";
+							String stLicnTypeTags = "__$LicnType$__";
+							try {
+								ResponseEntity<LicenseGlobalEntity> responseSmsTemp = new RestTemplate().exchange(
+										"http://65.1.66.115:8091/dev/smsTemplate/getPrimarySTByAction/License_Create",
+										HttpMethod.GET, request, LicenseGlobalEntity.class);
+
+								
+								
+//								String STSubject = responseSmsTemp.getBody().getStSubject();
+								String STBody = responseSmsTemp.getBody().getStBody();
+								ETTargetName = "__$name$__";
+								
+								ETNameReplacement = amdFname +" "+ amdLname;
+
+								
+								Unirest.setTimeouts(0, 0);
+								 HttpResponse<JsonNode> asJson = Unirest.get("http://65.1.66.115:8087/dev/institute/view/"+ save.getInstId())
+								  .header("Authorization", token)
+								  .asJson();
+								 
+								 
+								 org.json.JSONObject object = asJson.getBody().getObject();
+								 number = object.getString("instMnum");
+								 LOGGER.info("asJson   "+number);
+								 stInstName = object.getString("instName");
+								 stInstMail = object.getString("instEmail");
+								 stLicnName = save.getLcName();
+								 stLicnValidatyNum = save.getLcValidityNum() + "";
+								 stLicnValidatyType = save.getLcValidityType();
+								 stLicnCreateDate = save.getLcCreatDate()+"";
+								 stLicnEndDate = save.getLcEndDate()+"";
+								 stLicnServerType = save.getLcStype();
+								 stLicnType = save.getLcType();
+								 
+								 
+							
+										 String replace = STBody.replace(ETTargetName, ETNameReplacement);
+										 String replace2 = replace.replace(stInstNameTags, stInstName);
+										 String replace3 = replace2.replace(stInstMailTags, stInstMail);
+										 String replace4 = replace3.replace(stLicnNameTags, stLicnName);
+										 String replace5 = replace4.replace(stLicnValidatyNumTags, stLicnValidatyNum);
+										 String replace6 = replace5.replace(stLicnValidatyTypeTags, stLicnValidatyType);
+										 String replace7 = replace6.replace(stLicnCreateDateTags, stLicnCreateDate);
+										 String replace8 = replace7.replace(stLicnEndDateTags, stLicnEndDate);
+										 String replace9 = replace8.replace(stLicnServerTypeTags, stLicnServerType);
+										 processedSMSBodyContent = replace9.replace(stLicnTypeTags, stLicnType);
+								
+								
+							
+								number = number.substring(3);	
+								
+								
+
+
+							} catch (Exception e) {
+//								throw new CustomException("SMS Service Is Not Running!");
+								throw new CustomException(e.getMessage());
+							}
+							try {
+								
+								String encode = UriUtils.encodePath(processedSMSBodyContent, "UTF-8");
+								Unirest.setTimeouts(0, 0);
+								HttpResponse<JsonNode> asJson = Unirest.get(
+										"http://msg.jmdinfotek.in/api/mt/SendSMS?channel=Trans&DCS=0&flashsms=0&route=07&senderid=uLearn&user=technosoft_dev&password=Techno@8585&text="
+												+ encode + "&number="+ number)
+										.asJson();
+
+								org.json.JSONObject object = asJson.getBody().getObject();
+								String ErrorCode = object.getString("ErrorCode");
+
+								if (ErrorCode.equals("006")) {
+									throw new CustomException("Invalid Template Text!");
+								} else if (!ErrorCode.equals("000")) {
+									throw new CustomException("Failed to Sent SMS!");
+								}
+							} catch (Exception e) {
+								throw new CustomException(e.getMessage());
+//								throw new CustomException("Something Went To Wrong From SMS Gateway");
+							}
+							
+							//**** CLOSED ****//
+							
+							
 							
 							
 							if(!save.equals(null)) {
@@ -519,7 +733,7 @@ public class LicenseService {
 					
 						String lStatus = "Suspending";					
 						findById.setLcStatus(lStatus);
-						licenseRepo.save(findById);
+						LicenseEntity save2 = licenseRepo.save(findById);
 						
 //					For sending mail	
 						HttpHeaders headers = new HttpHeaders();
@@ -600,6 +814,110 @@ public class LicenseService {
 						}
 						
 //						End send mail
+						
+						//****----------   CODE ADDED BY SOUMEN   -------****//
+						String processedSMSBodyContent="";
+						String number="";
+						String stInstName = "";
+						String stInstMail = "";
+						String stLicnName = "";
+						String stLicnValidatyNum = "";
+						String stLicnValidatyType = "";
+						String stLicnCreateDate = "";
+						String stLicnEndDate = "";
+						String stLicnServerType = "";
+						String stLicnType = "";
+						
+						String stInstNameTags = "__$InstName$__";
+						String stInstMailTags = "__$InstMail$__";
+						String stLicnNameTags = "__$LicnName$__";
+						String stLicnValidatyNumTags = "__$LicnValidatyNum$__";
+						String stLicnValidatyTypeTags = "__$LicnValidatyTyp$__";
+						String stLicnCreateDateTags = "__$LicnCreateDate$__";
+						String stLicnEndDateTags = "__$LicnEndDate$__";
+						String stLicnServerTypeTags = "__$LicnServerType$__";
+						String stLicnTypeTags = "__$LicnType$__";
+						try {
+							ResponseEntity<LicenseGlobalEntity> responseSmsTemp = new RestTemplate().exchange(
+									"http://65.1.66.115:8091/dev/smsTemplate/getPrimarySTByAction/License_Create",
+									HttpMethod.GET, request, LicenseGlobalEntity.class);
+
+							
+							
+//							String STSubject = responseSmsTemp.getBody().getStSubject();
+							String STBody = responseSmsTemp.getBody().getStBody();
+							ETTargetName = "__$name$__";
+							
+							ETNameReplacement = amdFname +" "+ amdLname;
+
+						
+							Unirest.setTimeouts(0, 0);
+							 HttpResponse<JsonNode> asJson = Unirest.get("http://65.1.66.115:8087/dev/institute/view/"+ findById.getInstId())
+							  .header("Authorization", token)
+							  .asJson();
+							 
+							 
+							 org.json.JSONObject object = asJson.getBody().getObject();
+							 number = object.getString("instMnum");
+							 LOGGER.info("asJson   "+number);
+							 stInstName = object.getString("instName");
+							 stInstMail = object.getString("instEmail");
+							 stLicnName = save2.getLcName();
+							 stLicnValidatyNum = save2.getLcValidityNum() + "";
+							 stLicnValidatyType = save2.getLcValidityType();
+							 stLicnCreateDate = save2.getLcCreatDate()+"";
+							 stLicnEndDate = save2.getLcEndDate()+"";
+							 stLicnServerType = save2.getLcStype();
+							 stLicnType = save2.getLcType();
+							 
+							 
+						
+									 String replace = STBody.replace(ETTargetName, ETNameReplacement);
+									 String replace2 = replace.replace(stInstNameTags, stInstName);
+									 String replace3 = replace2.replace(stInstMailTags, stInstMail);
+									 String replace4 = replace3.replace(stLicnNameTags, stLicnName);
+									 String replace5 = replace4.replace(stLicnValidatyNumTags, stLicnValidatyNum);
+									 String replace6 = replace5.replace(stLicnValidatyTypeTags, stLicnValidatyType);
+									 String replace7 = replace6.replace(stLicnCreateDateTags, stLicnCreateDate);
+									 String replace8 = replace7.replace(stLicnEndDateTags, stLicnEndDate);
+									 String replace9 = replace8.replace(stLicnServerTypeTags, stLicnServerType);
+									 processedSMSBodyContent = replace9.replace(stLicnTypeTags, stLicnType);
+							
+							
+						
+							number = number.substring(3);	
+							
+							
+
+
+						} catch (Exception e) {
+//							throw new CustomException("SMS Service Is Not Running!");
+							throw new CustomException(e.getMessage());
+						}
+						try {
+							
+							String encode = UriUtils.encodePath(processedSMSBodyContent, "UTF-8");
+							Unirest.setTimeouts(0, 0);
+							HttpResponse<JsonNode> asJson = Unirest.get(
+									"http://msg.jmdinfotek.in/api/mt/SendSMS?channel=Trans&DCS=0&flashsms=0&route=07&senderid=uLearn&user=technosoft_dev&password=Techno@8585&text="
+											+ encode + "&number="+ number)
+									.asJson();
+
+							org.json.JSONObject object = asJson.getBody().getObject();
+							String ErrorCode = object.getString("ErrorCode");
+
+							if (ErrorCode.equals("006")) {
+								throw new CustomException("Invalid Template Text!");
+							} else if (!ErrorCode.equals("000")) {
+								throw new CustomException("Failed to Sent SMS!");
+							}
+						} catch (Exception e) {
+							throw new CustomException(e.getMessage());
+//							throw new CustomException("Something Went To Wrong From SMS Gateway");
+						}
+						
+						//**** CLOSED ****//
+						
 					
 					if (!save.equals(null)) {
 						return new GlobalResponse("SUCCESS","This license will be suspend for the selected date.",200);

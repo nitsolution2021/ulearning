@@ -41,7 +41,7 @@ public class SmsTemplateService {
 			if (validateData(globalEntity)) {
 				Optional<SmsTemplateEntity> findByStName = smsTemplateRepo.findByStName(globalEntity.getStName());
 				if (findByStName.isPresent()) {
-					throw new CustomException("Template name already exists");
+					throw new CustomException("Template Name Already Exists");
 				}
 				this.checkTag(globalEntity);
 				SmsTemplateEntity smsTemplateEntity = new SmsTemplateEntity();
@@ -72,13 +72,13 @@ public class SmsTemplateService {
 				smsTemplateEntity.setStType("CUSTOM");
 				SmsTemplateEntity save = smsTemplateRepo.save(smsTemplateEntity);
 				if (!save.equals(null)) {
-					return new GlobalResponseEntity("SUCCESS", "SMS template added successfully", 200);
+					return new GlobalResponseEntity("SUCCESS", "SMS Template Added Successfully", 200);
 				} else {
-					throw new CustomException("Internal server error");
+					throw new CustomException("Internal Server Error");
 				}
 
 			} else {
-				throw new CustomException("Validation error");
+				throw new CustomException("Validation Error");
 			}
 
 		} catch (Exception e) {
@@ -132,7 +132,7 @@ public class SmsTemplateService {
 				if (validateData(globalEntity)) {
 					Optional<SmsTemplateEntity> findByStName = smsTemplateRepo.findByStName(globalEntity.getStName());
 					if (findByStName.isPresent() && findByStName.get().getStId() != stId) {
-						throw new CustomException("Template name already exists");
+						throw new CustomException("Template Name Already Exists");
 					}
 					this.checkTag(globalEntity);
 					SmsTemplateEntity smsTemplateEntity = new SmsTemplateEntity();
@@ -166,15 +166,15 @@ public class SmsTemplateService {
 					smsTemplateEntity.setStId(stId);
 					SmsTemplateEntity save = smsTemplateRepo.save(smsTemplateEntity);
 					if (!save.equals(null)) {
-						return new GlobalResponseEntity("SUCCESS", "SMS template updated successfully", 200);
+						return new GlobalResponseEntity("SUCCESS", "SMS Template Updated Successfully", 200);
 					} else {
-						throw new CustomException("Data not save");
+						throw new CustomException("Data Not Save");
 					}
 				} else {
-					throw new CustomException("Validation error");
+					throw new CustomException("Validation Error");
 				}
 			} else {
-				throw new CustomException("Data not found for your request");
+				throw new CustomException("Data Not Found For Your Request");
 			}
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
@@ -184,20 +184,22 @@ public class SmsTemplateService {
 	private boolean validateData(GlobalEntity globalEntity) {
 
 		if (!fieldValidation.isEmpty(globalEntity.getStName())) {
-			throw new CustomException("Template Name required");
-		} else if (!fieldValidation.isEmpty(globalEntity.getStSubject())) {
-			// SMS template Subject represent SMS Header
-			throw new CustomException("SMS template header required");
-		} else if (!fieldValidation.isEmpty(globalEntity.getStBody())) {
+			throw new CustomException("Template Name Required");
+		} 
+//		else if (!fieldValidation.isEmpty(globalEntity.getStSubject())) {
+//			// SMS template Subject represent SMS Header
+//			throw new CustomException("SMS template header required");
+//		} 
+		else if (!fieldValidation.isEmpty(globalEntity.getStBody())) {
 			// SMS template Body represent SMS Content
-			throw new CustomException("SMS template content required");
+			throw new CustomException("SMS Template Content Required");
 		} else if (!fieldValidation.isEmpty(globalEntity.getStAction())) {
 			// SMS StAction represent Template For
-			throw new CustomException("Template For required");
+			throw new CustomException("Template For Required");
 		} else if (!fieldValidation.isEmpty(globalEntity.getIsPrimary())) {
 			// SMS template is_Primary represent Set Default
 			LOGGER.info(globalEntity.getIsPrimary() + "");
-			throw new CustomException("Set Default required");
+			throw new CustomException("Set Default Required");
 		} else {
 			return true;
 		}
@@ -209,32 +211,36 @@ public class SmsTemplateService {
 		try {
 			Optional<SmsTemplateEntity> findById = smsTemplateRepo.findById(stId);
 			if (findById.isPresent()) {
-				if (findById.get().getIsPrimary() == 1) {
-					throw new CustomException("Primary Template Can't be Deleted");
-				}
-				SmsTemplateEntity smsTemplateEntity = new SmsTemplateEntity();
-				smsTemplateEntity.setCreatedOn(findById.get().getCreatedOn());
-				smsTemplateEntity.setIsActive(findById.get().getIsActive());
-				smsTemplateEntity.setIsDeleted(1);
-				smsTemplateEntity.setIsPrimary(0);
-				smsTemplateEntity.setStAction(findById.get().getStAction());
-				smsTemplateEntity.setStBody(findById.get().getStBody());
-				smsTemplateEntity.setStId(stId);
-				smsTemplateEntity.setStName(findById.get().getStName());
-				smsTemplateEntity.setStOrder(findById.get().getStOrder());
-				smsTemplateEntity.setStSubject(findById.get().getStSubject());
-				smsTemplateEntity.setStTags(findById.get().getStTags());
-				smsTemplateEntity.setStTempId(findById.get().getStTempId());
-				smsTemplateEntity.setStType(findById.get().getStType());
-				smsTemplateEntity.setUpdatedOn(new Date());
-				SmsTemplateEntity save = smsTemplateRepo.save(smsTemplateEntity);
-				if (!save.equals(null)) {
-					return new GlobalResponseEntity("SUCCESS", "SMS template deleted successfully", 200);
+				if (findById.get().getIsDeleted() == 0) {
+					if (findById.get().getIsPrimary() == 1) {
+						throw new CustomException("Primary Template Can't Be Deleted");
+					}
+					SmsTemplateEntity smsTemplateEntity = new SmsTemplateEntity();
+					smsTemplateEntity.setCreatedOn(findById.get().getCreatedOn());
+					smsTemplateEntity.setIsActive(findById.get().getIsActive());
+					smsTemplateEntity.setIsDeleted(1);
+					smsTemplateEntity.setIsPrimary(0);
+					smsTemplateEntity.setStAction(findById.get().getStAction());
+					smsTemplateEntity.setStBody(findById.get().getStBody());
+					smsTemplateEntity.setStId(stId);
+					smsTemplateEntity.setStName(findById.get().getStName());
+					smsTemplateEntity.setStOrder(findById.get().getStOrder());
+					smsTemplateEntity.setStSubject(findById.get().getStSubject());
+					smsTemplateEntity.setStTags(findById.get().getStTags());
+					smsTemplateEntity.setStTempId(findById.get().getStTempId());
+					smsTemplateEntity.setStType(findById.get().getStType());
+					smsTemplateEntity.setUpdatedOn(new Date());
+					SmsTemplateEntity save = smsTemplateRepo.save(smsTemplateEntity);
+					if (!save.equals(null)) {
+						return new GlobalResponseEntity("SUCCESS", "SMS Template Deleted Successfully", 200);
+					} else {
+						throw new CustomException("Internal Server Error");
+					}
 				} else {
-					throw new CustomException("Internal server error");
+					throw new CustomException("Deleted Template Can't  Delete Again");
 				}
 			} else {
-				throw new CustomException("Your requested id is not available");
+				throw new CustomException("Your Requested Id Is Not Available");
 			}
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
@@ -248,7 +254,7 @@ public class SmsTemplateService {
 			if (findById.isPresent()) {
 				return findById.get();
 			} else {
-				throw new CustomException("Data not found");
+				throw new CustomException("Data Not Found");
 			}
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
@@ -262,7 +268,7 @@ public class SmsTemplateService {
 			if (findByStType.size() > 0) {
 				return findByStType;
 			} else {
-				throw new CustomException("Data not found");
+				throw new CustomException("Data Not Found");
 			}
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
@@ -299,15 +305,15 @@ public class SmsTemplateService {
 				if (saveAll.size() > 0) {
 					SmsTemplateEntity save = smsTemplateRepo.save(smsTemplateEntity);
 					if (!save.equals(null)) {
-						return new GlobalResponseEntity("SUCCESS", "Tempate set as default", 200);
+						return new GlobalResponseEntity("SUCCESS", "Tempate Set As Default", 200);
 					} else {
-						throw new CustomException("Can't set this template as default");
+						throw new CustomException("Can't Set This Template As Default");
 					}
 				} else {
-					throw new CustomException("Not deactiavte other template");
+					throw new CustomException("Not Deactiavte Other Template");
 				}
 			} else {
-				throw new CustomException("Your requested id is not available");
+				throw new CustomException("Your Requested Id Is Not Available");
 			}
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
@@ -392,7 +398,7 @@ public class SmsTemplateService {
 			if (find.size() > 0) {
 				return find.get(0);
 			} else {
-				throw new CustomException("Data not found");
+				throw new CustomException("SMS Template Not Found");
 			}
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
@@ -422,7 +428,7 @@ public class SmsTemplateService {
 				}
 				return list;
 			} else {
-				throw new CustomException("Data not present");
+				throw new CustomException("Data Not Present");
 			}
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());

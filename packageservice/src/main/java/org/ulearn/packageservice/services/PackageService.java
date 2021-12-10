@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertThrows;
-
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -20,7 +20,9 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -44,6 +46,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriUtils;
 import org.ulearn.packageservice.entity.DataResponseEntity;
 import org.ulearn.packageservice.entity.GlobalResponse;
 import org.ulearn.packageservice.entity.InstituteAddressEntity;
@@ -61,6 +64,7 @@ import org.ulearn.packageservice.repo.PackageRepo;
 import org.ulearn.packageservice.validation.FieldValidation;
 
 import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.mashape.unirest.http.Unirest;
 
 
 @Service
@@ -311,51 +315,95 @@ public class PackageService {
 							packageRepo.save(newPackageEntity);
 //							packageRepo.save(newData);
 //							return new GlobalResponse("Success", "Package Added Succesfully", 200);
+							
 							try {
 								HttpHeaders headers = new HttpHeaders();
 								headers.set("Authorization", token);
 								headers.setContentType(MediaType.APPLICATION_JSON);
 								HttpEntity request = new HttpEntity(headers);
+								//System.out.println(request);
 								ResponseEntity<PackageGlobalTemplate> responseEmailTemp = new RestTemplate().exchange(
 										"http://65.1.66.115:8085/dev/emailTemplate/getPrimaryETByAction/Package_Create",
 										HttpMethod.GET, request, PackageGlobalTemplate.class);
-								System.out.println(responseEmailTemp);
+								//System.out.println(responseEmailTemp);
+								ResponseEntity<PackageGlobalTemplate> responseSMSTemp = new RestTemplate().exchange(
+										"http://65.1.66.115:8085/dev/smsTemplate/getPrimarySTByAction/Package_Create",
+										HttpMethod.GET, request, PackageGlobalTemplate.class);
+								
+								System.out.println(responseSMSTemp);
 								String ETSubject= responseEmailTemp.getBody().getEtSubject();
 								String ETBody=responseEmailTemp.getBody().getEtBody();
+								String STSubject=responseSMSTemp.getBody().getStSubject();
+								String STBody=responseSMSTemp.getBody().getStBody();
 								String ETAdminFname="__$amdFname$__";
+								String ETinstId="__$instId$__";
+								String ETinstName="__$instName$__";
+								String ETinstMnum="__$instMnum$__";
+								String ETpkId="__$pkId$__";
 								String ETPackageFname="__$pkFname$__";
 								String ETPackageCdate="__$pkCdate$__";
 								String ETPackageValidityNo="__$pkValidityNum$__";
 								String ETPackgeValidityType="__$pkValidityType$__";
+//								String STAdminFname="__$amdFname$__";
+//								String STPackageFname="__$pkFname$__";
+//								String STPackageCdate="__$pkCdate$__";
+//								String STPackageValidityNo="__$pkValidityNum$__";
+//								String STPackgeValidityType="__$pkValidityType$__";
 								PackageEntity packageData=packageRepo.getById(newPackageEntity.getPkId());
 								InstituteEntity instituteData=instituteRepo.getById(newPackageEntity.getInstId());
-								String replace = ETBody.replace(ETAdminFname,instituteData.getInstituteAdmin().getAmdFname());
-								String replace1 = replace.replace(ETPackageFname,packageData.getPkFname());
-								String replace2 = replace1.replace(ETPackageCdate,packageData.getPkCdate().toString() );
-								String replace3 = replace2.replace(ETPackageValidityNo,packageData.getPkValidityNum().toString() );
-								String replace4 = replace3.replace(ETPackgeValidityType,packageData.getPkValidityType() );
-								
+								String ETreplace = ETBody.replace(ETAdminFname,instituteData.getInstituteAdmin().getAmdFname());
+								String ETreplace1 = ETreplace.replace(ETinstId,packageData.getInstId().toString());
+								String ETreplace2 = ETreplace1.replace(ETinstName,instituteData.getInstName());
+								String ETreplace3 = ETreplace2.replace(ETinstMnum,instituteData.getInstMnum());
+								String ETreplace4= ETreplace3.replace(ETpkId,packageData.getPkId().toString());
+								String ETreplace5 = ETreplace4.replace(ETPackageFname,packageData.getPkFname());
+								String ETreplace6 = ETreplace5.replace(ETPackageCdate,packageData.getPkCdate().toString() );
+								String ETreplace7 = ETreplace6.replace(ETPackageValidityNo,packageData.getPkValidityNum().toString() );
+								String ETreplace8 = ETreplace7.replace(ETPackgeValidityType,packageData.getPkValidityType() );
+//								String STreplace = STBody.replace(STAdminFname,instituteData.getInstituteAdmin().getAmdFname());
+//								String STreplace1 = STreplace.replace(STPackageFname,packageData.getPkFname());
+//								String STreplace2 = STreplace1.replace(STPackageCdate,packageData.getPkCdate().toString() );
+//								String STreplace3 = STreplace2.replace(STPackageValidityNo,packageData.getPkValidityNum().toString() );
+//								String STreplace4 = STreplace3.replace(STPackgeValidityType,packageData.getPkValidityType() );
 								InstituteEntity instData=instituteRepo.getById(newData.getInstId());
 								String mailId=instData.getInstEmail();
 								JSONObject requestJson = new JSONObject();
 								requestJson.put("senderMailId", mailId);
 								requestJson.put("subject", ETSubject);
-								requestJson.put("body", replace4);
+								requestJson.put("body", ETreplace8);
 								//System.out.println(requestJson);
 								requestJson.put("enableHtml", true);
+								String encode = UriUtils.encode(STBody, "UTF-8");
+								System.out.println(encode);
+								Unirest.setTimeouts(0, 0);
+								HttpResponse<JsonNode> asJson = Unirest.get(
+										"http://msg.jmdinfotek.in/api/mt/SendSMS?channel=Trans&DCS=0&flashsms=0&route=07&senderid=uLearn&user=technosoft_dev&password=Techno@8585&text="
+												+ encode + "&number=8777601693")
+										.asJson();
+
+								org.json.JSONObject object = asJson.getBody().getObject();
+								String ErrorCode = object.getString("ErrorCode");
+
+								if (ErrorCode.equals("006")) {
+									throw new CustomException("Invalid Template Text!");
+								} else if (!ErrorCode.equals("000")) {
+									throw new CustomException("Failed to Sent SMS!");
+								}
+//								org.json.JSONObject object = asJson.body().getObject();
+//								String ErrorCode = object.getString("ErrorCode");
 								//log.info("requestJson "+requestJson.toString());
 								HttpEntity<String> entity = new HttpEntity(requestJson, headers);
 								ResponseEntity<String> response = new RestTemplate()
 										.postForEntity("http://65.1.66.115:8085/dev/login/sendMail/", entity, String.class);
+								
 								//packageRepo.save(newData);
 								return new GlobalResponse("Success", "Package Added Succesfully", 200);
 								
 							}
 							catch(Exception e)
 							{
-								throw new CustomException("Email Service Not Running");
+								throw new CustomException("Email");
 							}
-							
 						}
 						else
 						{
@@ -450,7 +498,7 @@ public class PackageService {
 						updatePackagedata.setPkCdate(dbData.getPkCdate());
 						updatePackagedata.setIsActive(dbData.getIsActive());
 						updatePackagedata.setIsDeleted(dbData.getIsDeleted());
-						updatePackagedata.setPkStatus("Updated");
+						updatePackagedata.setPkStatus("Active");
 						updatePackagedata.setUpdatedOn(new Date());
 						packageRepo.save(updatePackagedata);
 						try {
@@ -461,31 +509,64 @@ public class PackageService {
 							ResponseEntity<PackageGlobalTemplate> responseEmailTemp = new RestTemplate().exchange(
 									"http://65.1.66.115:8085/dev/emailTemplate/getPrimaryETByAction/Package_Update",
 									HttpMethod.GET, request, PackageGlobalTemplate.class);
-							System.out.println(responseEmailTemp);
+							ResponseEntity<PackageGlobalTemplate> responseSMSTemp = new RestTemplate().exchange(
+									"http://65.1.66.115:8085/dev/smsTemplate/getPrimarySTByAction/Package_Create",
+									HttpMethod.GET, request, PackageGlobalTemplate.class);
+							//System.out.println(responseEmailTemp);
 							String ETSubject= responseEmailTemp.getBody().getEtSubject();
 							String ETBody=responseEmailTemp.getBody().getEtBody();
-							
+							String STSubject=responseSMSTemp.getBody().getStSubject();
+							String STBody=responseSMSTemp.getBody().getStBody();
 							String ETAdminFname="__$amdFname$__";
+							String ETinstId="__$instId$__";
+							String ETinstName="__$instName$__";
+							String ETinstMnum="__$instMnum$__";
+							String ETpkId="__$pkId$__";
 							String ETPackageFname="__$pkFname$__";
 							String ETPackageCdate="__$pkCdate$__";
 							String ETPackageValidityNo="__$pkValidityNum$__";
 							String ETPackgeValidityType="__$pkValidityType$__";
-							PackageEntity packageData=packageRepo.getById(pkId);
-							InstituteEntity instituteData=instituteRepo.getById(packageData.getInstId());
-							String replace = ETBody.replace(ETAdminFname,instituteData.getInstituteAdmin().getAmdFname());
-							String replace1 = replace.replace(ETPackageFname,packageData.getPkFname());
-							String replace2 = replace1.replace(ETPackageCdate,packageData.getPkCdate().toString() );
-							String replace3 = replace2.replace(ETPackageValidityNo,packageData.getPkValidityNum().toString() );
-							String replace4 = replace3.replace(ETPackgeValidityType,packageData.getPkValidityType() );
+//							String STAdminFname="__$amdFname$__";
+//							String STPackageFname="__$pkFname$__";
+//							String STPackageCdate="__$pkCdate$__";
+//							String STPackageValidityNo="__$pkValidityNum$__";
+//							String STPackgeValidityType="__$pkValidityType$__";
+							PackageEntity packageData=packageRepo.getById(updatePackagedata.getPkId());
+							InstituteEntity instituteData=instituteRepo.getById(updatePackagedata.getInstId());
+							String ETreplace = ETBody.replace(ETAdminFname,instituteData.getInstituteAdmin().getAmdFname());
+							String ETreplace1 = ETreplace.replace(ETinstId,packageData.getInstId().toString());
+							String ETreplace2 = ETreplace1.replace(ETinstName,instituteData.getInstName());
+							String ETreplace3 = ETreplace2.replace(ETinstMnum,instituteData.getInstMnum());
+							String ETreplace4= ETreplace3.replace(ETpkId,packageData.getPkId().toString());
+							String ETreplace5 = ETreplace4.replace(ETPackageFname,packageData.getPkFname());
+							String ETreplace6 = ETreplace5.replace(ETPackageCdate,packageData.getPkCdate().toString() );
+							String ETreplace7 = ETreplace6.replace(ETPackageValidityNo,packageData.getPkValidityNum().toString() );
+							String ETreplace8 = ETreplace7.replace(ETPackgeValidityType,packageData.getPkValidityType() );
 							InstituteEntity instData=instituteRepo.getById(updatePackagedata.getInstId());
 							String mailId=instData.getInstEmail();
 							JSONObject requestJson = new JSONObject();
 							requestJson.put("senderMailId", mailId);
 							requestJson.put("subject", ETSubject);
-							requestJson.put("body", replace4);
+							requestJson.put("body", ETreplace8);
 							requestJson.put("enableHtml", true);
 							//log.info("requestJson "+requestJson.toString());
 							HttpEntity<String> entity = new HttpEntity(requestJson, headers);
+							String encode = UriUtils.encode(STBody, "UTF-8");
+							System.out.println(encode);
+							Unirest.setTimeouts(0, 0);
+							HttpResponse<JsonNode> asJson = Unirest.get(
+									"http://msg.jmdinfotek.in/api/mt/SendSMS?channel=Trans&DCS=0&flashsms=0&route=07&senderid=uLearn&user=technosoft_dev&password=Techno@8585&text="
+											+ encode + "&number=9735841147")
+									.asJson();
+
+							org.json.JSONObject object = asJson.getBody().getObject();
+							String ErrorCode = object.getString("ErrorCode");
+
+							if (ErrorCode.equals("006")) {
+								throw new CustomException("Invalid Template Text!");
+							} else if (!ErrorCode.equals("000")) {
+								throw new CustomException("Failed to Sent SMS!");
+							}
 							ResponseEntity<String> response = new RestTemplate()
 									.postForEntity("http://65.1.66.115:8085/dev/login/sendMail/", entity, String.class);
 							
@@ -553,29 +634,68 @@ public class PackageService {
 							ResponseEntity<PackageGlobalTemplate> responseEmailTemp = new RestTemplate().exchange(
 									"http://65.1.66.115:8085/dev/emailTemplate/getPrimaryETByAction/Package_Suspend",
 									HttpMethod.GET, request, PackageGlobalTemplate.class);
-							System.out.println(responseEmailTemp);
+							ResponseEntity<PackageGlobalTemplate> responseSMSTemp = new RestTemplate().exchange(
+									"http://65.1.66.115:8085/dev/smsTemplate/getPrimarySTByAction/Package_Create",
+									HttpMethod.GET, request, PackageGlobalTemplate.class);
+							//System.out.println(responseEmailTemp);
 							String ETSubject= responseEmailTemp.getBody().getEtSubject();
 							String ETBody=responseEmailTemp.getBody().getEtBody();
-							
+							String STSubject=responseSMSTemp.getBody().getStSubject();
+							String STBody=responseSMSTemp.getBody().getStBody();
 							String ETAdminFname="__$amdFname$__";
+							String ETinstId="__$instId$__";
+							String ETinstName="__$instName$__";
+							String ETinstMnum="__$instMnum$__";
+							String ETpkId="__$pkId$__";
 							String ETPackageFname="__$pkFname$__";
-							String ETPLAdate="__$plAdate$__";
-							PackageEntity packageData=packageRepo.getById(pkId);
-							//Date data=packageData.getUpdatedOn();
-							InstituteEntity instituteData=instituteRepo.getById(packageData.getInstId());
-							String replace = ETBody.replace(ETAdminFname,instituteData.getInstituteAdmin().getAmdFname());
-							String replace1 = replace.replace(ETPackageFname,packageData.getPkFname());
-							String replace2 = replace1.replace(ETPLAdate,packageData.getUpdatedOn().toString());
+							String ETPackageAdate="__$pkAdate$__";
+							String ETPackageValidityNo="__$pkValidityNum$__";
+							String ETPackgeValidityType="__$pkValidityType$__";
+//							String STAdminFname="__$amdFname$__";
+//							String STPackageFname="__$pkFname$__";
+//							String STPackageCdate="__$pkCdate$__";
+//							String STPackageValidityNo="__$pkValidityNum$__";
+//							String STPackgeValidityType="__$pkValidityType$__";
+							PackageEntity packageData=packageRepo.getById(suspendedPackageData.getPkId());
+							InstituteEntity instituteData=instituteRepo.getById(suspendedPackageData.getInstId());
+							PackageLogEntity packageLogData=packageLogRepo.getById(suspendedPackageData.getPkId());
+							
+							String ETreplace = ETBody.replace(ETAdminFname,instituteData.getInstituteAdmin().getAmdFname());
+							String ETreplace1 = ETreplace.replace(ETinstId,packageData.getInstId().toString());
+							String ETreplace2 = ETreplace1.replace(ETinstName,instituteData.getInstName());
+							String ETreplace3 = ETreplace2.replace(ETinstMnum,instituteData.getInstMnum());
+							String ETreplace4= ETreplace3.replace(ETpkId,packageData.getPkId().toString());
+							String ETreplace5 = ETreplace4.replace(ETPackageFname,packageData.getPkFname());
+							String ETreplace6 = ETreplace5.replace(ETPackageAdate,packageLogEntity.getPlAdate().toString());
+							String ETreplace7 = ETreplace6.replace(ETPackageValidityNo,packageData.getPkValidityNum().toString() );
+							String ETreplace8 = ETreplace7.replace(ETPackgeValidityType,packageData.getPkValidityType() );
+							//InstituteEntity instData=instituteRepo.getById(updatePackagedata.getInstId());
 							InstituteEntity instData=instituteRepo.getById(suspendedPackageData.getInstId());
 							String mailId=instData.getInstEmail();
 							JSONObject requestJson = new JSONObject();
 							requestJson.put("senderMailId", mailId);
 							requestJson.put("subject", ETSubject);
-							requestJson.put("body", replace2);;
+							requestJson.put("body", ETreplace8);;
 							//requestJson.put("body", replace1);
 							requestJson.put("enableHtml", true);
 							//log.info("requestJson "+requestJson.toString());
 							HttpEntity<String> entity = new HttpEntity(requestJson, headers);
+							String encode = UriUtils.encode(STBody, "UTF-8");
+							System.out.println(encode);
+							Unirest.setTimeouts(0, 0);
+							HttpResponse<JsonNode> asJson = Unirest.get(
+									"http://msg.jmdinfotek.in/api/mt/SendSMS?channel=Trans&DCS=0&flashsms=0&route=07&senderid=uLearn&user=technosoft_dev&password=Techno@8585&text="
+											+ encode + "&number=8777601693")
+									.asJson();
+
+							org.json.JSONObject object = asJson.getBody().getObject();
+							String ErrorCode = object.getString("ErrorCode");
+
+							if (ErrorCode.equals("006")) {
+								throw new CustomException("Invalid Template Text!");
+							} else if (!ErrorCode.equals("000")) {
+								throw new CustomException("Failed to Sent SMS!");
+							}
 							ResponseEntity<String> response = new RestTemplate()
 									.postForEntity("http://65.1.66.115:8085/dev/login/sendMail/", entity, String.class);
 							
