@@ -23,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriUtils;
 import org.ulearn.licenseservice.controller.LicenseController;
 import org.ulearn.licenseservice.entity.GlobalResponse;
 import org.ulearn.licenseservice.entity.LicenseEntity;
@@ -141,7 +142,7 @@ public class LicenseService {
 						
 						try {
 							
-							ResponseEntity<LicenseGlobalEntity> responseEmailTemp = new RestTemplate().exchange("http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/License_Create",HttpMethod.GET, request, LicenseGlobalEntity.class);
+							ResponseEntity<LicenseGlobalEntity> responseEmailTemp = new RestTemplate().exchange("http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/Licens_Create",HttpMethod.GET, request, LicenseGlobalEntity.class);
 							 ETSubject = responseEmailTemp.getBody().getEtSubject();
 							 ETBody = responseEmailTemp.getBody().getEtBody();
 
@@ -152,6 +153,7 @@ public class LicenseService {
 							 processedName = ETBody.replace(ETTargetName, ETNameReplacement);
 						}
 						catch(Exception e) {
+							
 							if(!save.equals(null)) {
 								throw new CustomException("License have added but there is a problem in emailTemplate view.please check.");
 							}
@@ -174,6 +176,8 @@ public class LicenseService {
 							ResponseEntity<String> response = new RestTemplate().postForEntity("http://65.1.66.115:8086/dev/login/sendMail/", entity, String.class);
 						}
 						catch(Exception e) {
+							
+							
 							if(!save.equals(null)) {
 								throw new CustomException("License have added but there is a problem in sendMail.please check.");
 							}
@@ -182,6 +186,68 @@ public class LicenseService {
 							}
 							
 						}
+						
+						//****----------   CODE ADDED BY SOUMEN   -------****//
+						String processedSMSBodyContent="";
+						String number="";
+						try {
+							ResponseEntity<LicenseGlobalEntity> responseSmsTemp = new RestTemplate().exchange(
+									"http://65.1.66.115:8091/dev/smsTemplate/getPrimarySTByAction/License_Create",
+									HttpMethod.GET, request, LicenseGlobalEntity.class);
+
+							
+							
+//							String STSubject = responseSmsTemp.getBody().getStSubject();
+							String STBody = responseSmsTemp.getBody().getStBody();
+							ETTargetName = "__$name$__";
+							
+							ETNameReplacement = amdFname +" "+ amdLname;
+
+							processedSMSBodyContent = STBody.replace(ETTargetName, ETNameReplacement);
+							Unirest.setTimeouts(0, 0);
+							 HttpResponse<JsonNode> asJson = Unirest.get("http://65.1.66.115:8087/dev/institute/view/"+ save.getInstId())
+							  .header("Authorization", token)
+							  .asJson();
+							 
+							 
+							 org.json.JSONObject object = asJson.getBody().getObject();
+							 number = object.getString("instMnum");
+							 LOGGER.info("asJson   "+number);
+							
+							
+						
+							number = number.substring(3);	
+							
+							
+
+
+						} catch (Exception e) {
+//							throw new CustomException("SMS Service Is Not Running!");
+							throw new CustomException(e.getMessage());
+						}
+						try {
+							
+							String encode = UriUtils.encodePath(processedSMSBodyContent, "UTF-8");
+							Unirest.setTimeouts(0, 0);
+							HttpResponse<JsonNode> asJson = Unirest.get(
+									"http://msg.jmdinfotek.in/api/mt/SendSMS?channel=Trans&DCS=0&flashsms=0&route=07&senderid=uLearn&user=technosoft_dev&password=Techno@8585&text="
+											+ encode + "&number="+ number)
+									.asJson();
+
+							org.json.JSONObject object = asJson.getBody().getObject();
+							String ErrorCode = object.getString("ErrorCode");
+
+							if (ErrorCode.equals("006")) {
+								throw new CustomException("Invalid Template Text!");
+							} else if (!ErrorCode.equals("000")) {
+								throw new CustomException("Failed to Sent SMS!");
+							}
+						} catch (Exception e) {
+							throw new CustomException(e.getMessage());
+//							throw new CustomException("Something Went To Wrong From SMS Gateway");
+						}
+						
+						//**** CLOSED ****//
 						
 
 						if (!save.equals(null)) {
@@ -352,6 +418,69 @@ public class LicenseService {
 								}
 								
 							}
+							
+							
+							//****----------   CODE ADDED BY SOUMEN   -------****//
+							String processedSMSBodyContent="";
+							String number="";
+							try {
+								ResponseEntity<LicenseGlobalEntity> responseSmsTemp = new RestTemplate().exchange(
+										"http://65.1.66.115:8091/dev/smsTemplate/getPrimarySTByAction/License_Create",
+										HttpMethod.GET, request, LicenseGlobalEntity.class);
+
+								
+								
+//								String STSubject = responseSmsTemp.getBody().getStSubject();
+								String STBody = responseSmsTemp.getBody().getStBody();
+								ETTargetName = "__$name$__";
+								
+								ETNameReplacement = amdFname +" "+ amdLname;
+
+								processedSMSBodyContent = STBody.replace(ETTargetName, ETNameReplacement);
+								Unirest.setTimeouts(0, 0);
+								 HttpResponse<JsonNode> asJson = Unirest.get("http://65.1.66.115:8087/dev/institute/view/"+ save.getInstId())
+								  .header("Authorization", token)
+								  .asJson();
+								 
+								 
+								 org.json.JSONObject object = asJson.getBody().getObject();
+								 number = object.getString("instMnum");
+								 LOGGER.info("asJson   "+number);
+								
+								
+							
+								number = number.substring(3);	
+								
+								
+
+
+							} catch (Exception e) {
+//								throw new CustomException("SMS Service Is Not Running!");
+								throw new CustomException(e.getMessage());
+							}
+							try {
+								
+								String encode = UriUtils.encodePath(processedSMSBodyContent, "UTF-8");
+								Unirest.setTimeouts(0, 0);
+								HttpResponse<JsonNode> asJson = Unirest.get(
+										"http://msg.jmdinfotek.in/api/mt/SendSMS?channel=Trans&DCS=0&flashsms=0&route=07&senderid=uLearn&user=technosoft_dev&password=Techno@8585&text="
+												+ encode + "&number="+ number)
+										.asJson();
+
+								org.json.JSONObject object = asJson.getBody().getObject();
+								String ErrorCode = object.getString("ErrorCode");
+
+								if (ErrorCode.equals("006")) {
+									throw new CustomException("Invalid Template Text!");
+								} else if (!ErrorCode.equals("000")) {
+									throw new CustomException("Failed to Sent SMS!");
+								}
+							} catch (Exception e) {
+								throw new CustomException(e.getMessage());
+//								throw new CustomException("Something Went To Wrong From SMS Gateway");
+							}
+							
+							//**** CLOSED ****//
 							
 							
 							
@@ -600,6 +729,69 @@ public class LicenseService {
 						}
 						
 //						End send mail
+						
+						//****----------   CODE ADDED BY SOUMEN   -------****//
+						String processedSMSBodyContent="";
+						String number="";
+						try {
+							ResponseEntity<LicenseGlobalEntity> responseSmsTemp = new RestTemplate().exchange(
+									"http://65.1.66.115:8091/dev/smsTemplate/getPrimarySTByAction/License_Create",
+									HttpMethod.GET, request, LicenseGlobalEntity.class);
+
+							
+							
+//							String STSubject = responseSmsTemp.getBody().getStSubject();
+							String STBody = responseSmsTemp.getBody().getStBody();
+							ETTargetName = "__$name$__";
+							
+							ETNameReplacement = amdFname +" "+ amdLname;
+
+							processedSMSBodyContent = STBody.replace(ETTargetName, ETNameReplacement);
+							Unirest.setTimeouts(0, 0);
+							 HttpResponse<JsonNode> asJson = Unirest.get("http://65.1.66.115:8087/dev/institute/view/"+ findById.getInstId())
+							  .header("Authorization", token)
+							  .asJson();
+							 
+							 
+							 org.json.JSONObject object = asJson.getBody().getObject();
+							 number = object.getString("instMnum");
+							 LOGGER.info("asJson   "+number);
+							
+							
+						
+							number = number.substring(3);	
+							
+							
+
+
+						} catch (Exception e) {
+//							throw new CustomException("SMS Service Is Not Running!");
+							throw new CustomException(e.getMessage());
+						}
+						try {
+							
+							String encode = UriUtils.encodePath(processedSMSBodyContent, "UTF-8");
+							Unirest.setTimeouts(0, 0);
+							HttpResponse<JsonNode> asJson = Unirest.get(
+									"http://msg.jmdinfotek.in/api/mt/SendSMS?channel=Trans&DCS=0&flashsms=0&route=07&senderid=uLearn&user=technosoft_dev&password=Techno@8585&text="
+											+ encode + "&number="+ number)
+									.asJson();
+
+							org.json.JSONObject object = asJson.getBody().getObject();
+							String ErrorCode = object.getString("ErrorCode");
+
+							if (ErrorCode.equals("006")) {
+								throw new CustomException("Invalid Template Text!");
+							} else if (!ErrorCode.equals("000")) {
+								throw new CustomException("Failed to Sent SMS!");
+							}
+						} catch (Exception e) {
+							throw new CustomException(e.getMessage());
+//							throw new CustomException("Something Went To Wrong From SMS Gateway");
+						}
+						
+						//**** CLOSED ****//
+						
 					
 					if (!save.equals(null)) {
 						return new GlobalResponse("SUCCESS","This license will be suspend for the selected date.",200);
