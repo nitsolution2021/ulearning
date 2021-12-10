@@ -286,7 +286,8 @@ public class InstituteService {
 						String processedInstEmail = processedInstName.replace(STTargetEmailname, STInstNameReplacement);
 						String processedInstMobile = processedInstEmail.replace(STTargetInstMobile, STInstMobileReplacement);
 						String processedInstPan = processedInstMobile.replace(STTargetInstPan, STInstPanReplacement);
-						String processedUsername = processedInstPan.replace(STTargetInstGST, STInstGSTReplacement);				
+						String processedInstGST = processedInstPan.replace(STTargetInstGST, STInstGSTReplacement);
+						String processedUsername = processedInstGST.replace(STTargetUsername, STUsernameReplacement);	
 						processedSMSBodyContent = processedUsername.replace(STTargetPassword, STPasswordReplacement);
 						 
 						
