@@ -296,7 +296,10 @@ public class EmailTemplateController {
 		LOGGER.info("Inside - EmailTemplateController.emailTemplateGetAllPagination()");
 		try {
 			Pageable pagingSort = null;
-
+			int CountData=(int) emailTemplateRepo.count();							
+			if(limit==0) {
+				limit=CountData;
+			}
 			if (sort.equals("ASC")) {
 				pagingSort = PageRequest.of(page, limit, Sort.Direction.ASC, sortBy.orElse(sortName));
 			} else {
@@ -383,6 +386,39 @@ public class EmailTemplateController {
 			throw new CustomException(e.getMessage());
 		}
 		
+	}
+	
+	@GetMapping("/getTags/{action}")
+	public List<Map<String, String>> getTags(@PathVariable String action) {
+		LOGGER.info("Inside - EmailTemplateController.getTags()");
+		try {
+			Optional<EmailTemplateEntity> findTagByActionAndType = emailTemplateRepo.findTagByActionAndType(action,
+					"DEFAULT");
+			if (findTagByActionAndType.isPresent()) {
+				EmailTemplateEntity emailTemplateEntity = findTagByActionAndType.get();
+				String etTags = emailTemplateEntity.getEtTags();
+				String[] split = etTags.split(",");
+
+				String etTagsName = emailTemplateEntity.getEtTagsName();
+				String[] split2 = etTagsName.split(",");
+
+				List<Map<String, String>> list = new ArrayList<>();
+
+				for (int i = 0; i < split.length; i++) {
+
+					Map<String, String> map = new HashMap<String, String>();
+					map.put("value", split[i]);
+					map.put("name", split2[i]);
+					list.add(map);
+				}
+				return list;
+			}
+			else {
+				throw new CustomException("Data not present");
+			}
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
 	}
 	
 

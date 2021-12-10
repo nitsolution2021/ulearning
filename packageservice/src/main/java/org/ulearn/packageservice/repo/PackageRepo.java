@@ -18,8 +18,8 @@ public interface PackageRepo extends JpaRepository<PackageEntity, Long>{
 	List<PackageEntity> findAlldata();
 	@Query(value = "SELECT packObj FROM PackageEntity packObj WHERE packObj.isDeleted = 0")
 	List<PackageEntity> findByListInst();
-	@Query("SELECT packObj FROM PackageEntity packObj WHERE packObj.isDeleted = ?1 AND CONCAT(instituteEntity.instName,packObj.pkName,packObj.pkFname,packObj.pkValidityNum,packObj.parentId) LIKE %?1%")
-	Page<PackageEntity> Search(String string, Pageable pageSort,int isDeleted);
+	@Query("SELECT packObj FROM PackageEntity packObj WHERE CONCAT(instituteEntity.instName,packObj.pkCdate,packObj.pkFname,packObj.pkNusers,packObj.pkStatus,packObj.pkValidityType) LIKE %?1% AND packObj.isDeleted = ?2")
+	Page<PackageEntity> Search(String string, int isDeleted,Pageable pageSort);
 	@Query(value = "SELECT packObj FROM PackageEntity packObj WHERE packObj.isDeleted = ?1")
 	Page<PackageEntity> findByListpackage(Pageable pageSort,int isDeleted);
 	@Query(value="select * from tbl_inst_package where IS_ACTIVE=2",nativeQuery = true)

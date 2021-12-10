@@ -69,44 +69,9 @@ public class InstituteEntity {
 	@JoinColumn(name = "INST_ID", referencedColumnName = "INST_ID")
 	private List<InstituteAdminEntity> instituteAdmin = new ArrayList<>();
 	
-	@OneToOne
-	@JoinColumn(name = "INST_ID")
-	private LicenseEntity instituteLicense;
-
-	public LicenseEntity getInstituteLicense() {
-		return instituteLicense;
-	}
-
-	public void setInstituteLicense(LicenseEntity instituteLicense) {
-		this.instituteLicense = instituteLicense;
-	}
-
-	public InstituteEntity(Long instId, String instName, Date instEndDate, String instWebsite, String instEmail,
-			String instCnum, String instMnum, Date isntRegDate, String instLogo, String instPanNum, String instGstNum,
-			String instStatus, int isActive, int isDeleted, Date createdOn, Date updatedOn,
-			List<InstituteAddressEntity> instituteAddress, List<InstituteAdminEntity> instituteAdmin,
-			LicenseEntity instituteLicense) {
-		super();
-		this.instId = instId;
-		this.instName = instName;
-		this.instEndDate = instEndDate;
-		this.instWebsite = instWebsite;
-		this.instEmail = instEmail;
-		this.instCnum = instCnum;
-		this.instMnum = instMnum;
-		this.isntRegDate = isntRegDate;
-		this.instLogo = instLogo;
-		this.instPanNum = instPanNum;
-		this.instGstNum = instGstNum;
-		this.instStatus = instStatus;
-		this.isActive = isActive;
-		this.isDeleted = isDeleted;
-		this.createdOn = createdOn;
-		this.updatedOn = updatedOn;
-		this.instituteAddress = instituteAddress;
-		this.instituteAdmin = instituteAdmin;
-		this.instituteLicense = instituteLicense;
-	}
+	@OneToMany
+	@JoinColumn(name = "INST_ID",referencedColumnName = "INST_ID")
+	private List<LicenseEntity> instituteLicense = new ArrayList<>();
 
 	public InstituteEntity() {
 		super();
@@ -116,7 +81,8 @@ public class InstituteEntity {
 	public InstituteEntity(Long instId, String instName, Date instEndDate, String instWebsite, String instEmail,
 			String instCnum, String instMnum, Date isntRegDate, String instLogo, String instPanNum, String instGstNum,
 			String instStatus, int isActive, int isDeleted, Date createdOn, Date updatedOn,
-			List<InstituteAddressEntity> instituteAddress, List<InstituteAdminEntity> instituteAdmin) {
+			List<InstituteAddressEntity> instituteAddress, List<InstituteAdminEntity> instituteAdmin,
+			List<LicenseEntity> instituteLicense) {
 		super();
 		this.instId = instId;
 		this.instName = instName;
@@ -136,6 +102,7 @@ public class InstituteEntity {
 		this.updatedOn = updatedOn;
 		this.instituteAddress = instituteAddress;
 		this.instituteAdmin = instituteAdmin;
+		this.instituteLicense = instituteLicense;
 	}
 
 	@Override
@@ -292,8 +259,15 @@ public class InstituteEntity {
 	public void setInstituteAdmin(List<InstituteAdminEntity> instituteAdmin) {
 		this.instituteAdmin = instituteAdmin;
 	}
+
+	public List<LicenseEntity> getInstituteLicense() {
+		return instituteLicense;
+	}
+
+	public void setInstituteLicense(List<LicenseEntity> instituteLicense) {
+		this.instituteLicense = instituteLicense;
+	}
+
 	
-	
-	
-	
+		
 }

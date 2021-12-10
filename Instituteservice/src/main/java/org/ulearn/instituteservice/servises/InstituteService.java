@@ -1,5 +1,7 @@
 package org.ulearn.instituteservice.servises;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -11,6 +13,7 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.hibernate.query.criteria.internal.expression.function.AggregationFunction.COUNT;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +30,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriUtils;
 import org.ulearn.instituteservice.controller.InstuteController;
 import org.ulearn.instituteservice.entity.GlobalResponse;
 import org.ulearn.instituteservice.entity.InstituteAddressEntity;
@@ -38,6 +42,10 @@ import org.ulearn.instituteservice.repository.InstituteAddressRepo;
 import org.ulearn.instituteservice.repository.InstituteAdminRepo;
 import org.ulearn.instituteservice.repository.InstituteRepo;
 import org.ulearn.instituteservice.validation.FieldValidation;
+
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
 
 @Service
 public class InstituteService {
@@ -56,7 +64,7 @@ public class InstituteService {
 	@Autowired
 	private InstituteAdminRepo instituteAdminRepo;
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(InstuteController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(InstituteService.class);
 
 	public Map<String, Object> getInstuteList(Optional<Integer> page, Optional<String> sortBy, int isDeleted) {
 
@@ -92,22 +100,25 @@ public class InstituteService {
 			int isDeleted, Optional<String> keyword, Optional<String> sortBy) {
 
 		try {
-
+			int CountData = (int) instituteRepo.count();
 			Pageable pagingSort = null;
+			if (limit == 0) {
+				limit = CountData;
+			}
 
 			if (sort.equals("ASC")) {
 				pagingSort = PageRequest.of(page, limit, Sort.Direction.ASC, sortBy.orElse(sortName));
 			} else {
 				pagingSort = PageRequest.of(page, limit, Sort.Direction.DESC, sortBy.orElse(sortName));
 			}
-			
+
 			Page<InstituteEntity> findAll = null;
-			
+
 			if (keyword.get().isEmpty()) {
 				findAll = instituteRepo.findByAllInst(isDeleted, pagingSort);
 
 			} else {
-				findAll = instituteRepo.Search(keyword.get(), isDeleted,pagingSort);
+				findAll = instituteRepo.Search(keyword.get(), isDeleted, pagingSort);
 
 			}
 
@@ -148,52 +159,29 @@ public class InstituteService {
 
 					JSONObject requestJson = null;
 					JSONObject requestJsons = null;
+					String processedSMSBodyContent = null;
+					String number = null;
 					HttpHeaders headers = new HttpHeaders();
-					HttpHeaders headersForSms = new HttpHeaders();
+
+					headers.set("Authorization", token);
+					headers.setContentType(MediaType.APPLICATION_JSON);
+
+					HttpEntity request = new HttpEntity(headers);
+
+					String Password = null;
+					int length = 10;
+					boolean useLetters = true;
+					boolean useNumbers = false;
+					Password = RandomStringUtils.random(length, useLetters, useNumbers);
+					String HashPassword = passwordEncoder.encode(Password);
 
 					try {
-						headers.set("Authorization", token);
-						headers.setContentType(MediaType.APPLICATION_JSON);
-
-						HttpEntity request = new HttpEntity(headers);
-
-						// ResponseEntity<String> person
-						// =RestTemplate.postForEntity("http://sms.techno-soft.co.in/api/mt/SendSMS?user=technosoft_dev&password=Techno@8585&senderid=uLearn&channel=Promo&DCS=0&flashsms=0&number=917699983717&text=test
-						// message&route=##&peid=##",HttpMethod.POST, headers,String.class);
-
-//						Start fast2sms
-//						headersForSms.set("Authorization", "gRdDP5EMSnQtkmuse41hjpIOo6Bb0XcN2rxKlZ8FJwGLY3zC9ANeazHgiPS7pZVjdUX0fb2rGTWskQIu");
-//						End Start fast2sms
-
-//						HttpEntity requestForSms = new HttpEntity<>(headersForSms);
-
-//						Start fast2sms
-//						requestJsons = new JSONObject();
-//						requestJsons.put("route", "q");
-//						requestJsons.put("message", "Testing Ahadul");
-//						requestJsons.put("language", "english");
-//						requestJsons.put("flash", 0);
-//						requestJsons.put("numbers", "7699983717");
-//						HttpEntity requestForSms = new HttpEntity<>(requestJsons,headersForSms);
-//						End Start fast2sms
-
-//						RestTemplate Template=new RestTemplate();
-//						String postForObject = Template.postForObject("http://sms.techno-soft.co.in/api/mt/SendSMS?user=technosoft_dev&password=Techno@8585&senderid=uLearn&channel=Promo&DCS=0&flashsms=0&number=917699983717&text=test message&route=##&peid=##", requestForSms, String.class);
-//						String postForObject = Template.postForObject("https://www.fast2sms.com/dev/bulkV2", requestForSms, String.class);
-
 						ResponseEntity<InstituteGlobalEntity> responseEmailTemp = new RestTemplate().exchange(
 								"http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/Institute_Credentials",
 								HttpMethod.GET, request, InstituteGlobalEntity.class);
 
 						String ETSubject = responseEmailTemp.getBody().getEtSubject();
 						String ETBody = responseEmailTemp.getBody().getEtBody();
-
-						String Password = null;
-						int length = 10;
-						boolean useLetters = true;
-						boolean useNumbers = false;
-						Password = RandomStringUtils.random(length, useLetters, useNumbers);
-						String HashPassword = passwordEncoder.encode(Password);
 
 						InstituteAdminEntity getById = instituteAdminRepo.getById(findByIdAndEmail.get(0).getInstId());
 						if (getById.getInstId() != null) {
@@ -233,8 +221,59 @@ public class InstituteService {
 						ResponseEntity<String> response = new RestTemplate()
 								.postForEntity("http://65.1.66.115:8086/dev/login/sendMail/", entity, String.class);
 					} catch (Exception e) {
-						throw new CustomException("Login Service Is Not Running");
+						throw new CustomException("Login Service Is Not Running!");
 					}
+
+					try {
+						ResponseEntity<InstituteGlobalEntity> responseSmsTemp = new RestTemplate().exchange(
+								"http://65.1.66.115:8091/dev/smsTemplate/getPrimarySTByAction/Institute_Credentials",
+								HttpMethod.GET, request, InstituteGlobalEntity.class);
+
+						String STSubject = responseSmsTemp.getBody().getStSubject();
+						String STBody = responseSmsTemp.getBody().getStBody();
+
+						String STTargetName = "__$name$__";
+						String STTargetUsername = "__$username$__";
+						String STTargetPassword = "__$password$__";
+
+						String STNameReplacement = findByIdAndEmail.get(0).getInstituteAdmin().get(0).getAmdFname()
+								+ " " + findByIdAndEmail.get(0).getInstituteAdmin().get(0).getAmdLname();
+						String STUsernameReplacement = findByIdAndEmail.get(0).getInstituteAdmin().get(0)
+								.getAmdUsername();
+						String STPasswordReplacement = Password;
+
+						String processedName = STBody.replace(STTargetName, STNameReplacement);
+						String processedUsername = processedName.replace(STTargetUsername, STUsernameReplacement);
+						processedSMSBodyContent = processedUsername.replace(STTargetPassword, STPasswordReplacement);
+						number = findByIdAndEmail.get(0).getInstMnum();
+						number = number.substring(3);						
+
+
+					} catch (Exception e) {
+						throw new CustomException("SMS Service Is Not Running!");
+					}
+					try {
+						
+						String encode = UriUtils.encodePath(processedSMSBodyContent, "UTF-8");
+						Unirest.setTimeouts(0, 0);
+						HttpResponse<JsonNode> asJson = Unirest.get(
+								"http://msg.jmdinfotek.in/api/mt/SendSMS?channel=Trans&DCS=0&flashsms=0&route=07&senderid=uLearn&user=technosoft_dev&password=Techno@8585&text="
+										+ encode + "&number="+number)
+								.asJson();
+
+						org.json.JSONObject object = asJson.getBody().getObject();
+						String ErrorCode = object.getString("ErrorCode");
+
+						if (ErrorCode.equals("006")) {
+							throw new CustomException("Invalid Template Text!");
+						} else if (!ErrorCode.equals("000")) {
+							throw new CustomException("Failed to Sent SMS!");
+						}
+					} catch (Exception e) {
+						throw new CustomException(e.getMessage());
+//						throw new CustomException("Something Went To Wrong From SMS Gateway");
+					}
+
 				}
 			}
 			return new GlobalResponse("SUCCESS", 200, "You Have Successfully Sent A Credentials");
@@ -247,9 +286,9 @@ public class InstituteService {
 	public List<InstituteEntity> getListInstuteService() {
 
 		try {
-			List<InstituteEntity> findAll = instituteRepo.findByListInst().stream() 
-					.filter(Inst -> Inst.getIsDeleted() == 0).filter(Inst -> Inst.getIsActive() == 1)
-					.filter(instituteLicense -> instituteLicense.getInstituteLicense() == null)					
+			List<InstituteEntity> findAll = instituteRepo.findByListInst().stream()
+//					.filter(Inst -> Inst.getIsDeleted() == 0).filter(Inst -> Inst.getIsActive() == 1)
+//					.filter(instituteLicense -> instituteLicense.getInstituteLicense() == null)					
 					.collect(Collectors.toList());
 			if (findAll.size() <= 1) {
 				throw new CustomException("Institute Not Found!");

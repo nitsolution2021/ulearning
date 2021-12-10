@@ -27,6 +27,7 @@ public class EmailTemplateEntity {
 	@Column(name = "IS_PRIMARY") private int isPrimary;
 	@Column(name = "ET_ORDER") private Long etOrder;
 	@Column(name = "ET_TAGS") private String etTags;
+	@Column(name = "ET_TAGS_NAME") private String etTagsName;
 	@Column(name = "CREATED_ON") private Date createdOn;
 	@Column(name = "UPDATED_ON") private Date updatedOn;
 	public EmailTemplateEntity() {
@@ -34,8 +35,8 @@ public class EmailTemplateEntity {
 		// TODO Auto-generated constructor stub
 	}
 	public EmailTemplateEntity(Long etId, String etName, String etSubject, String etBody, String etType,
-			String etAction, int isActive, int isDeleted, int isPrimary, Long etOrder, String etTags, Date createdOn,
-			Date updatedOn) {
+			String etAction, int isActive, int isDeleted, int isPrimary, Long etOrder, String etTags, String etTagsName,
+			Date createdOn, Date updatedOn) {
 		super();
 		this.etId = etId;
 		this.etName = etName;
@@ -48,8 +49,16 @@ public class EmailTemplateEntity {
 		this.isPrimary = isPrimary;
 		this.etOrder = etOrder;
 		this.etTags = etTags;
+		this.etTagsName = etTagsName;
 		this.createdOn = createdOn;
 		this.updatedOn = updatedOn;
+	}
+	@Override
+	public String toString() {
+		return "EmailTemplateEntity [etId=" + etId + ", etName=" + etName + ", etSubject=" + etSubject + ", etBody="
+				+ etBody + ", etType=" + etType + ", etAction=" + etAction + ", isActive=" + isActive + ", isDeleted="
+				+ isDeleted + ", isPrimary=" + isPrimary + ", etOrder=" + etOrder + ", etTags=" + etTags
+				+ ", etTagsName=" + etTagsName + ", createdOn=" + createdOn + ", updatedOn=" + updatedOn + "]";
 	}
 	public Long getEtId() {
 		return etId;
@@ -117,6 +126,12 @@ public class EmailTemplateEntity {
 	public void setEtTags(String etTags) {
 		this.etTags = etTags;
 	}
+	public String getEtTagsName() {
+		return etTagsName;
+	}
+	public void setEtTagsName(String etTagsName) {
+		this.etTagsName = etTagsName;
+	}
 	public Date getCreatedOn() {
 		return createdOn;
 	}
@@ -129,16 +144,6 @@ public class EmailTemplateEntity {
 	public void setUpdatedOn(Date updatedOn) {
 		this.updatedOn = updatedOn;
 	}
-	@Override
-	public String toString() {
-		return "EmailTemplateEntity [etId=" + etId + ", etName=" + etName + ", etSubject=" + etSubject + ", etBody="
-				+ etBody + ", etType=" + etType + ", etAction=" + etAction + ", isActive=" + isActive + ", isDeleted="
-				+ isDeleted + ", isPrimary=" + isPrimary + ", etOrder=" + etOrder + ", etTags=" + etTags
-				+ ", createdOn=" + createdOn + ", updatedOn=" + updatedOn + "]";
-	}
 	
 	
-	
-	
-
 }

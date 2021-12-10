@@ -44,23 +44,23 @@ public class SmsTemplateController {
 		}
 	}
 	
-	@GetMapping("/list")
-	public Map<String, Object> getSmsTemplate(@RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy) {
+	@GetMapping("/list/{delete}")
+	public Map<String, Object> getSmsTemplate(@PathVariable int delete, @RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy) {
 		LOGGER.info("Inside - SmsTemplateController.getSmsTemplate()");
 		try {
-			return smsTemplateService.getSmsTemplate(page, sortBy);
+			return smsTemplateService.getSmsTemplate(delete, page, sortBy);
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
 		}
 	}
 	
-	@GetMapping(value = "/list/{page}/{limit}/{sortName}/{sort}")
-	public Map<String, Object> getSmsTemplatePagination(@PathVariable("page") int page, @PathVariable("limit") int limit,
+	@GetMapping(value = "/list/{page}/{limit}/{sortName}/{sort}/{delete}")
+	public Map<String, Object> getSmsTemplatePagination(@PathVariable("delete") int isDelete, @PathVariable("page") int page, @PathVariable("limit") int limit,
 			@PathVariable("sort") String sort, @PathVariable("sortName") String sortName,
 			@RequestParam(defaultValue = "") Optional<String> keyword, @RequestParam Optional<String> sortBy) {
 		LOGGER.info("Inside - SmsTemplateController.getSmsTemplatePagination()");
 		try {
-			return smsTemplateService.getSmsTemplatePagination(page, limit, sort, sortName, keyword, sortBy);
+			return smsTemplateService.getSmsTemplatePagination(page, limit, sort, sortName, keyword, sortBy, isDelete);
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
 		}
@@ -111,6 +111,26 @@ public class SmsTemplateController {
 		LOGGER.info("Inside - SmsTemplateController.setDefaultSmsTemplate()");
 		try {
 			return smsTemplateService.setDefaultSmsTemplate(stId, stAction);
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+	}
+	
+	@GetMapping("/getPrimarySTByAction/{action}")
+	public SmsTemplateEntity getPrimaryETByAction(@PathVariable String action) {
+		LOGGER.info("Inside - SmsTemplateController.getPrimaryETByAction()");
+		try {
+			return smsTemplateService.getPrimaryETByAction(action);
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+	}
+	
+	@GetMapping("/getTags/{action}")
+	public List<Map<String, String>> getTags(@PathVariable String action) {
+		LOGGER.info("Inside - SmsTemplateController.getTags()");
+		try {
+			return smsTemplateService.getTags(action);
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
 		}
