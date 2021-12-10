@@ -185,10 +185,12 @@ public class SmsTemplateService {
 
 		if (!fieldValidation.isEmpty(globalEntity.getStName())) {
 			throw new CustomException("Template Name required");
-		} else if (!fieldValidation.isEmpty(globalEntity.getStSubject())) {
-			// SMS template Subject represent SMS Header
-			throw new CustomException("SMS template header required");
-		} else if (!fieldValidation.isEmpty(globalEntity.getStBody())) {
+		} 
+//		else if (!fieldValidation.isEmpty(globalEntity.getStSubject())) {
+//			// SMS template Subject represent SMS Header
+//			throw new CustomException("SMS template header required");
+//		} 
+		else if (!fieldValidation.isEmpty(globalEntity.getStBody())) {
 			// SMS template Body represent SMS Content
 			throw new CustomException("SMS template content required");
 		} else if (!fieldValidation.isEmpty(globalEntity.getStAction())) {
