@@ -392,7 +392,7 @@ public class SmsTemplateService {
 			if (find.size() > 0) {
 				return find.get(0);
 			} else {
-				throw new CustomException("SMS Template Note Found");
+				throw new CustomException("SMS Template Not Found");
 			}
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
