@@ -38,6 +38,7 @@ import org.ulearn.instituteservice.entity.InstituteAdminEntity;
 import org.ulearn.instituteservice.entity.InstituteEntity;
 import org.ulearn.instituteservice.entity.InstituteGlobalEntity;
 import org.ulearn.instituteservice.exception.CustomException;
+import org.ulearn.instituteservice.helper.CustomFunction;
 import org.ulearn.instituteservice.repository.InstituteAddressRepo;
 import org.ulearn.instituteservice.repository.InstituteAdminRepo;
 import org.ulearn.instituteservice.repository.InstituteRepo;
@@ -63,6 +64,9 @@ public class InstituteService {
 
 	@Autowired
 	private InstituteAdminRepo instituteAdminRepo;
+	
+	@Autowired
+	private CustomFunction customFunction;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(InstituteService.class);
 
@@ -149,6 +153,7 @@ public class InstituteService {
 	public GlobalResponse SendInstituteCredentials(InstituteEntity instituteEntrity, String token) {
 
 		try {
+			
 
 			if ((fieldValidation.isEmpty(instituteEntrity.getInstId()))
 					& (fieldValidation.isEmail(instituteEntrity.getInstEmail()))) {
@@ -167,7 +172,6 @@ public class InstituteService {
 
 					headers.set("Authorization", token);
 					headers.setContentType(MediaType.APPLICATION_JSON);
-
 					HttpEntity request = new HttpEntity(headers);
 
 					String Password = null;
@@ -177,11 +181,8 @@ public class InstituteService {
 					Password = RandomStringUtils.random(length, useLetters, useNumbers);
 					String HashPassword = passwordEncoder.encode(Password);
 
-					try {
-						ResponseEntity<InstituteGlobalEntity> responseEmailTemp = new RestTemplate().exchange(
-								"http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/Institute_Credentials",
-								HttpMethod.GET, request, InstituteGlobalEntity.class);
-
+					try {											
+						ResponseEntity<InstituteGlobalEntity> responseEmailTemp=this.customFunction.GetEmailDetails(token,"Institute_Credentials");
 						String ETSubject = responseEmailTemp.getBody().getEtSubject();
 						String ETBody = responseEmailTemp.getBody().getEtBody();						
 						
@@ -243,22 +244,25 @@ public class InstituteService {
 					}
 					try {
 						HttpEntity<String> entity = new HttpEntity(requestJson, headers);
-						ResponseEntity<String> response = new RestTemplate()
-								.postForEntity("http://65.1.66.115:8086/dev/login/sendMail/", entity, String.class);
+						this.customFunction.SentEmail(entity);
 					} catch (Exception e) {
-						throw new CustomException("Login Service Is Not Running!");
+						
+						org.json.JSONObject jsonObject = new org.json.JSONObject(e.getMessage().substring(7));																		
+						if(!jsonObject.getString("messagee").equals("")) {										
+							throw new CustomException("Failed To Send Email Because "+jsonObject.getString("messagee"));
+						}
+						throw new CustomException("Sendmail Service Is Not Running!");
 					}
 
 					try {
-						ResponseEntity<InstituteGlobalEntity> responseSmsTemp = new RestTemplate().exchange(
-								"http://65.1.66.115:8091/dev/smsTemplate/getPrimarySTByAction/Institute_Credentials",
-								HttpMethod.GET, request, InstituteGlobalEntity.class);
 
+						ResponseEntity<InstituteGlobalEntity> responseSmsTemp=this.customFunction.GetSMSDetails(token,"Institute_Credentials");
+						
 						String STSubject = responseSmsTemp.getBody().getStSubject();
 						String STBody = responseSmsTemp.getBody().getStBody();
 						 ETStTempId = responseSmsTemp.getBody().getStTempId();
-		
-						
+						 
+						 
 						String STTargetAdmName = "__$AdmName$__";
 						String STTargetInstName = "__$InstName$__";
 						String STTargetEmailname = "__$InstEmail$__";
@@ -290,7 +294,7 @@ public class InstituteService {
 						String processedUsername = processedInstGST.replace(STTargetUsername, STUsernameReplacement);	
 						processedSMSBodyContent = processedUsername.replace(STTargetPassword, STPasswordReplacement);
 						 
-						
+//						LOGGER.info("Inside - InstituteController.getInstutePagination(////)"+processedSMSBodyContent);
 						number = findByIdAndEmail.get(0).getInstMnum();
 						number = number.substring(3);
 
@@ -302,24 +306,9 @@ public class InstituteService {
 						throw new CustomException("SMS Service Is Not Running!");
 					}
 					try {
-
-						String encode = UriUtils.encodePath(processedSMSBodyContent, "UTF-8");
-						Unirest.setTimeouts(0, 0);
-						HttpResponse<JsonNode> asJson = Unirest.get(
-								"http://msg.jmdinfotek.in/api/mt/SendSMS?channel=Trans&DCS=0&flashsms=0&route=07&senderid=uLearn&user=technosoft_dev&password=Techno@8585&text="
-										+ encode + "&number=" + number+"&dlt="+ETStTempId)
-								.asJson();
-//						LOGGER.info("Inside - InstituteController.getInstute()--"+ETStTempId+"//");
-						org.json.JSONObject object = asJson.getBody().getObject();
-						String ErrorCode = object.getString("ErrorCode");
-
-						if (ErrorCode.equals("006")) {
-							throw new CustomException("Invalid Template Text!");
-						} else if (!ErrorCode.equals("000")) {
-							throw new CustomException("Failed to Sent SMS!");
-						}
-					} catch (Exception e) {						
-						throw new CustomException(e.getMessage());
+						this.customFunction.SentSMS(processedSMSBodyContent, number, ETStTempId);						
+					} catch (Exception e) {		
+						throw new CustomException(e.getMessage());				
 					}
 
 				}
@@ -348,8 +337,8 @@ public class InstituteService {
 		}
 	}
 
-	public GlobalResponse postInstituteDetailsService(@Valid InstituteGlobalEntity instituteGlobalEntrity,
-			String token) {
+	
+	public GlobalResponse postInstituteDetailsService(@Valid InstituteGlobalEntity instituteGlobalEntrity, String token) {
 		try {
 
 			JSONObject requestJson = null;
@@ -357,6 +346,7 @@ public class InstituteService {
 			String processedSMSBodyContent = null;
 			String processedMailBodyContent = null;
 			String number = null;
+			String ETStTempId = null;			
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("Authorization", token);
 			headers.setContentType(MediaType.APPLICATION_JSON);
@@ -449,9 +439,7 @@ public class InstituteService {
 						InstituteAdminEntity InsAmdDetails = instituteAdminRepo.save(filterInsAmdDetails);
 
 						try {
-							ResponseEntity<InstituteGlobalEntity> responseEmailTemp = new RestTemplate().exchange(
-									"http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/Institute_Create",
-									HttpMethod.GET, request, InstituteGlobalEntity.class);
+							ResponseEntity<InstituteGlobalEntity> responseEmailTemp=this.customFunction.GetEmailDetails(token,"Institute_Create");
 
 							String ETSubject = responseEmailTemp.getBody().getEtSubject();
 							String ETBody = responseEmailTemp.getBody().getEtBody();
@@ -495,19 +483,20 @@ public class InstituteService {
 						}
 						try {
 							HttpEntity<String> entity = new HttpEntity(requestJson, headers);
-							ResponseEntity<String> response = new RestTemplate()
-									.postForEntity("http://65.1.66.115:8086/dev/login/sendMail/", entity, String.class);
+							this.customFunction.SentEmail(entity);
 						} catch (Exception e) {
-							throw new CustomException("Institute Added Successfully But Login Service Is Not Running");
+							org.json.JSONObject jsonObject = new org.json.JSONObject(e.getMessage().substring(7));																		
+							if(!jsonObject.getString("messagee").equals("")) {										
+								throw new CustomException("Institute Updated Successfully But "+jsonObject.getString("messagee"));
+							}
+							throw new CustomException("Institute Added Successfully But Login OR Email Service Is Not Running");
 						}
 
 						try {
-							ResponseEntity<InstituteGlobalEntity> responseSmsTemp = new RestTemplate().exchange(
-									"http://65.1.66.115:8091/dev/smsTemplate/getPrimarySTByAction/Institute_Credentials",
-									HttpMethod.GET, request, InstituteGlobalEntity.class);
-
+							ResponseEntity<InstituteGlobalEntity> responseSmsTemp=this.customFunction.GetSMSDetails(token,"Institute_Create");
 							String STSubject = responseSmsTemp.getBody().getStSubject();
 							String STBody = responseSmsTemp.getBody().getStBody();
+									ETStTempId = responseSmsTemp.getBody().getStTempId();
 
 							String STTargetAdmName = "__$AdmName$__";
 							String STTargetInstName = "__$InstName$__";
@@ -543,22 +532,7 @@ public class InstituteService {
 							throw new CustomException("Institute Added Successfully But SMS Service Is Not Running!");
 						}
 						try {
-
-							String encode = UriUtils.encodePath(processedSMSBodyContent, "UTF-8");
-							Unirest.setTimeouts(0, 0);
-							HttpResponse<JsonNode> asJson = Unirest.get(
-									"http://msg.jmdinfotek.in/api/mt/SendSMS?channel=Trans&DCS=0&flashsms=0&route=07&senderid=uLearn&user=technosoft_dev&password=Techno@8585&text="
-											+ encode + "&number=" + number)
-									.asJson();
-							LOGGER.info("Inside - InstituteController.getInstute()" + asJson.getBody());
-							org.json.JSONObject object = asJson.getBody().getObject();
-							String ErrorCode = object.getString("ErrorCode");
-
-							if (ErrorCode.equals("006")) {
-								throw new CustomException("Institute Added Successfully But Invalid Template Text!");
-							} else if (!ErrorCode.equals("000")) {
-								throw new CustomException("Institute Added Successfully But Failed to Sent SMS!");
-							}
+							this.customFunction.SentSMS(processedSMSBodyContent, number, ETStTempId);
 						} catch (Exception e) {
 							throw new CustomException(e.getMessage());
 //							throw new CustomException("Something Went To Wrong From SMS Gateway");
@@ -579,6 +553,7 @@ public class InstituteService {
 		}
 	}
 
+	
 	public Optional<InstituteEntity> viewInstituteDetailsService(long instId) {
 		try {
 			Optional<InstituteEntity> findById = this.instituteRepo.findById(instId);
@@ -594,6 +569,7 @@ public class InstituteService {
 		}
 	}
 
+	
 	public GlobalResponse putInstituteDetailsService(@Valid InstituteGlobalEntity instituteGlobalEntrity, long instId,
 			String token) {
 		try {
@@ -602,6 +578,7 @@ public class InstituteService {
 			String processedSMSBodyContent = null;
 			String processedMailBodyContent = null;
 			String number = null;
+			String ETStTempId = null;			
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("Authorization", token);
 			headers.setContentType(MediaType.APPLICATION_JSON);
@@ -721,11 +698,7 @@ public class InstituteService {
 								InstituteAdminEntity InsAmdDetails = instituteAdminRepo.save(filterInsAmdDetails);
 
 								try {
-
-									ResponseEntity<InstituteGlobalEntity> responseEmailTemp = new RestTemplate()
-											.exchange(
-													"http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/Institute_Update",
-													HttpMethod.GET, request, InstituteGlobalEntity.class);
+									ResponseEntity<InstituteGlobalEntity> responseEmailTemp=this.customFunction.GetEmailDetails(token,"Institute_Update");
 									String ETSubject = responseEmailTemp.getBody().getEtSubject();
 									String ETBody = responseEmailTemp.getBody().getEtBody();
 
@@ -752,7 +725,7 @@ public class InstituteService {
 									String processedInstPan = processedInstMobile.replace(ETTargetInstPan, ETInstPanReplacement);
 									processedMailBodyContent = processedInstPan.replace(ETTargetInstGST, ETInstGSTReplacement);	
 									 
-									LOGGER.info("Inside - InstituteController.getInstute()"+processedMailBodyContent);
+//									LOGGER.info("Inside - InstituteController.getInstute()"+processedMailBodyContent);
 									String mailid = instituteGlobalEntrity.getInstEmail();
 
 									requestJson = new JSONObject();
@@ -770,18 +743,20 @@ public class InstituteService {
 								}
 								try {
 									HttpEntity<String> entity = new HttpEntity(requestJson, headers);
-									ResponseEntity<String> response = new RestTemplate().postForEntity("http://65.1.66.115:8086/dev/login/sendMail/", entity, String.class);
+									this.customFunction.SentEmail(entity);
+																		
 								} catch (Exception e) {
-									throw new CustomException(e.getMessage());
-//									throw new CustomException("Institute Updated Successfully But Sendmail Service Is Not Running!");
+									org.json.JSONObject jsonObject = new org.json.JSONObject(e.getMessage().substring(7));									
+									if(!jsonObject.getString("messagee").equals("")) {
+										throw new CustomException("Institute Updated Successfully But "+jsonObject.getString("messagee"));
+									}
+									throw new CustomException("Institute Updated Successfully But Sendmail Service Is Not Running!");
 								}
-								try {
-									ResponseEntity<InstituteGlobalEntity> responseSmsTemp = new RestTemplate().exchange(
-											"http://65.1.66.115:8091/dev/smsTemplate/getPrimarySTByAction/Institute_Update",
-											HttpMethod.GET, request, InstituteGlobalEntity.class);
-
+								try {									
+									ResponseEntity<InstituteGlobalEntity> responseSmsTemp=this.customFunction.GetSMSDetails(token,"Institute_Update");
 									String STSubject = responseSmsTemp.getBody().getStSubject();
 									String STBody = responseSmsTemp.getBody().getStBody();
+											ETStTempId = responseSmsTemp.getBody().getStTempId();
 
 									String STTargetAdmName = "__$AdmName$__";
 									String STTargetInstName = "__$InstName$__";
@@ -799,15 +774,14 @@ public class InstituteService {
 									String STInstGSTReplacement = instituteGlobalEntrity.getInstGstNum();
 									
 
-									String processedName = STBody.replace(STTargetAdmName, STAdmNameReplacement);
-									String processedInstName = processedName.replace(STTargetInstName, STInstEmailReplacement);
+									String processedAmdName = STBody.replace(STTargetAdmName, STAdmNameReplacement);
+									String processedInstName = processedAmdName.replace(STTargetInstName, STInstEmailReplacement);
 									String processedInstEmail = processedInstName.replace(STTargetEmailname, STInstNameReplacement);
 									String processedInstMobile = processedInstEmail.replace(STTargetInstMobile, STInstMobileReplacement);
 									String processedInstPan = processedInstMobile.replace(STTargetInstPan, STInstPanReplacement);
 									 processedSMSBodyContent = processedInstPan.replace(STTargetInstGST, STInstGSTReplacement);									
 									
 									
-//									LOGGER.info("Inside - InstituteController.getInstute()"+processedSMSBodyContent);
 									number = instituteGlobalEntrity.getInstMnum();
 									number = number.substring(3);				
 
@@ -819,24 +793,9 @@ public class InstituteService {
 									throw new CustomException("Institute Updated Successfully But SMS Service Is Not Running!");
 								}
 								try {
-
-									String encode = UriUtils.encodePath(processedSMSBodyContent, "UTF-8");
-									Unirest.setTimeouts(0, 0);
-									HttpResponse<JsonNode> asJson = Unirest.get(
-											"http://msg.jmdinfotek.in/api/mt/SendSMS?channel=Trans&DCS=0&flashsms=0&route=07&senderid=uLearn&user=technosoft_dev&password=Techno@8585&text="
-													+ encode + "&number=" + number)
-											.asJson();
-									LOGGER.info("Inside - InstituteController.getInstute()" + asJson.getBody());
-									org.json.JSONObject object = asJson.getBody().getObject();
-									String ErrorCode = object.getString("ErrorCode");
-
-									if (ErrorCode.equals("006")) {
-										throw new CustomException("Institute Updated Successfully But Invalid Template Text!");
-									} else if (!ErrorCode.equals("000")) {
-										throw new CustomException("Institute Updated Successfully But Failed to Sent SMS!");
-									}
+									this.customFunction.SentSMS(processedSMSBodyContent, number, ETStTempId);
 								} catch (Exception e) {																		
-									throw new CustomException("Institute Updated Successfully But Something Went To Wrong From SMS Gateway");
+									throw new CustomException("Institute Updated Successfully But "+e.getMessage());
 								}
 							}
 							return new GlobalResponse("SUCCESS", 200, "Institute Updated Successfully");
