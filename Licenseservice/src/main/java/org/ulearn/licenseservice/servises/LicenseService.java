@@ -110,9 +110,30 @@ public class LicenseService {
 						
 						HttpEntity request=new HttpEntity(headers);
 						
+						String stLicnName = "";
+						String stLicnValidatyNum = "";
+						String stLicnValidatyType = "";
+						String stLicnCreateDate = "";
+						String stLicnEndDate = "";
+						String stLicnServerType = "";
+						String stLicnType = "";
+						
+						String ETTargetName = "__$AdmName$__";
+						String stInstNameTags = "__$InstName$__";
+						String stInstMailTags = "__$InstMail$__";
+						String stLicnNameTags = "__$LcName$__";
+						String stLicnValidatyNumTags = "__$LicnValidatyNum$__";
+						String stLicnValidatyTypeTags = "__$LicnValidatyType$__";
+						String stLicnCreateDateTags = "__$LicnCreateDate$__";
+						String stLicnEndDateTags = "__$LicnEndDate$__";
+						String stLicnServerTypeTags = "__$LicnServerType$__";
+						String stLicnTypeTags = "__$LicnType$__";
+						
 						String emailId="";
 						String amdFname="";
 						String amdLname="";
+						String number="";
+						String stInstName="";
 						try {
 							
 							Unirest.setTimeouts(0, 0);
@@ -121,6 +142,8 @@ public class LicenseService {
 							  .asJson();
 							 org.json.JSONObject object = asJson.getBody().getObject();
 							 emailId =object.getString("instEmail");
+							 number = object.getString("instMnum");
+							 stInstName = object.getString("instName");
 							 JSONArray jsonArray = object.getJSONArray("instituteAdmin");
 							 org.json.JSONObject jsonObject = jsonArray.getJSONObject(0);
 							 amdFname=jsonObject.getString("amdFname");
@@ -128,14 +151,14 @@ public class LicenseService {
 //							 LOGGER.info("Inside the LicenseController Update License"+object.getString("instEmail"));
 						}
 						catch(Exception e) {
-							throw new CustomException(e.getMessage());
+							throw new CustomException("Problem In Institute Service");
 							
 						}
 						
 						
 						String ETSubject;
 						String ETBody;
-						String ETTargetName;
+//						String ETTargetName;
 						String ETNameReplacement;
 						String processedName;
 						//HttpEntity request = new HttpEntity(headers);
@@ -146,19 +169,36 @@ public class LicenseService {
 							 ETSubject = responseEmailTemp.getBody().getEtSubject();
 							 ETBody = responseEmailTemp.getBody().getEtBody();
 
-							 ETTargetName = "__$name$__";
-							
+							 	
 							 ETNameReplacement = amdFname +" "+ amdLname;
+							 stLicnName = save.getLcName();
+							 stLicnValidatyNum = save.getLcValidityNum() + "";
+							 stLicnValidatyType = save.getLcValidityType();
+							 stLicnCreateDate = save.getLcCreatDate()+"";
+							 stLicnEndDate = save.getLcEndDate()+"";
+							 stLicnServerType = save.getLcStype();
+							 stLicnType = save.getLcType();
+							 
+							 String replace = ETBody.replace(ETTargetName, ETNameReplacement);
+							 String replace2 = replace.replace(stInstNameTags, stInstName);
+							 String replace3 = replace2.replace(stInstMailTags, emailId);
+							 String replace4 = replace3.replace(stLicnNameTags, stLicnName);
+							 String replace5 = replace4.replace(stLicnValidatyNumTags, stLicnValidatyNum);
+							 String replace6 = replace5.replace(stLicnValidatyTypeTags, stLicnValidatyType);
+							 String replace7 = replace6.replace(stLicnCreateDateTags, stLicnCreateDate);
+							 String replace8 = replace7.replace(stLicnEndDateTags, stLicnEndDate);
+							 String replace9 = replace8.replace(stLicnServerTypeTags, stLicnServerType);
+							 processedName = replace9.replace(stLicnTypeTags, stLicnType);
 
-							 processedName = ETBody.replace(ETTargetName, ETNameReplacement);
+							
 						}
 						catch(Exception e) {
 							
 							if(!save.equals(null)) {
-								throw new CustomException("License have added but there is a problem in emailTemplate view.please check.");
+								throw new CustomException("License Have Added But There Is a Problem in EmailTemplate View.Please Check.");
 							}
 							else {
-								throw new CustomException("Error from mail template.");
+								throw new CustomException("Error From Mail template.");
 							}
 							
 						}
@@ -179,7 +219,7 @@ public class LicenseService {
 							
 							
 							if(!save.equals(null)) {
-								throw new CustomException("License have added but there is a problem in sendMail.please check.");
+								throw new CustomException("License Have Added But There Is a Problem In SendMail.Please Check.");
 							}
 							else {
 								throw new CustomException("Error from sendMail.");
@@ -189,26 +229,7 @@ public class LicenseService {
 						
 						//****----------   CODE ADDED BY SOUMEN   -------****//
 						String processedSMSBodyContent="";
-						String number = "";
-						String stInstName = "";
-						String stInstMail = "";
-						String stLicnName = "";
-						String stLicnValidatyNum = "";
-						String stLicnValidatyType = "";
-						String stLicnCreateDate = "";
-						String stLicnEndDate = "";
-						String stLicnServerType = "";
-						String stLicnType = "";
 						
-						String stInstNameTags = "__$InstName$__";
-						String stInstMailTags = "__$InstMail$__";
-						String stLicnNameTags = "__$LicnName$__";
-						String stLicnValidatyNumTags = "__$LicnValidatyNum$__";
-						String stLicnValidatyTypeTags = "__$LicnValidatyTyp$__";
-						String stLicnCreateDateTags = "__$LicnCreateDate$__";
-						String stLicnEndDateTags = "__$LicnEndDate$__";
-						String stLicnServerTypeTags = "__$LicnServerType$__";
-						String stLicnTypeTags = "__$LicnType$__";
 						
 						try {
 							ResponseEntity<LicenseGlobalEntity> responseSmsTemp = new RestTemplate().exchange(
@@ -219,22 +240,9 @@ public class LicenseService {
 							
 //							String STSubject = responseSmsTemp.getBody().getStSubject();
 							String STBody = responseSmsTemp.getBody().getStBody();
-							ETTargetName = "__$name$__";
-							
-							
-
-							
-							Unirest.setTimeouts(0, 0);
-							 HttpResponse<JsonNode> asJson = Unirest.get("http://65.1.66.115:8087/dev/institute/view/"+ save.getInstId())
-							  .header("Authorization", token)
-							  .asJson();
+						
 							 
-							 
-							 org.json.JSONObject object = asJson.getBody().getObject();
 							 ETNameReplacement = amdFname +" "+ amdLname;
-							 number = object.getString("instMnum");
-							 stInstName = object.getString("instName");
-							 stInstMail = object.getString("instEmail");
 							 stLicnName = save.getLcName();
 							 stLicnValidatyNum = save.getLcValidityNum() + "";
 							 stLicnValidatyType = save.getLcValidityType();
@@ -247,7 +255,7 @@ public class LicenseService {
 						
 									 String replace = STBody.replace(ETTargetName, ETNameReplacement);
 									 String replace2 = replace.replace(stInstNameTags, stInstName);
-									 String replace3 = replace2.replace(stInstMailTags, stInstMail);
+									 String replace3 = replace2.replace(stInstMailTags, emailId);
 									 String replace4 = replace3.replace(stLicnNameTags, stLicnName);
 									 String replace5 = replace4.replace(stLicnValidatyNumTags, stLicnValidatyNum);
 									 String replace6 = replace5.replace(stLicnValidatyTypeTags, stLicnValidatyType);
@@ -256,18 +264,13 @@ public class LicenseService {
 									 String replace9 = replace8.replace(stLicnServerTypeTags, stLicnServerType);
 									 processedSMSBodyContent = replace9.replace(stLicnTypeTags, stLicnType);
 							 
-							 LOGGER.info("asJson   "+number);
-							
-							
-						
-							number = number.substring(3);	
-							
-							
+//							 LOGGER.info("asJson   "+number);
 
+							 number = number.substring(3);	
 
 						} catch (Exception e) {
 //							throw new CustomException("SMS Service Is Not Running!");
-							throw new CustomException(e.getMessage());
+							throw new CustomException("Gatting Error From SMS Template");
 						}
 						try {
 							
@@ -287,8 +290,8 @@ public class LicenseService {
 								throw new CustomException("Failed to Sent SMS!");
 							}
 						} catch (Exception e) {
-							throw new CustomException(e.getMessage());
-//							throw new CustomException("Something Went To Wrong From SMS Gateway");
+//							throw new CustomException(e.getMessage());
+							throw new CustomException("Something Went To Wrong From SMS Gateway");
 						}
 						
 						//**** CLOSED ****//
@@ -301,11 +304,11 @@ public class LicenseService {
 						}
 					}
 					else {
-						throw new CustomException("A license have already assigned for ths institute..");
+						throw new CustomException("A License Have Already Assigned For This Institute..");
 					}
 				}
 				else {
-					throw new CustomException("Some required value are missing..");
+					throw new CustomException("Some Required Value Are Missing..");
 				}
 		}
 		catch(Exception ex) {
@@ -341,7 +344,7 @@ public class LicenseService {
 								}
 								else {
 								
-									throw new CustomException("A license have already assigned for this institute.please select another institute.");
+									throw new CustomException("A License Have Already Assigned for This Institute. Please Select Another Institute.");
 								}
 							}
 							
@@ -386,16 +389,43 @@ public class LicenseService {
 							headers.setContentType(MediaType.APPLICATION_JSON);
 							
 							HttpEntity request=new HttpEntity(headers);
+							
+							String stLicnName = "";
+							String stLicnValidatyNum = "";
+							String stLicnValidatyType = "";
+							String stLicnCreateDate = "";
+							String stLicnEndDate = "";
+							String stLicnServerType = "";
+							String stLicnType = "";
+							
+							String ETTargetName = "__$AdmName$__";
+							String stInstNameTags = "__$InstName$__";
+							String stInstMailTags = "__$InstMail$__";
+							String stLicnNameTags = "__$LcName$__";
+							String stLicnValidatyNumTags = "__$LicnValidatyNum$__";
+							String stLicnValidatyTypeTags = "__$LicnValidatyType$__";
+							String stLicnCreateDateTags = "__$LicnCreateDate$__";
+							String stLicnEndDateTags = "__$LicnEndDate$__";
+							String stLicnServerTypeTags = "__$LicnServerType$__";
+							String stLicnTypeTags = "__$LicnType$__";
+
+							
 							String emailId;
 							String amdFname;
 							String amdLname;
+							String number="";
+							String stInstName="";
+							
 							try {
 								Unirest.setTimeouts(0, 0);
 								 HttpResponse<JsonNode> asJson = Unirest.get("http://65.1.66.115:8087/dev/institute/view/"+ save.getInstId())
 								  .header("Authorization", token)
 								  .asJson();
 								 org.json.JSONObject object = asJson.getBody().getObject();
+//								 emailId =object.getString("instEmail");
 								 emailId =object.getString("instEmail");
+								 number = object.getString("instMnum");
+								 stInstName = object.getString("instName");
 								 JSONArray jsonArray = object.getJSONArray("instituteAdmin");
 								 org.json.JSONObject jsonObject = jsonArray.getJSONObject(0);
 								 amdFname=jsonObject.getString("amdFname");
@@ -403,7 +433,7 @@ public class LicenseService {
 							}
 							catch(Exception e) {
 								if(!save.equals(null)) {
-									throw new CustomException("License have updated but there is a problem in institute view.please check.");
+									throw new CustomException("License Have Updated But There Is a Problem in Institute Service. Please Check.");
 								}
 								else {
 									throw new CustomException("Error from institute view.");
@@ -414,26 +444,41 @@ public class LicenseService {
 							
 							String ETSubject;
 							String ETBody;
-							String ETTargetName;
+//							String ETTargetName;
 							String ETNameReplacement;
 							String processedName;
 							//HttpEntity request = new HttpEntity(headers);
 							
 							try {
 								
-								ResponseEntity<LicenseGlobalEntity> responseEmailTemp = new RestTemplate().exchange("http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/License_Create",HttpMethod.GET, request, LicenseGlobalEntity.class);
+								ResponseEntity<LicenseGlobalEntity> responseEmailTemp = new RestTemplate().exchange("http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/License_Update",HttpMethod.GET, request, LicenseGlobalEntity.class);
 								 ETSubject = responseEmailTemp.getBody().getEtSubject();
 								 ETBody = responseEmailTemp.getBody().getEtBody();
 
-								 ETTargetName = "__$name$__";
-								
 								 ETNameReplacement = amdFname +" "+ amdLname;
-
-								 processedName = ETBody.replace(ETTargetName, ETNameReplacement);
+								 stLicnName = save.getLcName();
+								 stLicnValidatyNum = save.getLcValidityNum() + "";
+								 stLicnValidatyType = save.getLcValidityType();
+								 stLicnCreateDate = save.getLcCreatDate()+"";
+								 stLicnEndDate = save.getLcEndDate()+"";
+								 stLicnServerType = save.getLcStype();
+								 stLicnType = save.getLcType();
+								 
+								 String replace = ETBody.replace(ETTargetName, ETNameReplacement);
+								 String replace2 = replace.replace(stInstNameTags, stInstName);
+								 String replace3 = replace2.replace(stInstMailTags, emailId);
+								 String replace4 = replace3.replace(stLicnNameTags, stLicnName);
+								 String replace5 = replace4.replace(stLicnValidatyNumTags, stLicnValidatyNum);
+								 String replace6 = replace5.replace(stLicnValidatyTypeTags, stLicnValidatyType);
+								 String replace7 = replace6.replace(stLicnCreateDateTags, stLicnCreateDate);
+								 String replace8 = replace7.replace(stLicnEndDateTags, stLicnEndDate);
+								 String replace9 = replace8.replace(stLicnServerTypeTags, stLicnServerType);
+								 processedName = replace9.replace(stLicnTypeTags, stLicnType);
+								 
 							}
 							catch(Exception e) {
 								if(!save.equals(null)) {
-									throw new CustomException("License have updated but there is a problem in emailTemplate view.please check.");
+									throw new CustomException("License Have Updated But There is a Problem In EmailTemplate Service. Please Check.");
 								}
 								else {
 									throw new CustomException("Error from mail template.");
@@ -466,51 +511,16 @@ public class LicenseService {
 							
 							//****----------   CODE ADDED BY SOUMEN   -------****//
 							String processedSMSBodyContent="";
-							String number="";
-							String stInstName = "";
-							String stInstMail = "";
-							String stLicnName = "";
-							String stLicnValidatyNum = "";
-							String stLicnValidatyType = "";
-							String stLicnCreateDate = "";
-							String stLicnEndDate = "";
-							String stLicnServerType = "";
-							String stLicnType = "";
-							
-							String stInstNameTags = "__$InstName$__";
-							String stInstMailTags = "__$InstMail$__";
-							String stLicnNameTags = "__$LicnName$__";
-							String stLicnValidatyNumTags = "__$LicnValidatyNum$__";
-							String stLicnValidatyTypeTags = "__$LicnValidatyTyp$__";
-							String stLicnCreateDateTags = "__$LicnCreateDate$__";
-							String stLicnEndDateTags = "__$LicnEndDate$__";
-							String stLicnServerTypeTags = "__$LicnServerType$__";
-							String stLicnTypeTags = "__$LicnType$__";
+					
 							try {
 								ResponseEntity<LicenseGlobalEntity> responseSmsTemp = new RestTemplate().exchange(
-										"http://65.1.66.115:8091/dev/smsTemplate/getPrimarySTByAction/License_Create",
+										"http://65.1.66.115:8091/dev/smsTemplate/getPrimarySTByAction/License_Update",
 										HttpMethod.GET, request, LicenseGlobalEntity.class);
 
-								
-								
-//								String STSubject = responseSmsTemp.getBody().getStSubject();
 								String STBody = responseSmsTemp.getBody().getStBody();
-								ETTargetName = "__$name$__";
 								
 								ETNameReplacement = amdFname +" "+ amdLname;
 
-								
-								Unirest.setTimeouts(0, 0);
-								 HttpResponse<JsonNode> asJson = Unirest.get("http://65.1.66.115:8087/dev/institute/view/"+ save.getInstId())
-								  .header("Authorization", token)
-								  .asJson();
-								 
-								 
-								 org.json.JSONObject object = asJson.getBody().getObject();
-								 number = object.getString("instMnum");
-								 LOGGER.info("asJson   "+number);
-								 stInstName = object.getString("instName");
-								 stInstMail = object.getString("instEmail");
 								 stLicnName = save.getLcName();
 								 stLicnValidatyNum = save.getLcValidityNum() + "";
 								 stLicnValidatyType = save.getLcValidityType();
@@ -523,7 +533,7 @@ public class LicenseService {
 							
 										 String replace = STBody.replace(ETTargetName, ETNameReplacement);
 										 String replace2 = replace.replace(stInstNameTags, stInstName);
-										 String replace3 = replace2.replace(stInstMailTags, stInstMail);
+										 String replace3 = replace2.replace(stInstMailTags, emailId);
 										 String replace4 = replace3.replace(stLicnNameTags, stLicnName);
 										 String replace5 = replace4.replace(stLicnValidatyNumTags, stLicnValidatyNum);
 										 String replace6 = replace5.replace(stLicnValidatyTypeTags, stLicnValidatyType);
@@ -558,7 +568,7 @@ public class LicenseService {
 								if (ErrorCode.equals("006")) {
 									throw new CustomException("Invalid Template Text!");
 								} else if (!ErrorCode.equals("000")) {
-									throw new CustomException("Failed to Sent SMS!");
+									throw new CustomException("Failed To Sent SMS!");
 								}
 							} catch (Exception e) {
 								throw new CustomException(e.getMessage());
@@ -567,24 +577,21 @@ public class LicenseService {
 							
 							//**** CLOSED ****//
 							
-							
-							
-							
 							if(!save.equals(null)) {
 								return new GlobalResponse("SUCCESS","License Update Successfull",200);
 							}
 							else {
-								throw new CustomException("Update not successfull");
+								throw new CustomException("Update Not Successfull");
 							}
 							
 					}
 					else {
-						throw new CustomException("License not found for this Id  "+licenseId);
+						throw new CustomException("License Not Found For This Id  "+licenseId);
 					}
 			}
 			else {
 			
-				throw new CustomException("Some required value are missing, please check..");
+				throw new CustomException("Some Required Value Are Missing, Please Check..");
 			}
 		}
 		catch(Exception ex) {
@@ -694,7 +701,7 @@ public class LicenseService {
 				return findById;
 			}
 			else {
-				throw new CustomException("No license found for this id");
+				throw new CustomException("No License Found For This Id");
 			}
 			
 		} catch (Exception e) {
@@ -742,9 +749,32 @@ public class LicenseService {
 						
 						HttpEntity request=new HttpEntity(headers);
 						
+						String processedSMSBodyContent="";
+						String stLicnName = "";
+						String stLicnValidatyNum = "";
+						String stLicnValidatyType = "";
+						String stLicnCreateDate = "";
+						String stLicnEndDate = "";
+						String stLicnServerType = "";
+						String stLicnType = "";
+						
+						String ETTargetName = "__$AdmName$__";
+						String stInstNameTags = "__$InstName$__";
+						String stInstMailTags = "__$InstMail$__";
+						String stLicnNameTags = "__$LicnName$__";
+						String stLicnValidatyNumTags = "__$LicnValidatyNum$__";
+						String stLicnValidatyTypeTags = "__$LicnValidatyTyp$__";
+						String stLicnCreateDateTags = "__$LicnCreateDate$__";
+						String stLicnEndDateTags = "__$LicnEndDate$__";
+						String stLicnServerTypeTags = "__$LicnServerType$__";
+						String stLicnTypeTags = "__$LicnType$__";
+						String licenseSuspendDate = "__$LicnSuspendDate$__";
+						
 						String emailId="";
 						String amdFname="";
 						String amdLname="";
+						String number="";
+						String stInstName="";
 						try {
 							
 							Unirest.setTimeouts(0, 0);
@@ -753,6 +783,8 @@ public class LicenseService {
 							  .asJson();
 							 org.json.JSONObject object = asJson.getBody().getObject();
 							 emailId =object.getString("instEmail");
+							 number = object.getString("instMnum");
+							 stInstName = object.getString("instName");
 							 JSONArray jsonArray = object.getJSONArray("instituteAdmin");
 							 org.json.JSONObject jsonObject = jsonArray.getJSONObject(0);
 							 amdFname=jsonObject.getString("amdFname");
@@ -760,15 +792,15 @@ public class LicenseService {
 //							 LOGGER.info("Inside the LicenseController Update License"+object.getString("instEmail"));
 						}
 						catch(Exception e) {
-							throw new CustomException(e.getMessage());
+							throw new CustomException("Gatting Error From Institute Service.");
 							
 						}
 						
 						
 						String ETSubject;
 						String ETBody;
-						String ETTargetName;
-						String licenseSuspendDate;
+//						String ETTargetName;
+//						String licenseSuspendDate;
 						String ETNameReplacement;
 						String ETDateReplacement;
 						String processedDate;
@@ -777,18 +809,32 @@ public class LicenseService {
 						
 						try {
 							
-							ResponseEntity<LicenseGlobalEntity> responseEmailTemp = new RestTemplate().exchange("http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/Add_Suspend_License",HttpMethod.GET, request, LicenseGlobalEntity.class);
+							ResponseEntity<LicenseGlobalEntity> responseEmailTemp = new RestTemplate().exchange("http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/License_Suspend",HttpMethod.GET, request, LicenseGlobalEntity.class);
 							 ETSubject = responseEmailTemp.getBody().getEtSubject();
 							 ETBody = responseEmailTemp.getBody().getEtBody();
-
-							 ETTargetName = "__$name$__";
-							 licenseSuspendDate = "__$date$__";
+							 
+							 stLicnName = save2.getLcName();
+							 stLicnValidatyNum = save2.getLcValidityNum() + "";
+							 stLicnValidatyType = save2.getLcValidityType();
+							 stLicnCreateDate = save2.getLcCreatDate()+"";
+							 stLicnEndDate = save2.getLcEndDate()+"";
+							 stLicnServerType = save2.getLcStype();
+							 stLicnType = save2.getLcType();
 							
 							 ETNameReplacement = amdFname +" "+ amdLname;
 							 ETDateReplacement = licenseLogEntitySuspend.getLlEdate().toString();
 							 processedDate = ETBody.replace(licenseSuspendDate, ETDateReplacement);
-							 processedName = processedDate.replace(ETTargetName, ETNameReplacement);
-							 
+							 String replace2 = processedDate.replace(stInstNameTags, stInstName);
+							 String replace3 = replace2.replace(stInstMailTags, emailId);
+							 String replace4 = replace3.replace(stLicnNameTags, stLicnName);
+							 String replace5 = replace4.replace(stLicnValidatyNumTags, stLicnValidatyNum);
+							 String replace6 = replace5.replace(stLicnValidatyTypeTags, stLicnValidatyType);
+							 String replace7 = replace6.replace(stLicnCreateDateTags, stLicnCreateDate);
+							 String replace8 = replace7.replace(stLicnEndDateTags, stLicnEndDate);
+							 String replace9 = replace8.replace(stLicnServerTypeTags, stLicnServerType);
+							 String replace10 = replace9.replace(stLicnTypeTags, stLicnType);
+							 processedName = replace10.replace(ETTargetName, ETNameReplacement);
+		 
 						}
 						catch(Exception e) {
 
@@ -816,52 +862,22 @@ public class LicenseService {
 //						End send mail
 						
 						//****----------   CODE ADDED BY SOUMEN   -------****//
-						String processedSMSBodyContent="";
-						String number="";
-						String stInstName = "";
-						String stInstMail = "";
-						String stLicnName = "";
-						String stLicnValidatyNum = "";
-						String stLicnValidatyType = "";
-						String stLicnCreateDate = "";
-						String stLicnEndDate = "";
-						String stLicnServerType = "";
-						String stLicnType = "";
 						
-						String stInstNameTags = "__$InstName$__";
-						String stInstMailTags = "__$InstMail$__";
-						String stLicnNameTags = "__$LicnName$__";
-						String stLicnValidatyNumTags = "__$LicnValidatyNum$__";
-						String stLicnValidatyTypeTags = "__$LicnValidatyTyp$__";
-						String stLicnCreateDateTags = "__$LicnCreateDate$__";
-						String stLicnEndDateTags = "__$LicnEndDate$__";
-						String stLicnServerTypeTags = "__$LicnServerType$__";
-						String stLicnTypeTags = "__$LicnType$__";
+						
+						
 						try {
 							ResponseEntity<LicenseGlobalEntity> responseSmsTemp = new RestTemplate().exchange(
-									"http://65.1.66.115:8091/dev/smsTemplate/getPrimarySTByAction/License_Create",
+									"http://65.1.66.115:8091/dev/smsTemplate/getPrimarySTByAction/License_Suspend",
 									HttpMethod.GET, request, LicenseGlobalEntity.class);
 
 							
 							
 //							String STSubject = responseSmsTemp.getBody().getStSubject();
 							String STBody = responseSmsTemp.getBody().getStBody();
-							ETTargetName = "__$name$__";
+
 							
 							ETNameReplacement = amdFname +" "+ amdLname;
-
-						
-							Unirest.setTimeouts(0, 0);
-							 HttpResponse<JsonNode> asJson = Unirest.get("http://65.1.66.115:8087/dev/institute/view/"+ findById.getInstId())
-							  .header("Authorization", token)
-							  .asJson();
-							 
-							 
-							 org.json.JSONObject object = asJson.getBody().getObject();
-							 number = object.getString("instMnum");
-							 LOGGER.info("asJson   "+number);
-							 stInstName = object.getString("instName");
-							 stInstMail = object.getString("instEmail");
+							
 							 stLicnName = save2.getLcName();
 							 stLicnValidatyNum = save2.getLcValidityNum() + "";
 							 stLicnValidatyType = save2.getLcValidityType();
@@ -870,29 +886,25 @@ public class LicenseService {
 							 stLicnServerType = save2.getLcStype();
 							 stLicnType = save2.getLcType();
 							 
-							 
+						 		 String replace = STBody.replace(ETTargetName, ETNameReplacement);
+								 String replace2 = replace.replace(stInstNameTags, stInstName);
+								 String replace3 = replace2.replace(stInstMailTags, emailId);
+								 String replace4 = replace3.replace(stLicnNameTags, stLicnName);
+								 String replace5 = replace4.replace(stLicnValidatyNumTags, stLicnValidatyNum);
+								 String replace6 = replace5.replace(stLicnValidatyTypeTags, stLicnValidatyType);
+								 String replace7 = replace6.replace(stLicnCreateDateTags, stLicnCreateDate);
+								 String replace8 = replace7.replace(stLicnEndDateTags, stLicnEndDate);
+								 String replace9 = replace8.replace(stLicnServerTypeTags, stLicnServerType);
+								 processedSMSBodyContent = replace9.replace(stLicnTypeTags, stLicnType);
 						
-									 String replace = STBody.replace(ETTargetName, ETNameReplacement);
-									 String replace2 = replace.replace(stInstNameTags, stInstName);
-									 String replace3 = replace2.replace(stInstMailTags, stInstMail);
-									 String replace4 = replace3.replace(stLicnNameTags, stLicnName);
-									 String replace5 = replace4.replace(stLicnValidatyNumTags, stLicnValidatyNum);
-									 String replace6 = replace5.replace(stLicnValidatyTypeTags, stLicnValidatyType);
-									 String replace7 = replace6.replace(stLicnCreateDateTags, stLicnCreateDate);
-									 String replace8 = replace7.replace(stLicnEndDateTags, stLicnEndDate);
-									 String replace9 = replace8.replace(stLicnServerTypeTags, stLicnServerType);
-									 processedSMSBodyContent = replace9.replace(stLicnTypeTags, stLicnType);
-							
 							
 						
 							number = number.substring(3);	
 							
-							
-
-
+				
 						} catch (Exception e) {
-//							throw new CustomException("SMS Service Is Not Running!");
-							throw new CustomException(e.getMessage());
+							throw new CustomException("SMS Service Is Not Running!");
+//							throw new CustomException(e.getMessage());
 						}
 						try {
 							
@@ -920,19 +932,19 @@ public class LicenseService {
 						
 					
 					if (!save.equals(null)) {
-						return new GlobalResponse("SUCCESS","This license will be suspend for the selected date.",200);
+						return new GlobalResponse("SUCCESS","This License Will Be Suspend Or The Selected Date.",200);
 					}
 					else {
-						throw new CustomException("Suspend date not add.. ");
+						throw new CustomException("Suspend Date Not Add.. ");
 					}
 				}
 				}
 				else {
-					throw new CustomException("This license has not active.");
+					throw new CustomException("This License Has Not Active.");
 				}
 			}
 			else {
-				throw new CustomException("Some required value are missing, please check..");
+				throw new CustomException("Some Required Value Are Missing, Please Check..");
 			}
 			
 		} catch (Exception e) {
