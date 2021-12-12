@@ -98,6 +98,8 @@ public class LicenseService {
 						licenseLogAdd.setLlAction("Add license");
 						licenseLogAdd.setLlValidityType(save.getLcValidityType());
 						licenseLogAdd.setLlValidityNum(Integer.parseInt(save.getLcValidityNum()+""));
+						licenseLogAdd.setLlSdate(save.getLcCreatDate());
+						licenseLogAdd.setLlEdate(save.getLcEndDate());
 						licenseLogAdd.setLlComment(save.getLcComment());
 						licenseLogAdd.setLlStatus("Complete");
 						licenseLogAdd.setCreatedOn(new Date());
@@ -165,7 +167,7 @@ public class LicenseService {
 						
 						try {
 							
-							ResponseEntity<LicenseGlobalEntity> responseEmailTemp = new RestTemplate().exchange("http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/Licens_Create",HttpMethod.GET, request, LicenseGlobalEntity.class);
+							ResponseEntity<LicenseGlobalEntity> responseEmailTemp = new RestTemplate().exchange("http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/License_Create",HttpMethod.GET, request, LicenseGlobalEntity.class);
 							 ETSubject = responseEmailTemp.getBody().getEtSubject();
 							 ETBody = responseEmailTemp.getBody().getEtBody();
 
@@ -229,7 +231,7 @@ public class LicenseService {
 						
 						//****----------   CODE ADDED BY SOUMEN   -------****//
 						String processedSMSBodyContent="";
-						
+						String ETStTempId="";
 						
 						try {
 							ResponseEntity<LicenseGlobalEntity> responseSmsTemp = new RestTemplate().exchange(
@@ -240,6 +242,7 @@ public class LicenseService {
 							
 //							String STSubject = responseSmsTemp.getBody().getStSubject();
 							String STBody = responseSmsTemp.getBody().getStBody();
+							ETStTempId = responseSmsTemp.getBody().getStTempId();
 						
 							 
 							 ETNameReplacement = amdFname +" "+ amdLname;
@@ -264,7 +267,8 @@ public class LicenseService {
 									 String replace9 = replace8.replace(stLicnServerTypeTags, stLicnServerType);
 									 processedSMSBodyContent = replace9.replace(stLicnTypeTags, stLicnType);
 							 
-//							 LOGGER.info("asJson   "+number);
+									 
+						 LOGGER.info("asJson  number "+number);
 
 							 number = number.substring(3);	
 
@@ -278,9 +282,10 @@ public class LicenseService {
 							Unirest.setTimeouts(0, 0);
 							HttpResponse<JsonNode> asJson = Unirest.get(
 									"http://msg.jmdinfotek.in/api/mt/SendSMS?channel=Trans&DCS=0&flashsms=0&route=07&senderid=uLearn&user=technosoft_dev&password=Techno@8585&text="
-											+ encode + "&number="+ number)
+											+ encode + "&number="+ number+"&dlt=" + ETStTempId)
 									.asJson();
 
+							 LOGGER.info("asJson url -  "+number);
 							org.json.JSONObject object = asJson.getBody().getObject();
 							String ErrorCode = object.getString("ErrorCode");
 
@@ -377,6 +382,8 @@ public class LicenseService {
 							licenseLogAdd.setLlAction("Update license");
 							licenseLogAdd.setLlValidityType(save.getLcValidityType());
 							licenseLogAdd.setLlValidityNum(Integer.parseInt(save.getLcValidityNum()+""));
+							licenseLogAdd.setLlSdate(save.getLcCreatDate());
+							licenseLogAdd.setLlEdate(save.getLcEndDate());
 							licenseLogAdd.setLlComment(save.getLcComment());
 							licenseLogAdd.setLlStatus("Complete");
 							licenseLogAdd.setCreatedOn(new Date());
@@ -410,9 +417,9 @@ public class LicenseService {
 							String stLicnTypeTags = "__$LicnType$__";
 
 							
-							String emailId;
-							String amdFname;
-							String amdLname;
+							String emailId=null;
+							String amdFname=null;
+							String amdLname=null;
 							String number="";
 							String stInstName="";
 							
@@ -510,7 +517,8 @@ public class LicenseService {
 							
 							
 							//****----------   CODE ADDED BY SOUMEN   -------****//
-							String processedSMSBodyContent="";
+							String processedSMSBodyContent=null;
+							String ETStTempId=null;
 					
 							try {
 								ResponseEntity<LicenseGlobalEntity> responseSmsTemp = new RestTemplate().exchange(
@@ -518,6 +526,8 @@ public class LicenseService {
 										HttpMethod.GET, request, LicenseGlobalEntity.class);
 
 								String STBody = responseSmsTemp.getBody().getStBody();
+								ETStTempId = responseSmsTemp.getBody().getStTempId();
+								
 								
 								ETNameReplacement = amdFname +" "+ amdLname;
 
@@ -541,13 +551,8 @@ public class LicenseService {
 										 String replace8 = replace7.replace(stLicnEndDateTags, stLicnEndDate);
 										 String replace9 = replace8.replace(stLicnServerTypeTags, stLicnServerType);
 										 processedSMSBodyContent = replace9.replace(stLicnTypeTags, stLicnType);
-								
-								
-							
+						
 								number = number.substring(3);	
-								
-								
-
 
 							} catch (Exception e) {
 //								throw new CustomException("SMS Service Is Not Running!");
@@ -559,7 +564,7 @@ public class LicenseService {
 								Unirest.setTimeouts(0, 0);
 								HttpResponse<JsonNode> asJson = Unirest.get(
 										"http://msg.jmdinfotek.in/api/mt/SendSMS?channel=Trans&DCS=0&flashsms=0&route=07&senderid=uLearn&user=technosoft_dev&password=Techno@8585&text="
-												+ encode + "&number="+ number)
+												+ encode + "&number="+ number+"&dlt=" + ETStTempId)
 										.asJson();
 
 								org.json.JSONObject object = asJson.getBody().getObject();
@@ -756,7 +761,8 @@ public class LicenseService {
 						String stLicnCreateDate = "";
 						String stLicnEndDate = "";
 						String stLicnServerType = "";
-						String stLicnType = "";
+						String stLicnType = "";	
+						String ETStTempId="";
 						
 						String ETTargetName = "__$AdmName$__";
 						String stInstNameTags = "__$InstName$__";
@@ -874,6 +880,7 @@ public class LicenseService {
 							
 //							String STSubject = responseSmsTemp.getBody().getStSubject();
 							String STBody = responseSmsTemp.getBody().getStBody();
+							ETStTempId = responseSmsTemp.getBody().getStTempId();
 
 							
 							ETNameReplacement = amdFname +" "+ amdLname;
@@ -912,7 +919,7 @@ public class LicenseService {
 							Unirest.setTimeouts(0, 0);
 							HttpResponse<JsonNode> asJson = Unirest.get(
 									"http://msg.jmdinfotek.in/api/mt/SendSMS?channel=Trans&DCS=0&flashsms=0&route=07&senderid=uLearn&user=technosoft_dev&password=Techno@8585&text="
-											+ encode + "&number="+ number)
+											+ encode + "&number=" + number + "&dlt=" + ETStTempId)
 									.asJson();
 
 							org.json.JSONObject object = asJson.getBody().getObject();
