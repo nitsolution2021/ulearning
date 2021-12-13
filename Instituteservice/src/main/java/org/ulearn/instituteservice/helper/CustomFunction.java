@@ -65,8 +65,8 @@ public class CustomFunction {
 
 			HttpEntity request = new HttpEntity(headers);
 			ResponseEntity<InstituteGlobalEntity> responseEmailTemp = new RestTemplate().exchange(
-					"http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/" + ActionType,
-					HttpMethod.GET, request, InstituteGlobalEntity.class);
+					"http://65.1.66.115:8090/dev/emailTemplate/getPrimaryETByAction/" + ActionType, HttpMethod.GET,
+					request, InstituteGlobalEntity.class);
 
 			return responseEmailTemp;
 		} catch (Exception e) {
@@ -74,7 +74,7 @@ public class CustomFunction {
 		}
 
 	}
-	
+
 	public ResponseEntity<InstituteGlobalEntity> GetSMSDetails(String token, String ActionType) {
 
 		try {
@@ -85,8 +85,8 @@ public class CustomFunction {
 			LOGGER.info("Inside - CustomFunction.SentSMS()-AHADUL-" + ActionType + "//");
 			HttpEntity request = new HttpEntity(headers);
 			ResponseEntity<InstituteGlobalEntity> responseSmsTemp = new RestTemplate().exchange(
-					"http://65.1.66.115:8091/dev/smsTemplate/getPrimarySTByAction/"+ActionType,
-					HttpMethod.GET, request, InstituteGlobalEntity.class);
+					"http://65.1.66.115:8091/dev/smsTemplate/getPrimarySTByAction/" + ActionType, HttpMethod.GET,
+					request, InstituteGlobalEntity.class);
 
 			return responseSmsTemp;
 		} catch (Exception e) {
@@ -94,5 +94,6 @@ public class CustomFunction {
 		}
 
 	}
+
 
 }
