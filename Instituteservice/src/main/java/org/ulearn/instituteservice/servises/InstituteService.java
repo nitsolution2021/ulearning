@@ -203,11 +203,11 @@ public class InstituteService {
 							String ETUsernameReplacement = findByIdAndEmail.get(0).getInstituteAdmin().get(0)
 									.getAmdUsername();
 							String ETPasswordReplacement = Password;
+
 							
-												
 							String processedName = ETBody.replace(ETTargetAdmName, ETAdmNameReplacement);
-							String processedInstName = processedName.replace(ETTargetInstName, ETInstEmailReplacement);
-							String processedInstEmail = processedInstName.replace(ETTargetEmailname, ETInstNameReplacement);
+							String processedInstName = processedName.replace(ETTargetInstName, ETInstNameReplacement);
+							String processedInstEmail = processedInstName.replace(ETTargetEmailname, ETInstEmailReplacement);
 							String processedInstMobile = processedInstEmail.replace(ETTargetInstMobile, ETInstMobileReplacement);
 							String processedInstPan = processedInstMobile.replace(ETTargetInstPan, ETInstPanReplacement);
 							String processedInstGST = processedInstPan.replace(ETTargetInstGST, ETInstGSTReplacement);
@@ -275,8 +275,8 @@ public class InstituteService {
 						
 
 						String processedName = STBody.replace(STTargetAdmName, STAdmNameReplacement);
-						String processedInstName = processedName.replace(STTargetInstName, STInstEmailReplacement);
-						String processedInstEmail = processedInstName.replace(STTargetEmailname, STInstNameReplacement);
+						String processedInstName = processedName.replace(STTargetInstName, STInstNameReplacement);
+						String processedInstEmail = processedInstName.replace(STTargetEmailname, STInstEmailReplacement);
 						String processedInstMobile = processedInstEmail.replace(STTargetInstMobile, STInstMobileReplacement);
 						String processedInstPan = processedInstMobile.replace(STTargetInstPan, STInstPanReplacement);
 						String processedInstGST = processedInstPan.replace(STTargetInstGST, STInstGSTReplacement);
@@ -448,13 +448,12 @@ public class InstituteService {
 							String ETInstPanReplacement = instituteGlobalEntrity.getInstPanNum();
 							String ETInstGSTReplacement = instituteGlobalEntrity.getInstGstNum();
 							
-
 							String processedName = ETBody.replace(ETTargetAdmName, ETAdmNameReplacement);
-							String processedInstName = processedName.replace(ETTargetInstName, ETInstEmailReplacement);
-							String processedInstEmail = processedInstName.replace(ETTargetEmailname, ETInstNameReplacement);
+							String processedInstName = processedName.replace(ETTargetInstName,ETInstNameReplacement);
+							String processedInstEmail = processedInstName.replace(ETTargetEmailname, ETInstEmailReplacement);
 							String processedInstMobile = processedInstEmail.replace(ETTargetInstMobile, ETInstMobileReplacement);
 							String processedInstPan = processedInstMobile.replace(ETTargetInstPan, ETInstPanReplacement);
-							processedMailBodyContent = processedInstPan.replace(ETTargetInstGST, ETInstGSTReplacement);
+							processedMailBodyContent = processedInstPan.replace(ETTargetInstGST, ETInstGSTReplacement);								
 							
 							String mailid = instituteGlobalEntrity.getInstEmail();
 
@@ -504,8 +503,8 @@ public class InstituteService {
 							
 
 							String processedName = STBody.replace(STTargetAdmName, STAdmNameReplacement);
-							String processedInstName = processedName.replace(STTargetInstName, STInstEmailReplacement);
-							String processedInstEmail = processedInstName.replace(STTargetEmailname, STInstNameReplacement);
+							String processedInstName = processedName.replace(STTargetInstName, STInstNameReplacement);
+							String processedInstEmail = processedInstName.replace(STTargetEmailname, STInstEmailReplacement);
 							String processedInstMobile = processedInstEmail.replace(STTargetInstMobile, STInstMobileReplacement);
 							String processedInstPan = processedInstMobile.replace(STTargetInstPan, STInstPanReplacement);
 							 processedSMSBodyContent = processedInstPan.replace(STTargetInstGST, STInstGSTReplacement);	
@@ -708,8 +707,8 @@ public class InstituteService {
 									
 
 									String processedName = ETBody.replace(ETTargetAdmName, ETAdmNameReplacement);
-									String processedInstName = processedName.replace(ETTargetInstName, ETInstEmailReplacement);
-									String processedInstEmail = processedInstName.replace(ETTargetEmailname, ETInstNameReplacement);
+									String processedInstName = processedName.replace(ETTargetInstName,ETInstNameReplacement);
+									String processedInstEmail = processedInstName.replace(ETTargetEmailname, ETInstEmailReplacement);
 									String processedInstMobile = processedInstEmail.replace(ETTargetInstMobile, ETInstMobileReplacement);
 									String processedInstPan = processedInstMobile.replace(ETTargetInstPan, ETInstPanReplacement);
 									processedMailBodyContent = processedInstPan.replace(ETTargetInstGST, ETInstGSTReplacement);	
@@ -761,11 +760,11 @@ public class InstituteService {
 									String STInstMobileReplacement = instituteGlobalEntrity.getInstMnum();
 									String STInstPanReplacement = instituteGlobalEntrity.getInstPanNum();
 									String STInstGSTReplacement = instituteGlobalEntrity.getInstGstNum();
+																		
 									
-
 									String processedAmdName = STBody.replace(STTargetAdmName, STAdmNameReplacement);
-									String processedInstName = processedAmdName.replace(STTargetInstName, STInstEmailReplacement);
-									String processedInstEmail = processedInstName.replace(STTargetEmailname, STInstNameReplacement);
+									String processedInstName = processedAmdName.replace(STTargetInstName, STInstNameReplacement);
+									String processedInstEmail = processedInstName.replace(STTargetEmailname, STInstEmailReplacement);
 									String processedInstMobile = processedInstEmail.replace(STTargetInstMobile, STInstMobileReplacement);
 									String processedInstPan = processedInstMobile.replace(STTargetInstPan, STInstPanReplacement);
 									 processedSMSBodyContent = processedInstPan.replace(STTargetInstGST, STInstGSTReplacement);									
