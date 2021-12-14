@@ -211,11 +211,12 @@ public class EmailTemplateController {
 		}	
 	}
 	
-	@DeleteMapping("/delete/{id}")
-	public GlobalResponse emailTemplateDelete(@PathVariable("id") Long id) {
+	@PutMapping("/delete")
+	public GlobalResponse emailTemplateDelete(@RequestBody() EmailTemplateEntity emailTemplateEntityParam) {
 		
 		LOGGER.info("Inside - EmailTemplateController.emailTemplateDelete()");
 		try {
+			Long id = emailTemplateEntityParam.getEtId();
 			Optional<EmailTemplateEntity> findById = emailTemplateRepo.findById(id);
 			if(findById.isPresent()) {
 				List<EmailTemplateEntity> findByIdAndDelete = emailTemplateRepo.findByIdAndDelete(0, id);
@@ -247,11 +248,12 @@ public class EmailTemplateController {
 		}
 	}
 	
-	@PutMapping("/restore/{id}")
-	public GlobalResponse emailTemplateRestore(@PathVariable("id") Long id) {
+	@PutMapping("/restore")
+	public GlobalResponse emailTemplateRestore(@RequestBody() EmailTemplateEntity emailTemplateEntityParam) {
 		
 		LOGGER.info("Inside - EmailTemplateController.emailTemplateRestore()");
 		try {
+			Long id = emailTemplateEntityParam.getEtId();
 			Optional<EmailTemplateEntity> findById = emailTemplateRepo.findById(id);
 			if(findById.isPresent()) {
 				List<EmailTemplateEntity> findByIdAndDelete = emailTemplateRepo.findByIdAndDelete(1, id);
