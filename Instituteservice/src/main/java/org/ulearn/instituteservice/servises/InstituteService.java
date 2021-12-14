@@ -36,7 +36,6 @@ import org.ulearn.instituteservice.repository.InstituteAdminRepo;
 import org.ulearn.instituteservice.repository.InstituteRepo;
 import org.ulearn.instituteservice.validation.FieldValidation;
 
-
 @Service
 public class InstituteService {
 	@Autowired
@@ -53,7 +52,7 @@ public class InstituteService {
 
 	@Autowired
 	private InstituteAdminRepo instituteAdminRepo;
-	
+
 	@Autowired
 	private CustomFunction customFunction;
 
@@ -142,7 +141,6 @@ public class InstituteService {
 	public GlobalResponse SendInstituteCredentials(InstituteEntity instituteEntrity, String token) {
 
 		try {
-			
 
 			if ((fieldValidation.isEmpty(instituteEntrity.getInstId()))
 					& (fieldValidation.isEmail(instituteEntrity.getInstEmail()))) {
@@ -170,11 +168,11 @@ public class InstituteService {
 					Password = RandomStringUtils.random(length, useLetters, useNumbers);
 					String HashPassword = passwordEncoder.encode(Password);
 
-					try {											
-						ResponseEntity<InstituteGlobalEntity> responseEmailTemp=this.customFunction.GetEmailDetails(token,"Institute_Credentials");
+					try {
+						ResponseEntity<InstituteGlobalEntity> responseEmailTemp = this.customFunction
+								.GetEmailDetails(token, "Institute_Credentials");
 						String ETSubject = responseEmailTemp.getBody().getEtSubject();
-						String ETBody = responseEmailTemp.getBody().getEtBody();						
-						
+						String ETBody = responseEmailTemp.getBody().getEtBody();
 
 						InstituteAdminEntity getById = instituteAdminRepo.getById(findByIdAndEmail.get(0).getInstId());
 						if (getById.getInstId() != null) {
@@ -182,7 +180,6 @@ public class InstituteService {
 							getById.setUpdatedOn(new Date());
 							InstituteAdminEntity InsAmdDetails = instituteAdminRepo.save(getById);
 
-							
 							String ETTargetAdmName = "__$AdmName$__";
 							String ETTargetInstName = "__$InstName$__";
 							String ETTargetEmailname = "__$InstEmail$__";
@@ -191,10 +188,10 @@ public class InstituteService {
 							String ETTargetInstGST = "__$InstGST$__";
 							String ETTargetUsername = "__$username$__";
 							String ETTargetPassword = "__$password$__";
-							
 
-							String ETAdmNameReplacement = findByIdAndEmail.get(0).getInstituteAdmin().get(0).getAmdFname()
-									+ " " + findByIdAndEmail.get(0).getInstituteAdmin().get(0).getAmdLname();
+							String ETAdmNameReplacement = findByIdAndEmail.get(0).getInstituteAdmin().get(0)
+									.getAmdFname() + " "
+									+ findByIdAndEmail.get(0).getInstituteAdmin().get(0).getAmdLname();
 							String ETInstEmailReplacement = findByIdAndEmail.get(0).getInstEmail();
 							String ETInstNameReplacement = findByIdAndEmail.get(0).getInstName();
 							String ETInstMobileReplacement = findByIdAndEmail.get(0).getInstMnum();
@@ -204,16 +201,20 @@ public class InstituteService {
 									.getAmdUsername();
 							String ETPasswordReplacement = Password;
 
-							
 							String processedName = ETBody.replace(ETTargetAdmName, ETAdmNameReplacement);
 							String processedInstName = processedName.replace(ETTargetInstName, ETInstNameReplacement);
-							String processedInstEmail = processedInstName.replace(ETTargetEmailname, ETInstEmailReplacement);
-							String processedInstMobile = processedInstEmail.replace(ETTargetInstMobile, ETInstMobileReplacement);
-							String processedInstPan = processedInstMobile.replace(ETTargetInstPan, ETInstPanReplacement);
+							String processedInstEmail = processedInstName.replace(ETTargetEmailname,
+									ETInstEmailReplacement);
+							String processedInstMobile = processedInstEmail.replace(ETTargetInstMobile,
+									ETInstMobileReplacement);
+							String processedInstPan = processedInstMobile.replace(ETTargetInstPan,
+									ETInstPanReplacement);
 							String processedInstGST = processedInstPan.replace(ETTargetInstGST, ETInstGSTReplacement);
-							String processedUsername = processedInstGST.replace(ETTargetUsername, ETUsernameReplacement);
-							 processedMailBodyContent = processedUsername.replace(ETTargetPassword, ETPasswordReplacement);
-														 
+							String processedUsername = processedInstGST.replace(ETTargetUsername,
+									ETUsernameReplacement);
+							processedMailBodyContent = processedUsername.replace(ETTargetPassword,
+									ETPasswordReplacement);
+
 							String mailid = findByIdAndEmail.get(0).getInstEmail();
 
 							requestJson = new JSONObject();
@@ -224,34 +225,35 @@ public class InstituteService {
 						}
 					} catch (Exception e) {
 
-						org.json.JSONObject jsonObject = new org.json.JSONObject(e.getMessage().substring(7));																		
-						if(!jsonObject.getString("messagee").equals("")) {										
+						org.json.JSONObject jsonObject = new org.json.JSONObject(e.getMessage().substring(7));
+						if (!jsonObject.getString("messagee").equals("")) {
 							throw new CustomException(jsonObject.getString("messagee"));
 						}
-						
+
 						throw new CustomException("Email Service Is Not Running!");
 					}
 					try {
 						HttpEntity<String> entity = new HttpEntity(requestJson, headers);
 						this.customFunction.SentEmail(entity);
 					} catch (Exception e) {
-						
-						org.json.JSONObject jsonObject = new org.json.JSONObject(e.getMessage().substring(7));																		
-						if(!jsonObject.getString("messagee").equals("")) {										
-							throw new CustomException("Failed To Send Email Because "+jsonObject.getString("messagee"));
+
+						org.json.JSONObject jsonObject = new org.json.JSONObject(e.getMessage().substring(7));
+						if (!jsonObject.getString("messagee").equals("")) {
+							throw new CustomException(
+									"Failed To Send Email Because " + jsonObject.getString("messagee"));
 						}
 						throw new CustomException("Sendmail Service Is Not Running!");
 					}
 
 					try {
 
-						ResponseEntity<InstituteGlobalEntity> responseSmsTemp=this.customFunction.GetSMSDetails(token,"Institute_Credentials");
-						
+						ResponseEntity<InstituteGlobalEntity> responseSmsTemp = this.customFunction.GetSMSDetails(token,
+								"Institute_Credentials");
+
 						String STSubject = responseSmsTemp.getBody().getStSubject();
 						String STBody = responseSmsTemp.getBody().getStBody();
-						 ETStTempId = responseSmsTemp.getBody().getStTempId();
-						 
-						 
+						ETStTempId = responseSmsTemp.getBody().getStTempId();
+
 						String STTargetAdmName = "__$AdmName$__";
 						String STTargetInstName = "__$InstName$__";
 						String STTargetEmailname = "__$InstEmail$__";
@@ -260,7 +262,6 @@ public class InstituteService {
 						String STTargetInstGST = "__$InstGST$__";
 						String STTargetUsername = "__$username$__";
 						String STTargetPassword = "__$password$__";
-						
 
 						String STAdmNameReplacement = findByIdAndEmail.get(0).getInstituteAdmin().get(0).getAmdFname()
 								+ " " + findByIdAndEmail.get(0).getInstituteAdmin().get(0).getAmdLname();
@@ -272,32 +273,33 @@ public class InstituteService {
 						String STUsernameReplacement = findByIdAndEmail.get(0).getInstituteAdmin().get(0)
 								.getAmdUsername();
 						String STPasswordReplacement = Password;
-						
 
 						String processedName = STBody.replace(STTargetAdmName, STAdmNameReplacement);
 						String processedInstName = processedName.replace(STTargetInstName, STInstNameReplacement);
-						String processedInstEmail = processedInstName.replace(STTargetEmailname, STInstEmailReplacement);
-						String processedInstMobile = processedInstEmail.replace(STTargetInstMobile, STInstMobileReplacement);
+						String processedInstEmail = processedInstName.replace(STTargetEmailname,
+								STInstEmailReplacement);
+						String processedInstMobile = processedInstEmail.replace(STTargetInstMobile,
+								STInstMobileReplacement);
 						String processedInstPan = processedInstMobile.replace(STTargetInstPan, STInstPanReplacement);
 						String processedInstGST = processedInstPan.replace(STTargetInstGST, STInstGSTReplacement);
-						String processedUsername = processedInstGST.replace(STTargetUsername, STUsernameReplacement);	
+						String processedUsername = processedInstGST.replace(STTargetUsername, STUsernameReplacement);
 						processedSMSBodyContent = processedUsername.replace(STTargetPassword, STPasswordReplacement);
-						 
+
 //						LOGGER.info("Inside - InstituteController.getInstutePagination(////)"+processedSMSBodyContent);
 						number = findByIdAndEmail.get(0).getInstMnum();
 						number = number.substring(3);
 
 					} catch (Exception e) {
-						org.json.JSONObject jsonObject = new org.json.JSONObject(e.getMessage().substring(7));																		
-						if(!jsonObject.getString("messagee").equals("")) {										
+						org.json.JSONObject jsonObject = new org.json.JSONObject(e.getMessage().substring(7));
+						if (!jsonObject.getString("messagee").equals("")) {
 							throw new CustomException(jsonObject.getString("messagee"));
 						}
 						throw new CustomException("SMS Service Is Not Running!");
 					}
 					try {
-						this.customFunction.SentSMS(processedSMSBodyContent, number, ETStTempId);						
-					} catch (Exception e) {		
-						throw new CustomException(e.getMessage());				
+						this.customFunction.SentSMS(processedSMSBodyContent, number, ETStTempId);
+					} catch (Exception e) {
+						throw new CustomException(e.getMessage());
 					}
 
 				}
@@ -313,7 +315,7 @@ public class InstituteService {
 
 		try {
 			List<InstituteEntity> findAll = instituteRepo.findByListInst().stream()
-//					.filter(Inst -> Inst.getIsDeleted() == 0).filter(Inst -> Inst.getIsActive() == 1)
+					.filter(Inst -> Inst.getIsDeleted() == 0).filter(Inst -> Inst.getIsActive() == 1)
 //					.filter(instituteLicense -> instituteLicense.getInstituteLicense() == null)					
 					.collect(Collectors.toList());
 			if (findAll.size() <= 1) {
@@ -326,8 +328,8 @@ public class InstituteService {
 		}
 	}
 
-	
-	public GlobalResponse postInstituteDetailsService(@Valid InstituteGlobalEntity instituteGlobalEntrity, String token) {
+	public GlobalResponse postInstituteDetailsService(@Valid InstituteGlobalEntity instituteGlobalEntrity,
+			String token) {
 		try {
 
 			JSONObject requestJson = null;
@@ -335,12 +337,12 @@ public class InstituteService {
 			String processedSMSBodyContent = null;
 			String processedMailBodyContent = null;
 			String number = null;
-			String ETStTempId = null;			
+			String ETStTempId = null;
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("Authorization", token);
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity request = new HttpEntity(headers);
-			
+
 			Optional<InstituteEntity> findByInstituteName = instituteRepo
 					.findByInstName(instituteGlobalEntrity.getInstName());
 			Optional<InstituteEntity> findByInstEmail = instituteRepo
@@ -428,7 +430,8 @@ public class InstituteService {
 						InstituteAdminEntity InsAmdDetails = instituteAdminRepo.save(filterInsAmdDetails);
 
 						try {
-							ResponseEntity<InstituteGlobalEntity> responseEmailTemp=this.customFunction.GetEmailDetails(token,"Institute_Create");
+							ResponseEntity<InstituteGlobalEntity> responseEmailTemp = this.customFunction
+									.GetEmailDetails(token, "Institute_Create");
 
 							String ETSubject = responseEmailTemp.getBody().getEtSubject();
 							String ETBody = responseEmailTemp.getBody().getEtBody();
@@ -439,22 +442,25 @@ public class InstituteService {
 							String ETTargetInstMobile = "__$InstMobile$__";
 							String ETTargetInstPan = "__$InstPan$__";
 							String ETTargetInstGST = "__$InstGST$__";
-							
 
-							String ETAdmNameReplacement = instituteGlobalEntrity.getAmdFname() + " "+ instituteGlobalEntrity.getAmdLname();
+							String ETAdmNameReplacement = instituteGlobalEntrity.getAmdFname() + " "
+									+ instituteGlobalEntrity.getAmdLname();
 							String ETInstEmailReplacement = instituteGlobalEntrity.getInstEmail();
 							String ETInstNameReplacement = instituteGlobalEntrity.getInstName();
 							String ETInstMobileReplacement = instituteGlobalEntrity.getInstMnum();
 							String ETInstPanReplacement = instituteGlobalEntrity.getInstPanNum();
 							String ETInstGSTReplacement = instituteGlobalEntrity.getInstGstNum();
-							
+
 							String processedName = ETBody.replace(ETTargetAdmName, ETAdmNameReplacement);
-							String processedInstName = processedName.replace(ETTargetInstName,ETInstNameReplacement);
-							String processedInstEmail = processedInstName.replace(ETTargetEmailname, ETInstEmailReplacement);
-							String processedInstMobile = processedInstEmail.replace(ETTargetInstMobile, ETInstMobileReplacement);
-							String processedInstPan = processedInstMobile.replace(ETTargetInstPan, ETInstPanReplacement);
-							processedMailBodyContent = processedInstPan.replace(ETTargetInstGST, ETInstGSTReplacement);								
-							
+							String processedInstName = processedName.replace(ETTargetInstName, ETInstNameReplacement);
+							String processedInstEmail = processedInstName.replace(ETTargetEmailname,
+									ETInstEmailReplacement);
+							String processedInstMobile = processedInstEmail.replace(ETTargetInstMobile,
+									ETInstMobileReplacement);
+							String processedInstPan = processedInstMobile.replace(ETTargetInstPan,
+									ETInstPanReplacement);
+							processedMailBodyContent = processedInstPan.replace(ETTargetInstGST, ETInstGSTReplacement);
+
 							String mailid = instituteGlobalEntrity.getInstEmail();
 
 							requestJson = new JSONObject();
@@ -463,9 +469,10 @@ public class InstituteService {
 							requestJson.put("body", processedMailBodyContent);
 							requestJson.put("enableHtml", true);
 						} catch (Exception e) {
-							org.json.JSONObject jsonObject = new org.json.JSONObject(e.getMessage().substring(7));																		
-							if(!jsonObject.getString("messagee").equals("")) {										
-								throw new CustomException("Institute Added Successfully But "+jsonObject.getString("messagee"));
+							org.json.JSONObject jsonObject = new org.json.JSONObject(e.getMessage().substring(7));
+							if (!jsonObject.getString("messagee").equals("")) {
+								throw new CustomException(
+										"Institute Added Successfully But " + jsonObject.getString("messagee"));
 							}
 							throw new CustomException("Institute Added Successfully But Email Service Is Not Running!");
 						}
@@ -473,18 +480,21 @@ public class InstituteService {
 							HttpEntity<String> entity = new HttpEntity(requestJson, headers);
 							this.customFunction.SentEmail(entity);
 						} catch (Exception e) {
-							org.json.JSONObject jsonObject = new org.json.JSONObject(e.getMessage().substring(7));																		
-							if(!jsonObject.getString("messagee").equals("")) {										
-								throw new CustomException("Institute Updated Successfully But "+jsonObject.getString("messagee"));
+							org.json.JSONObject jsonObject = new org.json.JSONObject(e.getMessage().substring(7));
+							if (!jsonObject.getString("messagee").equals("")) {
+								throw new CustomException(
+										"Institute Updated Successfully But " + jsonObject.getString("messagee"));
 							}
-							throw new CustomException("Institute Added Successfully But Login OR Email Service Is Not Running");
+							throw new CustomException(
+									"Institute Added Successfully But Login OR Email Service Is Not Running");
 						}
 
 						try {
-							ResponseEntity<InstituteGlobalEntity> responseSmsTemp=this.customFunction.GetSMSDetails(token,"Institute_Create");
+							ResponseEntity<InstituteGlobalEntity> responseSmsTemp = this.customFunction
+									.GetSMSDetails(token, "Institute_Create");
 							String STSubject = responseSmsTemp.getBody().getStSubject();
 							String STBody = responseSmsTemp.getBody().getStBody();
-									ETStTempId = responseSmsTemp.getBody().getStTempId();
+							ETStTempId = responseSmsTemp.getBody().getStTempId();
 
 							String STTargetAdmName = "__$AdmName$__";
 							String STTargetInstName = "__$InstName$__";
@@ -492,30 +502,33 @@ public class InstituteService {
 							String STTargetInstMobile = "__$InstMobile$__";
 							String STTargetInstPan = "__$InstPan$__";
 							String STTargetInstGST = "__$InstGST$__";
-							
 
-							String STAdmNameReplacement = instituteGlobalEntrity.getAmdFname() + " "+ instituteGlobalEntrity.getAmdLname();
+							String STAdmNameReplacement = instituteGlobalEntrity.getAmdFname() + " "
+									+ instituteGlobalEntrity.getAmdLname();
 							String STInstEmailReplacement = instituteGlobalEntrity.getInstEmail();
 							String STInstNameReplacement = instituteGlobalEntrity.getInstName();
 							String STInstMobileReplacement = instituteGlobalEntrity.getInstMnum();
 							String STInstPanReplacement = instituteGlobalEntrity.getInstPanNum();
 							String STInstGSTReplacement = instituteGlobalEntrity.getInstGstNum();
-							
 
 							String processedName = STBody.replace(STTargetAdmName, STAdmNameReplacement);
 							String processedInstName = processedName.replace(STTargetInstName, STInstNameReplacement);
-							String processedInstEmail = processedInstName.replace(STTargetEmailname, STInstEmailReplacement);
-							String processedInstMobile = processedInstEmail.replace(STTargetInstMobile, STInstMobileReplacement);
-							String processedInstPan = processedInstMobile.replace(STTargetInstPan, STInstPanReplacement);
-							 processedSMSBodyContent = processedInstPan.replace(STTargetInstGST, STInstGSTReplacement);	
+							String processedInstEmail = processedInstName.replace(STTargetEmailname,
+									STInstEmailReplacement);
+							String processedInstMobile = processedInstEmail.replace(STTargetInstMobile,
+									STInstMobileReplacement);
+							String processedInstPan = processedInstMobile.replace(STTargetInstPan,
+									STInstPanReplacement);
+							processedSMSBodyContent = processedInstPan.replace(STTargetInstGST, STInstGSTReplacement);
 
 							number = instituteGlobalEntrity.getInstMnum();
-							number = number.substring(3);								
+							number = number.substring(3);
 
 						} catch (Exception e) {
-							org.json.JSONObject jsonObject = new org.json.JSONObject(e.getMessage().substring(7));																		
-							if(!jsonObject.getString("messagee").equals("")) {										
-								throw new CustomException("Institute Added Successfully But "+jsonObject.getString("messagee"));
+							org.json.JSONObject jsonObject = new org.json.JSONObject(e.getMessage().substring(7));
+							if (!jsonObject.getString("messagee").equals("")) {
+								throw new CustomException(
+										"Institute Added Successfully But " + jsonObject.getString("messagee"));
 							}
 							throw new CustomException("Institute Added Successfully But SMS Service Is Not Running!");
 						}
@@ -541,14 +554,12 @@ public class InstituteService {
 		}
 	}
 
-	
 	public Optional<InstituteEntity> viewInstituteDetailsService(long instId) {
 		try {
 			Optional<InstituteEntity> findById = this.instituteRepo.findById(instId);
 			if (!(findById.isPresent())) {
 				throw new CustomException("Institute Not Found!");
 			} else {
-				LOGGER.info("findById:- " + findById.get().getInstituteAdmin().toString());
 				return findById;
 			}
 
@@ -557,7 +568,6 @@ public class InstituteService {
 		}
 	}
 
-	
 	public GlobalResponse putInstituteDetailsService(@Valid InstituteGlobalEntity instituteGlobalEntrity, long instId,
 			String token) {
 		try {
@@ -566,12 +576,12 @@ public class InstituteService {
 			String processedSMSBodyContent = null;
 			String processedMailBodyContent = null;
 			String number = null;
-			String ETStTempId = null;			
+			String ETStTempId = null;
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("Authorization", token);
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity request = new HttpEntity(headers);
-			
+
 			if ((fieldValidation.isEmpty(instituteGlobalEntrity.getInstCnum()))
 					& (fieldValidation.isEmpty(instituteGlobalEntrity.getInstName()))
 					& (fieldValidation.isEmail(instituteGlobalEntrity.getInstEmail()))
@@ -686,7 +696,8 @@ public class InstituteService {
 								InstituteAdminEntity InsAmdDetails = instituteAdminRepo.save(filterInsAmdDetails);
 
 								try {
-									ResponseEntity<InstituteGlobalEntity> responseEmailTemp=this.customFunction.GetEmailDetails(token,"Institute_Update");
+									ResponseEntity<InstituteGlobalEntity> responseEmailTemp = this.customFunction
+											.GetEmailDetails(token, "Institute_Update");
 									String ETSubject = responseEmailTemp.getBody().getEtSubject();
 									String ETBody = responseEmailTemp.getBody().getEtBody();
 
@@ -696,23 +707,27 @@ public class InstituteService {
 									String ETTargetInstMobile = "__$InstMobile$__";
 									String ETTargetInstPan = "__$InstPan$__";
 									String ETTargetInstGST = "__$InstGST$__";
-									
 
-									String ETAdmNameReplacement = instituteGlobalEntrity.getAmdFname() + " "+ instituteGlobalEntrity.getAmdLname();
+									String ETAdmNameReplacement = instituteGlobalEntrity.getAmdFname() + " "
+											+ instituteGlobalEntrity.getAmdLname();
 									String ETInstEmailReplacement = instituteGlobalEntrity.getInstEmail();
 									String ETInstNameReplacement = instituteGlobalEntrity.getInstName();
 									String ETInstMobileReplacement = instituteGlobalEntrity.getInstMnum();
 									String ETInstPanReplacement = instituteGlobalEntrity.getInstPanNum();
 									String ETInstGSTReplacement = instituteGlobalEntrity.getInstGstNum();
-									
 
 									String processedName = ETBody.replace(ETTargetAdmName, ETAdmNameReplacement);
-									String processedInstName = processedName.replace(ETTargetInstName,ETInstNameReplacement);
-									String processedInstEmail = processedInstName.replace(ETTargetEmailname, ETInstEmailReplacement);
-									String processedInstMobile = processedInstEmail.replace(ETTargetInstMobile, ETInstMobileReplacement);
-									String processedInstPan = processedInstMobile.replace(ETTargetInstPan, ETInstPanReplacement);
-									processedMailBodyContent = processedInstPan.replace(ETTargetInstGST, ETInstGSTReplacement);	
-									 
+									String processedInstName = processedName.replace(ETTargetInstName,
+											ETInstNameReplacement);
+									String processedInstEmail = processedInstName.replace(ETTargetEmailname,
+											ETInstEmailReplacement);
+									String processedInstMobile = processedInstEmail.replace(ETTargetInstMobile,
+											ETInstMobileReplacement);
+									String processedInstPan = processedInstMobile.replace(ETTargetInstPan,
+											ETInstPanReplacement);
+									processedMailBodyContent = processedInstPan.replace(ETTargetInstGST,
+											ETInstGSTReplacement);
+
 //									LOGGER.info("Inside - InstituteController.getInstute()"+processedMailBodyContent);
 									String mailid = instituteGlobalEntrity.getInstEmail();
 
@@ -723,28 +738,35 @@ public class InstituteService {
 									requestJson.put("enableHtml", true);
 
 								} catch (Exception e) {
-									org.json.JSONObject jsonObject = new org.json.JSONObject(e.getMessage().substring(7));																		
-									if(!jsonObject.getString("messagee").equals("")) {										
-										throw new CustomException("Institute Updated Successfully But "+jsonObject.getString("messagee"));
+									org.json.JSONObject jsonObject = new org.json.JSONObject(
+											e.getMessage().substring(7));
+									if (!jsonObject.getString("messagee").equals("")) {
+										throw new CustomException("Institute Updated Successfully But "
+												+ jsonObject.getString("messagee"));
 									}
-									throw new CustomException("Institute Updated Successfully But Email Service Is Not Running!");
+									throw new CustomException(
+											"Institute Updated Successfully But Email Service Is Not Running!");
 								}
 								try {
 									HttpEntity<String> entity = new HttpEntity(requestJson, headers);
 									this.customFunction.SentEmail(entity);
-																		
+
 								} catch (Exception e) {
-									org.json.JSONObject jsonObject = new org.json.JSONObject(e.getMessage().substring(7));									
-									if(!jsonObject.getString("messagee").equals("")) {
-										throw new CustomException("Institute Updated Successfully But "+jsonObject.getString("messagee"));
+									org.json.JSONObject jsonObject = new org.json.JSONObject(
+											e.getMessage().substring(7));
+									if (!jsonObject.getString("messagee").equals("")) {
+										throw new CustomException("Institute Updated Successfully But "
+												+ jsonObject.getString("messagee"));
 									}
-									throw new CustomException("Institute Updated Successfully But Sendmail Service Is Not Running!");
+									throw new CustomException(
+											"Institute Updated Successfully But Sendmail Service Is Not Running!");
 								}
-								try {									
-									ResponseEntity<InstituteGlobalEntity> responseSmsTemp=this.customFunction.GetSMSDetails(token,"Institute_Update");
+								try {
+									ResponseEntity<InstituteGlobalEntity> responseSmsTemp = this.customFunction
+											.GetSMSDetails(token, "Institute_Update");
 									String STSubject = responseSmsTemp.getBody().getStSubject();
 									String STBody = responseSmsTemp.getBody().getStBody();
-											ETStTempId = responseSmsTemp.getBody().getStTempId();
+									ETStTempId = responseSmsTemp.getBody().getStTempId();
 
 									String STTargetAdmName = "__$AdmName$__";
 									String STTargetInstName = "__$InstName$__";
@@ -752,38 +774,44 @@ public class InstituteService {
 									String STTargetInstMobile = "__$InstMobile$__";
 									String STTargetInstPan = "__$InstPan$__";
 									String STTargetInstGST = "__$InstGST$__";
-									
 
-									String STAdmNameReplacement = instituteGlobalEntrity.getAmdFname() + " "+ instituteGlobalEntrity.getAmdLname();
+									String STAdmNameReplacement = instituteGlobalEntrity.getAmdFname() + " "
+											+ instituteGlobalEntrity.getAmdLname();
 									String STInstEmailReplacement = instituteGlobalEntrity.getInstEmail();
 									String STInstNameReplacement = instituteGlobalEntrity.getInstName();
 									String STInstMobileReplacement = instituteGlobalEntrity.getInstMnum();
 									String STInstPanReplacement = instituteGlobalEntrity.getInstPanNum();
 									String STInstGSTReplacement = instituteGlobalEntrity.getInstGstNum();
-																		
-									
+
 									String processedAmdName = STBody.replace(STTargetAdmName, STAdmNameReplacement);
-									String processedInstName = processedAmdName.replace(STTargetInstName, STInstNameReplacement);
-									String processedInstEmail = processedInstName.replace(STTargetEmailname, STInstEmailReplacement);
-									String processedInstMobile = processedInstEmail.replace(STTargetInstMobile, STInstMobileReplacement);
-									String processedInstPan = processedInstMobile.replace(STTargetInstPan, STInstPanReplacement);
-									 processedSMSBodyContent = processedInstPan.replace(STTargetInstGST, STInstGSTReplacement);									
-									
-									
+									String processedInstName = processedAmdName.replace(STTargetInstName,
+											STInstNameReplacement);
+									String processedInstEmail = processedInstName.replace(STTargetEmailname,
+											STInstEmailReplacement);
+									String processedInstMobile = processedInstEmail.replace(STTargetInstMobile,
+											STInstMobileReplacement);
+									String processedInstPan = processedInstMobile.replace(STTargetInstPan,
+											STInstPanReplacement);
+									processedSMSBodyContent = processedInstPan.replace(STTargetInstGST,
+											STInstGSTReplacement);
+
 									number = instituteGlobalEntrity.getInstMnum();
-									number = number.substring(3);				
+									number = number.substring(3);
 
 								} catch (Exception e) {
-									org.json.JSONObject jsonObject = new org.json.JSONObject(e.getMessage().substring(7));									
-									if(!jsonObject.getString("messagee").equals("")) {
-										throw new CustomException("Institute Updated Successfully But "+jsonObject.getString("messagee"));
-									}									
-									throw new CustomException("Institute Updated Successfully But SMS Service Is Not Running!");
+									org.json.JSONObject jsonObject = new org.json.JSONObject(
+											e.getMessage().substring(7));
+									if (!jsonObject.getString("messagee").equals("")) {
+										throw new CustomException("Institute Updated Successfully But "
+												+ jsonObject.getString("messagee"));
+									}
+									throw new CustomException(
+											"Institute Updated Successfully But SMS Service Is Not Running!");
 								}
 								try {
 									this.customFunction.SentSMS(processedSMSBodyContent, number, ETStTempId);
-								} catch (Exception e) {																		
-									throw new CustomException("Institute Updated Successfully But "+e.getMessage());
+								} catch (Exception e) {
+									throw new CustomException("Institute Updated Successfully But " + e.getMessage());
 								}
 							}
 							return new GlobalResponse("SUCCESS", 200, "Institute Updated Successfully");
@@ -799,6 +827,52 @@ public class InstituteService {
 				}
 			} else {
 				throw new CustomException("Validation Error!");
+			}
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+	}
+
+	public GlobalResponse putInstituteDeleteService(long instId) {
+
+		try {
+			InstituteEntity findById = instituteRepo.getById(instId);
+			if (findById.getInstId() == null) {
+				throw new CustomException("Institute Not Found!");
+			} else {
+				findById.setIsDeleted(1);
+				findById.setUpdatedOn(new Date());
+				InstituteEntity InsDetails = instituteRepo.save(findById);
+
+				InstituteAddressEntity findByAdrId = instituteAddressRepo.getById(instId);
+				findByAdrId.setIsDeleted(1);
+				findByAdrId.setUpdatedOn(new Date());
+				InstituteAddressEntity InsAmdDetails = instituteAddressRepo.save(findByAdrId);
+
+				return new GlobalResponse("SUCCESS", 200, "Institute Deleted Successfully");
+			}
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+	}
+
+	public GlobalResponse putInstituteRestoreService(long instId) {
+
+		try {
+			InstituteEntity findById = instituteRepo.getById(instId);
+			if (findById.getInstId() == null) {
+				throw new CustomException("Institute Not Found!");
+			} else {
+				findById.setIsDeleted(0);
+				findById.setUpdatedOn(new Date());
+				InstituteEntity InsDetails = instituteRepo.save(findById);
+
+				InstituteAddressEntity findByAdrId = instituteAddressRepo.getById(instId);
+				findByAdrId.setIsDeleted(0);
+				findByAdrId.setUpdatedOn(new Date());
+				InstituteAddressEntity InsAmdDetails = instituteAddressRepo.save(findByAdrId);
+
+				return new GlobalResponse("SUCCESS", 200, "Institute Restore Successfully");
 			}
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());

@@ -19,10 +19,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.ulearn.instituteservice.entity.GlobalResponse;
+import org.ulearn.instituteservice.entity.InstituteAddressEntity;
 import org.ulearn.instituteservice.entity.InstituteEntity;
 import org.ulearn.instituteservice.entity.InstituteGlobalEntity;
 import org.ulearn.instituteservice.exception.CustomException;
 import org.ulearn.instituteservice.servises.InstituteService;
+import org.ulearn.instituteservice.validation.FieldValidation;
 
 @RestController
 @RequestMapping("/institute")
@@ -32,7 +34,9 @@ public class InstuteController {
 
 	@Autowired
 	private InstituteService instituteService;
-
+	@Autowired
+	private FieldValidation fieldValidation;
+	
 	@GetMapping("/list")
 	public Map<String, Object> getInstute(@RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy,
 			@RequestParam(defaultValue = "0") Integer isDeleted) {
@@ -120,6 +124,34 @@ public class InstuteController {
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
 		}
+	}
+
+	@PutMapping("/delete")
+	public GlobalResponse putInstituteDelete(@RequestBody() InstituteEntity instituteEntrity) {
+		LOGGER.info("Inside - InstituteController.putInstituteDelete()");
+		try {
+			if (instituteEntrity.getInstId()!=null){
+				return this.instituteService.putInstituteDeleteService(instituteEntrity.getInstId());
+			}else {
+				throw new CustomException("Institute Id Not Found!");
+			}
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}	
+	}
+	
+	@PutMapping("/restore")
+	public GlobalResponse putInstituteRestore(@RequestBody() InstituteEntity instituteEntrity) {
+		LOGGER.info("Inside - InstituteController.putInstituteRestore()");
+		try {
+			if (instituteEntrity.getInstId()!=null){
+				return this.instituteService.putInstituteRestoreService(instituteEntrity.getInstId());
+			}else {
+				throw new CustomException("Institute Id Not Found!");
+			}
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}	
 	}
 
 }
