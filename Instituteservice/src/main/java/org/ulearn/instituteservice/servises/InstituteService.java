@@ -878,5 +878,41 @@ public class InstituteService {
 			throw new CustomException(e.getMessage());
 		}
 	}
+	
+	public GlobalResponse putInstituteStatusService(long instId) {
+
+		try {
+			InstituteEntity findById = instituteRepo.getById(instId);
+			if (findById.getInstId() == null) {
+				throw new CustomException("Institute Not Found!");
+			} else {
+				if(findById.getIsActive()==0) {
+					findById.setIsActive(1);
+				}else {
+					findById.setIsActive(0);
+				}
+				if(findById.getInstStatus()=="0") {
+					findById.setInstStatus("1");
+				}else {
+					findById.setInstStatus("0");
+				}
+				findById.setUpdatedOn(new Date());
+				InstituteEntity InsDetails = instituteRepo.save(findById);
+
+				InstituteAddressEntity findByAdrId = instituteAddressRepo.getById(instId);
+				if(findByAdrId.getIsActive()==0) {
+					findByAdrId.setIsActive(1);
+				}else {
+					findByAdrId.setIsActive(0);
+				}
+				findByAdrId.setUpdatedOn(new Date());
+				InstituteAddressEntity InsAmdDetails = instituteAddressRepo.save(findByAdrId);
+
+				return new GlobalResponse("SUCCESS", 200, "Status Changed Successfully");
+			}
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+	}
 
 }

@@ -152,6 +152,20 @@ public class InstuteController {
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
 		}	
+	}	
+	
+	@PutMapping("/status")
+	public GlobalResponse putInstituteStatus(@RequestBody() InstituteEntity instituteEntrity) {
+		LOGGER.info("Inside - InstituteController.putInstituteStatus()");
+		try {
+			if (instituteEntrity.getInstId()!=null){
+				return this.instituteService.putInstituteStatusService(instituteEntrity.getInstId());
+			}else {
+				throw new CustomException("Institute Id Not Found!");
+			}
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}	
 	}
 
 }
