@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,7 +33,7 @@ public class InstuteController {
 
 	@Autowired
 	private InstituteService instituteService;
-
+	
 	@GetMapping("/list")
 	public Map<String, Object> getInstute(@RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy,
 			@RequestParam(defaultValue = "0") Integer isDeleted) {
@@ -120,6 +121,48 @@ public class InstuteController {
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
 		}
+	}
+
+	@PutMapping("/delete")
+	public GlobalResponse putInstituteDelete(@RequestBody() InstituteEntity instituteEntrity) {
+		LOGGER.info("Inside - InstituteController.putInstituteDelete()");
+		try {
+			if (instituteEntrity.getInstId()!=null){
+				return this.instituteService.putInstituteDeleteService(instituteEntrity.getInstId());
+			}else {
+				throw new CustomException("Institute Id Not Found!");
+			}
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}	
+	}
+	
+	@PutMapping("/restore")
+	public GlobalResponse putInstituteRestore(@RequestBody() InstituteEntity instituteEntrity) {
+		LOGGER.info("Inside - InstituteController.putInstituteRestore()");
+		try {
+			if (instituteEntrity.getInstId()!=null){
+				return this.instituteService.putInstituteRestoreService(instituteEntrity.getInstId());
+			}else {
+				throw new CustomException("Institute Id Not Found!");
+			}
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}	
+	}	
+	
+	@PutMapping("/status")
+	public GlobalResponse putInstituteStatus(@RequestBody() InstituteEntity instituteEntrity) {
+		LOGGER.info("Inside - InstituteController.putInstituteStatus()");
+		try {
+			if (instituteEntrity.getInstId()!=null){
+				return this.instituteService.putInstituteStatusService(instituteEntrity.getInstId());
+			}else {
+				throw new CustomException("Institute Id Not Found!");
+			}
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}	
 	}
 
 }
