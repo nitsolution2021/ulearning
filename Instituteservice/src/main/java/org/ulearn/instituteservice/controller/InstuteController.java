@@ -123,7 +123,7 @@ public class InstuteController {
 		}
 	}
 
-	@DeleteMapping("/delete")
+	@PutMapping("/delete")
 	public GlobalResponse putInstituteDelete(@RequestBody() InstituteEntity instituteEntrity) {
 		LOGGER.info("Inside - InstituteController.putInstituteDelete()");
 		try {
