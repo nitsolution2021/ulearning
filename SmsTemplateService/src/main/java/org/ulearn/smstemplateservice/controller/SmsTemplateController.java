@@ -76,11 +76,15 @@ public class SmsTemplateController {
 		}
 	}
 	
-	@DeleteMapping("/delete/{stId}")
-	public GlobalResponseEntity deleteSmsTemplate(@PathVariable Long stId) {
+	@PutMapping("/delete")
+	public GlobalResponseEntity deleteSmsTemplate(@RequestBody SmsTemplateEntity entity) {
 		LOGGER.info("Inside - SmsTemplateController.deleteSmsTemplate()");
 		try {
-			return smsTemplateService.deleteSmsTemplate(stId);
+			if (entity.getStId() == null) {
+				return smsTemplateService.deleteSmsTemplate(entity.getStId());
+			} else {
+				throw new CustomException("SMS Template Not Found");
+			}
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
 		}
@@ -131,6 +135,20 @@ public class SmsTemplateController {
 		LOGGER.info("Inside - SmsTemplateController.getTags()");
 		try {
 			return smsTemplateService.getTags(action);
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+	}
+	
+	@PutMapping("/restore")
+	public GlobalResponseEntity smsTemplateRestore(@RequestBody SmsTemplateEntity smsTemplateEntity) {
+		LOGGER.info("Inside - SmsTemplateController.smsTemplateRestore()");
+		try {
+			if (smsTemplateEntity.getStId() != null) {
+				return smsTemplateService.smsTemplateRestore(smsTemplateEntity.getStId());
+			} else {
+				throw new CustomException("SMS Template Not Found");
+			}
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
 		}

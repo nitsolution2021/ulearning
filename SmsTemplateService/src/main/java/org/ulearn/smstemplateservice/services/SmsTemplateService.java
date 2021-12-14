@@ -436,4 +436,34 @@ public class SmsTemplateService {
 		
 	}
 
+	public GlobalResponseEntity smsTemplateRestore(Long id) {
+		LOGGER.info("Inside - SmsTemplateService.getTags()");
+		try {
+			Optional<SmsTemplateEntity> findById = smsTemplateRepo.findById(id);
+			SmsTemplateEntity smsTemplateEntity = findById.get();
+			if (findById.isPresent()) {
+				if (smsTemplateEntity.getIsDeleted() == 1) {
+					if (smsTemplateEntity.getStType().equals("CUSTOM")) {
+						smsTemplateEntity.setIsDeleted(0);
+						LOGGER.info("final Data is --->  "+smsTemplateEntity.toString());
+						SmsTemplateEntity save = smsTemplateRepo.save(smsTemplateEntity);
+						if (save.equals(null)) {
+							return new GlobalResponseEntity("SUCCESS", "Template Restore Successfully", 200);
+						} else {
+							throw new CustomException("Data not Restored");
+						}
+					} else {
+						throw new CustomException("You Can't Restore Default Template");
+					}
+				} else {
+					throw new CustomException("Can't Restore an Omitted Template");
+				}
+			} else {
+				throw new CustomException("Can't Find The Template");
+			}
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+	}
+
 }
