@@ -247,26 +247,23 @@ public class EmailTemplateController {
 		}
 	}
 	
-	@PutMapping("/delete/{id}")
+	@PutMapping("/restore/{id}")
 	public GlobalResponse emailTemplateRestore(@PathVariable("id") Long id) {
 		
-		LOGGER.info("Inside - EmailTemplateController.emailTemplateDelete()");
+		LOGGER.info("Inside - EmailTemplateController.emailTemplateRestore()");
 		try {
 			Optional<EmailTemplateEntity> findById = emailTemplateRepo.findById(id);
 			if(findById.isPresent()) {
 				List<EmailTemplateEntity> findByIdAndDelete = emailTemplateRepo.findByIdAndDelete(1, id);
 				if(findByIdAndDelete.size()>0) {
 					if(findByIdAndDelete.get(0).getEtType().equals("CUSTOM")) {
-						if(findByIdAndDelete.get(0).getIsPrimary()==1) {
-							throw new CustomException("Primary Template Can't be Deleted");
-						}
 						EmailTemplateEntity emailTemplateEntity = findById.get();
 						emailTemplateEntity.setIsDeleted(0);
 						EmailTemplateEntity save = emailTemplateRepo.save(emailTemplateEntity);
 						if(save.equals(null)) {
 							throw new CustomException("Data Not Save Try Again");
 						}else {
-							return new GlobalResponse("Data Deleted Successfully","SUCCESS",200);
+							return new GlobalResponse("Data Restored Successfully","SUCCESS",200);
 						}	
 					}else {
 						throw new CustomException("Default Template Can't be Restore");
