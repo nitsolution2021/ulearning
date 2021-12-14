@@ -35,7 +35,7 @@ public interface InstituteRepo extends JpaRepository<InstituteEntity, Long> {
 	
 	@Query(value = "select tbl_institutes.*,tbl_inst_addr.* from tbl_institutes INNER JOIN tbl_inst_addr on tbl_institutes.INST_ID = tbl_inst_addr.INST_ID",nativeQuery = true)
 	List<InstituteEntity> func();	
-//	instituteAdmin.amdUsername,
+
 	@Query("SELECT instObj FROM InstituteEntity instObj INNER JOIN InstituteAdminEntity instAmdObj on instAmdObj.instId = instObj.instId WHERE CONCAT(instAmdObj.amdUsername,instObj.instName,instObj.instEmail,instObj.instMnum,instObj.instCnum,instObj.instWebsite,instObj.isntRegDate) LIKE %?1% AND instObj.isDeleted = ?2")
     Page<InstituteEntity> Search(String sortKey, int isDeleted,Pageable pageable);
 	

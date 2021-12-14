@@ -316,7 +316,7 @@ public class InstituteService {
 		try {
 			List<InstituteEntity> findAll = instituteRepo.findByListInst().stream()
 					.filter(Inst -> Inst.getIsDeleted() == 0).filter(Inst -> Inst.getIsActive() == 1)
-//					.filter(instituteLicense -> instituteLicense.getInstituteLicense() == null)					
+//					.filter(instituteLicense -> instituteLicense.getInstituteLicense().get(1).getInstId() == null)					
 					.collect(Collectors.toList());
 			if (findAll.size() <= 1) {
 				throw new CustomException("Institute Not Found!");

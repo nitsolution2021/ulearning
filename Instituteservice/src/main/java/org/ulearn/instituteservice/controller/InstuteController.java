@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,12 +20,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.ulearn.instituteservice.entity.GlobalResponse;
-import org.ulearn.instituteservice.entity.InstituteAddressEntity;
 import org.ulearn.instituteservice.entity.InstituteEntity;
 import org.ulearn.instituteservice.entity.InstituteGlobalEntity;
 import org.ulearn.instituteservice.exception.CustomException;
 import org.ulearn.instituteservice.servises.InstituteService;
-import org.ulearn.instituteservice.validation.FieldValidation;
 
 @RestController
 @RequestMapping("/institute")
@@ -34,8 +33,6 @@ public class InstuteController {
 
 	@Autowired
 	private InstituteService instituteService;
-	@Autowired
-	private FieldValidation fieldValidation;
 	
 	@GetMapping("/list")
 	public Map<String, Object> getInstute(@RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy,
@@ -126,7 +123,7 @@ public class InstuteController {
 		}
 	}
 
-	@PutMapping("/delete")
+	@DeleteMapping("/delete")
 	public GlobalResponse putInstituteDelete(@RequestBody() InstituteEntity instituteEntrity) {
 		LOGGER.info("Inside - InstituteController.putInstituteDelete()");
 		try {
