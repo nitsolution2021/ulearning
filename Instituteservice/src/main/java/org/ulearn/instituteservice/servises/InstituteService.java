@@ -314,11 +314,11 @@ public class InstituteService {
 	public List<InstituteEntity> getListInstuteService() {
 
 		try {
-			List<InstituteEntity> findAll = instituteRepo.findByListInst()
-					.stream()
-					.filter(Inst -> Inst.getIsDeleted() == 0).filter(Inst -> Inst.getIsActive() == 1)
+			List<InstituteEntity> findAll = instituteRepo.findByListInst();
+//					.stream()
+//					.filter(Inst -> Inst.getIsDeleted() == 0).filter(Inst -> Inst.getIsActive() == 1)
 //					.filter(instituteLicense -> instituteLicense.getInstituteLicense().get(1).getInstId() == null)					
-					.collect(Collectors.toList());
+//					.collect(Collectors.toList());
 			if (findAll.size() <= 1) {
 				throw new CustomException("Institute Not Found!");
 			} else {
@@ -887,17 +887,23 @@ public class InstituteService {
 			if (findById.getInstId() == null) {
 				throw new CustomException("Institute Not Found!");
 			} else {
+				String InstStatus=null;
+				Integer isStatus=null;
 				if(findById.getIsActive()==0) {
-					findById.setIsActive(1);
+					isStatus=1;
 				}else {
-					findById.setIsActive(0);
+					isStatus=0;					
 				}
-				if(findById.getInstStatus()=="0") {
-					findById.setInstStatus("1");
+				if(findById.getInstStatus().equals("0")) {
+					InstStatus="1";
 				}else {
-					findById.setInstStatus("0");
+					InstStatus="0";
 				}
+							
+				findById.setIsActive(isStatus);
+				findById.setInstStatus(InstStatus);				
 				findById.setUpdatedOn(new Date());
+				
 				InstituteEntity InsDetails = instituteRepo.save(findById);
 
 				InstituteAddressEntity findByAdrId = instituteAddressRepo.getById(instId);
