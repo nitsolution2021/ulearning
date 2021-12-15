@@ -75,6 +75,30 @@ public class InstuteController {
 		}
 
 	}
+	
+	@GetMapping("/geteditlicenselist")
+	public List<InstituteEntity> geteditlicenselist() {
+		LOGGER.info("Inside - InstituteController.geteditlicenselist()");
+
+		try {
+			return this.instituteService.getEditLicenseListInstuteService();
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+
+	}
+	
+	@GetMapping("/getlicenselist")
+	public List<InstituteEntity> getLicenseListInstute() {
+		LOGGER.info("Inside - InstituteController.getLicenseListInstute()");
+
+		try {
+			return this.instituteService.getListLicenseInstuteService();
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+
+	}
 
 	@PostMapping("/credentialssent")
 	public GlobalResponse postInstituteCredentials(@RequestBody InstituteEntity instituteEntrity,
@@ -165,4 +189,17 @@ public class InstuteController {
 		}	
 	}
 
+	@PutMapping("/muldelete")
+	public GlobalResponse putInstituteMulDelete(@RequestBody() List<String> mulDelete) {
+		LOGGER.info("Inside - InstituteController.putInstituteMulDelete()"+mulDelete);
+		try {
+			if (!mulDelete.equals(null)){
+				return this.instituteService.putInstituteMulDeleteService(mulDelete);
+			}else {
+				throw new CustomException("Institute Id Not Found!");
+			}
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}	
+	}
 }

@@ -329,6 +329,25 @@ public class InstituteService {
 		}
 	}
 
+	public List<InstituteEntity> getEditLicenseListInstuteService() {
+
+		try {
+			List<InstituteEntity> findAll = instituteRepo.findByEditLicenseListInst();
+//					.stream()
+//					.filter(Inst -> Inst.getIsDeleted() == 0).filter(Inst -> Inst.getIsActive() == 1)
+//					.filter(instituteLicense -> instituteLicense.getInstituteLicense().get(1).getInstId() == null)					
+//					.collect(Collectors.toList());
+			if (findAll.size() <= 1) {
+				throw new CustomException("Institute Not Found!");
+			} else {
+				return findAll;
+			}
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+	}
+	
+	
 	public GlobalResponse postInstituteDetailsService(@Valid InstituteGlobalEntity instituteGlobalEntrity,
 			String token) {
 		try {
@@ -857,6 +876,31 @@ public class InstituteService {
 		}
 	}
 
+	public GlobalResponse putInstituteMulDeleteService(List<String> instId) {
+
+		try {
+			for (String instIdRowId : instId) {
+
+				InstituteEntity findById = instituteRepo.getById(Long.parseLong(instIdRowId));
+				InstituteAddressEntity findByAdrId = instituteAddressRepo.getById(Long.parseLong(instIdRowId));
+
+				if (findById.getInstId() != null && findByAdrId.getInstId() !=null) {
+					findById.setIsDeleted(1);
+					findById.setUpdatedOn(new Date());
+				InstituteEntity InsDetails = instituteRepo.save(findById);
+					
+					findByAdrId.setIsDeleted(1);
+					findByAdrId.setUpdatedOn(new Date());
+				InstituteAddressEntity InsAmdDetails = instituteAddressRepo.save(findByAdrId);
+				}
+			}
+			return new GlobalResponse("SUCCESS", 200, "Institute Deleted Successfully");
+
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+	}
+
 	public GlobalResponse putInstituteRestoreService(long instId) {
 
 		try {
@@ -879,7 +923,7 @@ public class InstituteService {
 			throw new CustomException(e.getMessage());
 		}
 	}
-	
+
 	public GlobalResponse putInstituteStatusService(long instId) {
 
 		try {
@@ -887,29 +931,29 @@ public class InstituteService {
 			if (findById.getInstId() == null) {
 				throw new CustomException("Institute Not Found!");
 			} else {
-				String InstStatus=null;
-				Integer isStatus=null;
-				if(findById.getIsActive()==0) {
-					isStatus=1;
-				}else {
-					isStatus=0;					
+				String InstStatus = null;
+				Integer isStatus = null;
+				if (findById.getIsActive() == 0) {
+					isStatus = 1;
+				} else {
+					isStatus = 0;
 				}
-				if(findById.getInstStatus().equals("0")) {
-					InstStatus="1";
-				}else {
-					InstStatus="0";
+				if (findById.getInstStatus().equals("0")) {
+					InstStatus = "1";
+				} else {
+					InstStatus = "0";
 				}
-							
+
 				findById.setIsActive(isStatus);
-				findById.setInstStatus(InstStatus);				
+				findById.setInstStatus(InstStatus);
 				findById.setUpdatedOn(new Date());
-				
+
 				InstituteEntity InsDetails = instituteRepo.save(findById);
 
 				InstituteAddressEntity findByAdrId = instituteAddressRepo.getById(instId);
-				if(findByAdrId.getIsActive()==0) {
+				if (findByAdrId.getIsActive() == 0) {
 					findByAdrId.setIsActive(1);
-				}else {
+				} else {
 					findByAdrId.setIsActive(0);
 				}
 				findByAdrId.setUpdatedOn(new Date());
@@ -921,5 +965,22 @@ public class InstituteService {
 			throw new CustomException(e.getMessage());
 		}
 	}
+	
+	public List<InstituteEntity> getListLicenseInstuteService() {
 
+		try {
+			List<InstituteEntity> findAll = instituteRepo.findByLicenseListInst();
+//					.stream()
+//					.filter(Inst -> Inst.getIsDeleted() == 0).filter(Inst -> Inst.getIsActive() == 1)
+//					.filter(instituteLicense -> instituteLicense.getInstituteLicense().get(1).getInstId() == null)					
+//					.collect(Collectors.toList());
+			if (findAll.size() <= 1) {
+				throw new CustomException("Institute Not Found!");
+			} else {
+				return findAll;
+			}
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+	}
 }
