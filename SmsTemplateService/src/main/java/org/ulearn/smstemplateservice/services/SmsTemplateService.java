@@ -447,7 +447,7 @@ public class SmsTemplateService {
 						smsTemplateEntity.setIsDeleted(0);
 						LOGGER.info("final Data is --->  "+smsTemplateEntity.toString());
 						SmsTemplateEntity save = smsTemplateRepo.save(smsTemplateEntity);
-						if (save.equals(null)) {
+						if (!save.equals(null)) {
 							return new GlobalResponseEntity("SUCCESS", "Template Restore Successfully", 200);
 						} else {
 							throw new CustomException("Data not Restored");
