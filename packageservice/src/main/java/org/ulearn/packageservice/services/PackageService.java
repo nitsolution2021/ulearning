@@ -569,7 +569,16 @@ public class PackageService {
 		try
 		{
 			List<InstituteEntity> instData=instituteRepo.findAll();
-			return instData;
+			ArrayList<InstituteEntity> instituteData=new ArrayList<>();
+			for(int i=0;i<instData.size();i++)
+			{
+				if(licenseRepo.findInst(instData.get(i).getInstId())!=null)
+				{
+					
+					instituteData.add(instData.get(i));
+				}
+			}
+			return instituteData;
 		}
 		catch(Exception e)
 		{
@@ -595,7 +604,7 @@ public class PackageService {
 			 throw new CustomException(e.getMessage());
 		}
 	}
-	public Map<String, Object> pagination(long instId,int limit,int isDelete,Optional<Integer> page,Optional<String> sortby,String sortName)
+	public Map<String, Object> pagination(long instId,int limit,int isDelete,int  page, String sort,String sortName,Optional<String> sortby)
 	{
 		try
 		{
@@ -606,15 +615,10 @@ public class PackageService {
 				limit=countData;
 			}
 			Pageable pagingSort=null;
-			if(sortName.equals("ASC"))
-			{
-				pagingSort = PageRequest.of(page.orElse(0), limit, Sort.Direction.DESC,
-						sortby.orElse("DESC"));
-			}
-			else
-			{
-				pagingSort = PageRequest.of(page.orElse(0), limit, Sort.Direction.DESC,
-						sortby.orElse("DESC"));
+			if (sort == "ASC") {
+				pagingSort = PageRequest.of(page, limit, Sort.Direction.ASC, sortby.orElse(sortName));
+			} else {
+				pagingSort = PageRequest.of(page, limit, Sort.Direction.DESC, sortby.orElse(sortName));
 			}
 			Page<PackageEntity> findAll = packageRepo.getInstData(instId,pageSort,isDelete);			
 			int totalPage=findAll.getTotalPages()-1;
@@ -688,7 +692,7 @@ public class PackageService {
 			throw new CustomException(e.getMessage());
 		}
 	}
-	public GlobalResponse endPackage(long pkId, String token) {
+	public GlobalResponse endPackage(long pkId, String token,PackageLogEntity packageLogEntity) {
 		try
 		{
 			if(pkId!=0)
@@ -700,8 +704,8 @@ public class PackageService {
 					PackageLogEntity logData=new PackageLogEntity();
 					logData.setPkId(pkId);
 					logData.setPlAction("End");
-					logData.setPlAdate(new Date());
-					logData.setPlComment("Package End");
+					logData.setPlAdate(packageLogEntity.getPlAdate());
+					logData.setPlComment(packageLogEntity.getPlComment());
 					logData.setPlCreat(new Date());
 					logData.setPlStatus("Active");
 					packageLogRepo.save(logData);
@@ -734,7 +738,7 @@ public class PackageService {
 			throw new CustomException(e.getMessage());
 		}
 	}
-	public GlobalResponse restorePackage(long pkId, String token) {
+	public GlobalResponse restorePackage(long pkId, String token,PackageLogEntity packageLogEntity) {
 		try
 		{
 			if(pkId!=0)
@@ -746,8 +750,8 @@ public class PackageService {
 				PackageLogEntity logData=new PackageLogEntity();
 				logData.setPkId(pkId);
 				logData.setPlAction("Restore");
-				logData.setPlAdate(new Date());
-				logData.setPlComment("Package Restore");
+				logData.setPlAdate(packageLogEntity.getPlAdate());
+				logData.setPlComment(packageLogEntity.getPlComment());
 				logData.setPlCreat(new Date());
 				logData.setPlStatus("Active");
 				packageLogRepo.save(logData);

@@ -144,13 +144,13 @@ public class PackageContoller {
 			throw new CustomException(e.getMessage());
 		}
 	}
-	@GetMapping("/paginationList/{instId}/{limit}/{sortName}/{isDelete}")
+	@GetMapping("/paginationList/{instId}/{page}/{limit}/{sortName}/{sort}/{isDelete}")
 	public Map<String, Object> paginationList(@PathVariable long instId,@PathVariable int limit,@PathVariable int isDelete,
-								Optional<Integer> page,Optional<String>sortBy,@PathVariable String sortName)
+								@PathVariable int page, @PathVariable String sort,@PathVariable String sortName,@RequestParam Optional<String> sortBy)
 	{
 		try
 		{
-			return this.packageService.pagination(instId,limit, isDelete,page,sortBy,sortName);
+			return this.packageService.pagination(instId,limit, isDelete,page,sort,sortName,sortBy);
 		}
 		catch(Exception e)
 		{
@@ -170,11 +170,11 @@ public class PackageContoller {
 		}
 	}
 	@PostMapping("/endPackage/{pkId}")
-	public GlobalResponse endPackage(@PathVariable long pkId,@RequestHeader("Authorization") String token)
+	public GlobalResponse endPackage(@PathVariable long pkId,@RequestHeader("Authorization") String token,PackageLogEntity packageLogEntity)
 	{
 		try
 		{
-			return this.packageService.endPackage(pkId,token);
+			return this.packageService.endPackage(pkId,token,packageLogEntity);
 		}
 		catch(Exception e)
 		{
@@ -182,11 +182,11 @@ public class PackageContoller {
 		}
 	}
 	@PostMapping("/restorePackage/{pkId}")
-	public GlobalResponse restorePackage(@PathVariable long pkId,@RequestHeader("Authorization") String token)
+	public GlobalResponse restorePackage(@PathVariable long pkId,@RequestHeader("Authorization") String token,PackageLogEntity packageLogEntity)
 	{
 		try
 		{
-			return this.packageService.restorePackage(pkId,token);
+			return this.packageService.restorePackage(pkId,token,packageLogEntity);
 		}
 		catch(Exception e)
 		{
