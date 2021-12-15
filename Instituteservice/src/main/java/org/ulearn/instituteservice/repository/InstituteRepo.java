@@ -20,6 +20,9 @@ public interface InstituteRepo extends JpaRepository<InstituteEntity, Long> {
 	
 	@Query(value = "SELECT instObj FROM InstituteEntity instObj LEFT JOIN LicenseEntity instLicObj on instLicObj.instId = instObj.instId WHERE instLicObj.instId = null AND instObj.isDeleted = 0 AND instObj.isActive = 1 AND instObj.instStatus = 1")
 	List<InstituteEntity> findByListInst();
+	
+	@Query(value = "SELECT instObj FROM InstituteEntity instObj LEFT JOIN LicenseEntity instLicObj on instLicObj.instId = instObj.instId WHERE instLicObj.instId != null AND instObj.isDeleted = 0 AND instObj.isActive = 1 AND instObj.instStatus = 1")
+	List<InstituteEntity> findByLicenseListInst();
 
 	@Query(value = "select * from tbl_institutes where INST_ID != ? and INST_NAME = ? and IS_DELETED = 0",nativeQuery = true)
 	List<InstituteEntity> findByInstUnqName(long instId,String instName); 
