@@ -56,6 +56,7 @@ import org.ulearn.packageservice.entity.PackageEntity;
 import org.ulearn.packageservice.entity.PackageGlobalTemplate;
 import org.ulearn.packageservice.entity.PackageLogEntity;
 import org.ulearn.packageservice.exception.CustomException;
+import org.ulearn.packageservice.helper.CustomFunction;
 import org.ulearn.packageservice.repo.InstituteRepo;
 import org.ulearn.packageservice.repo.LicenseRepo;
 import org.ulearn.packageservice.repo.LoginRepository;
@@ -84,7 +85,12 @@ public class PackageService {
 	
 	@Autowired
 	private LicenseRepo licenseRepo;
-	public Map<String, Object> getPackage(@RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy,@PathVariable int isDelete)
+	
+	@Autowired
+	private CustomFunction customFunction;
+	
+	
+	public Map<String, Object> getPackage(Optional<Integer> page,Optional<String> sortBy,@PathVariable int isDelete)
 	{
 		int Limit = 10;
 		try {
@@ -115,9 +121,9 @@ public class PackageService {
 			throw new CustomException(e.getMessage());
 		}
 	}
-	public Map<String, Object> getPackagePagination(@PathVariable("page") int page, @PathVariable("limit") int limit,
-			@PathVariable("sort") String sort, @PathVariable("sortName") String sortName,
-			@RequestParam(defaultValue = "") Optional<String>keyword, @RequestParam Optional<String> sortBy,@PathVariable int isDelete)
+	public Map<String, Object> getPackagePagination(int page,int limit,
+			String sort, String sortName,
+			 Optional<String>keyword,Optional<String> sortBy,int isDelete)
 	{
 		try
 		{
@@ -313,97 +319,43 @@ public class PackageService {
 							packageLogRepo.save(packageLogData);
 							newPackageEntity.setIsActive(1);
 							packageRepo.save(newPackageEntity);
-//							packageRepo.save(newData);
-//							return new GlobalResponse("Success", "Package Added Succesfully", 200);
-							
+							HttpHeaders headers = new HttpHeaders();
+							headers.set("Authorization", token);
+							headers.setContentType(MediaType.APPLICATION_JSON);
+							HttpEntity request = new HttpEntity(headers);
 							try {
-								HttpHeaders headers = new HttpHeaders();
-								headers.set("Authorization", token);
-								headers.setContentType(MediaType.APPLICATION_JSON);
-								HttpEntity request = new HttpEntity(headers);
-								//System.out.println(request);
-								ResponseEntity<PackageGlobalTemplate> responseEmailTemp = new RestTemplate().exchange(
-										"http://65.1.66.115:8085/dev/emailTemplate/getPrimaryETByAction/Package_Create",
-										HttpMethod.GET, request, PackageGlobalTemplate.class);
-								//System.out.println(responseEmailTemp);
-								ResponseEntity<PackageGlobalTemplate> responseSMSTemp = new RestTemplate().exchange(
-										"http://65.1.66.115:8085/dev/smsTemplate/getPrimarySTByAction/Package_Create",
-										HttpMethod.GET, request, PackageGlobalTemplate.class);
-								
-								System.out.println(responseSMSTemp);
-								String ETSubject= responseEmailTemp.getBody().getEtSubject();
-								String ETBody=responseEmailTemp.getBody().getEtBody();
-								String STSubject=responseSMSTemp.getBody().getStSubject();
-								String STBody=responseSMSTemp.getBody().getStBody();
-								String ETAdminFname="__$amdFname$__";
-								String ETinstId="__$instId$__";
-								String ETinstName="__$instName$__";
-								String ETinstMnum="__$instMnum$__";
-								String ETpkId="__$pkId$__";
-								String ETPackageFname="__$pkFname$__";
-								String ETPackageCdate="__$pkCdate$__";
-								String ETPackageValidityNo="__$pkValidityNum$__";
-								String ETPackgeValidityType="__$pkValidityType$__";
-//								String STAdminFname="__$amdFname$__";
-//								String STPackageFname="__$pkFname$__";
-//								String STPackageCdate="__$pkCdate$__";
-//								String STPackageValidityNo="__$pkValidityNum$__";
-//								String STPackgeValidityType="__$pkValidityType$__";
-								PackageEntity packageData=packageRepo.getById(newPackageEntity.getPkId());
-								InstituteEntity instituteData=instituteRepo.getById(newPackageEntity.getInstId());
-								String ETreplace = ETBody.replace(ETAdminFname,instituteData.getInstituteAdmin().getAmdFname());
-								String ETreplace1 = ETreplace.replace(ETinstId,packageData.getInstId().toString());
-								String ETreplace2 = ETreplace1.replace(ETinstName,instituteData.getInstName());
-								String ETreplace3 = ETreplace2.replace(ETinstMnum,instituteData.getInstMnum());
-								String ETreplace4= ETreplace3.replace(ETpkId,packageData.getPkId().toString());
-								String ETreplace5 = ETreplace4.replace(ETPackageFname,packageData.getPkFname());
-								String ETreplace6 = ETreplace5.replace(ETPackageCdate,packageData.getPkCdate().toString() );
-								String ETreplace7 = ETreplace6.replace(ETPackageValidityNo,packageData.getPkValidityNum().toString() );
-								String ETreplace8 = ETreplace7.replace(ETPackgeValidityType,packageData.getPkValidityType() );
-//								String STreplace = STBody.replace(STAdminFname,instituteData.getInstituteAdmin().getAmdFname());
-//								String STreplace1 = STreplace.replace(STPackageFname,packageData.getPkFname());
-//								String STreplace2 = STreplace1.replace(STPackageCdate,packageData.getPkCdate().toString() );
-//								String STreplace3 = STreplace2.replace(STPackageValidityNo,packageData.getPkValidityNum().toString() );
-//								String STreplace4 = STreplace3.replace(STPackgeValidityType,packageData.getPkValidityType() );
-								InstituteEntity instData=instituteRepo.getById(newData.getInstId());
-								String mailId=instData.getInstEmail();
-								JSONObject requestJson = new JSONObject();
-								requestJson.put("senderMailId", mailId);
-								requestJson.put("subject", ETSubject);
-								requestJson.put("body", ETreplace8);
-								//System.out.println(requestJson);
-								requestJson.put("enableHtml", true);
-								String encode = UriUtils.encode(STBody, "UTF-8");
-								System.out.println(encode);
-								Unirest.setTimeouts(0, 0);
-								HttpResponse<JsonNode> asJson = Unirest.get(
-										"http://msg.jmdinfotek.in/api/mt/SendSMS?channel=Trans&DCS=0&flashsms=0&route=07&senderid=uLearn&user=technosoft_dev&password=Techno@8585&text="
-												+ encode + "&number=8777601693")
-										.asJson();
-
-								org.json.JSONObject object = asJson.getBody().getObject();
-								String ErrorCode = object.getString("ErrorCode");
-
-								if (ErrorCode.equals("006")) {
-									throw new CustomException("Invalid Template Text!");
-								} else if (!ErrorCode.equals("000")) {
-									throw new CustomException("Failed to Sent SMS!");
-								}
-//								org.json.JSONObject object = asJson.body().getObject();
-//								String ErrorCode = object.getString("ErrorCode");
-								//log.info("requestJson "+requestJson.toString());
-								HttpEntity<String> entity = new HttpEntity(requestJson, headers);
-								ResponseEntity<String> response = new RestTemplate()
-										.postForEntity("http://65.1.66.115:8085/dev/login/sendMail/", entity, String.class);
-								
-								//packageRepo.save(newData);
-								return new GlobalResponse("Success", "Package Added Succesfully", 200);
-								
+								InstituteEntity instData=instituteRepo.getById(newPackageEntity.getInstId());
+								//System.out.println(instData.getInstituteAdmin().getAmdMnum());
+								ResponseEntity<PackageGlobalTemplate> responseEmailTemp=customFunction.getEmailDetails("Package_Create", token);
+								//System.out.println(responseEmailTemp.getBody().getStTempId());
+								//System.out.println();
+								customFunction.sentEmail(newPackageEntity, token, responseEmailTemp,packageLogData);
 							}
 							catch(Exception e)
 							{
-								throw new CustomException("Email");
+								org.json.JSONObject jsonObject = new org.json.JSONObject(e.getMessage().substring(7));																		
+								if(!jsonObject.getString("messagee").equals("")) {										
+									throw new CustomException(jsonObject.getString("messagee"));
+								}
+								
+								throw new CustomException("Email Service Is Not Running!");
 							}
+							try
+							{
+								ResponseEntity<PackageGlobalTemplate> responseSMSTemp=customFunction.getSMSDetail(token,"Package_Create");
+								customFunction.sentSMS(newPackageEntity, token, responseSMSTemp);
+								return new GlobalResponse("Success", "Package Added Succesfully", 200);
+							}
+							catch(Exception e)
+							{
+								org.json.JSONObject jsonObject = new org.json.JSONObject(e.getMessage().substring(7));																		
+								if(!jsonObject.getString("messagee").equals("")) {										
+									throw new CustomException(jsonObject.getString("messagee"));
+								}
+								
+								throw new CustomException("SMS Service Is Not Running!");
+							}
+							
 						}
 						else
 						{
@@ -500,83 +452,36 @@ public class PackageService {
 						updatePackagedata.setIsDeleted(dbData.getIsDeleted());
 						updatePackagedata.setPkStatus("Active");
 						updatePackagedata.setUpdatedOn(new Date());
+						PackageLogEntity logEntity=new PackageLogEntity();
 						packageRepo.save(updatePackagedata);
-						try {
-							HttpHeaders headers = new HttpHeaders();
-							headers.set("Authorization", token);
-							headers.setContentType(MediaType.APPLICATION_JSON);
-							HttpEntity request = new HttpEntity(headers);
-							ResponseEntity<PackageGlobalTemplate> responseEmailTemp = new RestTemplate().exchange(
-									"http://65.1.66.115:8085/dev/emailTemplate/getPrimaryETByAction/Package_Update",
-									HttpMethod.GET, request, PackageGlobalTemplate.class);
-							ResponseEntity<PackageGlobalTemplate> responseSMSTemp = new RestTemplate().exchange(
-									"http://65.1.66.115:8085/dev/smsTemplate/getPrimarySTByAction/Package_Create",
-									HttpMethod.GET, request, PackageGlobalTemplate.class);
-							//System.out.println(responseEmailTemp);
-							String ETSubject= responseEmailTemp.getBody().getEtSubject();
-							String ETBody=responseEmailTemp.getBody().getEtBody();
-							String STSubject=responseSMSTemp.getBody().getStSubject();
-							String STBody=responseSMSTemp.getBody().getStBody();
-							String ETAdminFname="__$amdFname$__";
-							String ETinstId="__$instId$__";
-							String ETinstName="__$instName$__";
-							String ETinstMnum="__$instMnum$__";
-							String ETpkId="__$pkId$__";
-							String ETPackageFname="__$pkFname$__";
-							String ETPackageCdate="__$pkCdate$__";
-							String ETPackageValidityNo="__$pkValidityNum$__";
-							String ETPackgeValidityType="__$pkValidityType$__";
-//							String STAdminFname="__$amdFname$__";
-//							String STPackageFname="__$pkFname$__";
-//							String STPackageCdate="__$pkCdate$__";
-//							String STPackageValidityNo="__$pkValidityNum$__";
-//							String STPackgeValidityType="__$pkValidityType$__";
-							PackageEntity packageData=packageRepo.getById(updatePackagedata.getPkId());
-							InstituteEntity instituteData=instituteRepo.getById(updatePackagedata.getInstId());
-							String ETreplace = ETBody.replace(ETAdminFname,instituteData.getInstituteAdmin().getAmdFname());
-							String ETreplace1 = ETreplace.replace(ETinstId,packageData.getInstId().toString());
-							String ETreplace2 = ETreplace1.replace(ETinstName,instituteData.getInstName());
-							String ETreplace3 = ETreplace2.replace(ETinstMnum,instituteData.getInstMnum());
-							String ETreplace4= ETreplace3.replace(ETpkId,packageData.getPkId().toString());
-							String ETreplace5 = ETreplace4.replace(ETPackageFname,packageData.getPkFname());
-							String ETreplace6 = ETreplace5.replace(ETPackageCdate,packageData.getPkCdate().toString() );
-							String ETreplace7 = ETreplace6.replace(ETPackageValidityNo,packageData.getPkValidityNum().toString() );
-							String ETreplace8 = ETreplace7.replace(ETPackgeValidityType,packageData.getPkValidityType() );
-							InstituteEntity instData=instituteRepo.getById(updatePackagedata.getInstId());
-							String mailId=instData.getInstEmail();
-							JSONObject requestJson = new JSONObject();
-							requestJson.put("senderMailId", mailId);
-							requestJson.put("subject", ETSubject);
-							requestJson.put("body", ETreplace8);
-							requestJson.put("enableHtml", true);
-							//log.info("requestJson "+requestJson.toString());
-							HttpEntity<String> entity = new HttpEntity(requestJson, headers);
-							String encode = UriUtils.encode(STBody, "UTF-8");
-							System.out.println(encode);
-							Unirest.setTimeouts(0, 0);
-							HttpResponse<JsonNode> asJson = Unirest.get(
-									"http://msg.jmdinfotek.in/api/mt/SendSMS?channel=Trans&DCS=0&flashsms=0&route=07&senderid=uLearn&user=technosoft_dev&password=Techno@8585&text="
-											+ encode + "&number=9735841147")
-									.asJson();
-
-							org.json.JSONObject object = asJson.getBody().getObject();
-							String ErrorCode = object.getString("ErrorCode");
-
-							if (ErrorCode.equals("006")) {
-								throw new CustomException("Invalid Template Text!");
-							} else if (!ErrorCode.equals("000")) {
-								throw new CustomException("Failed to Sent SMS!");
-							}
-							ResponseEntity<String> response = new RestTemplate()
-									.postForEntity("http://65.1.66.115:8085/dev/login/sendMail/", entity, String.class);
-							
+						InstituteEntity instituteEntity=instituteRepo.getById(updatePackagedata.getInstId());
+						PackageLogEntity packageLogEntity=new PackageLogEntity();
+						try
+						{
+							ResponseEntity<PackageGlobalTemplate> emailTemplateData=customFunction.getEmailDetails("Package_Update", token);
+							//System.out.println(emailTemplateData);
+							ResponseEntity<PackageGlobalTemplate> smsTemplateData=customFunction.getSMSDetail(token,"Package_Update");
+							//System.out.println();
+							System.out.println(updatePackagedata);
+							packageLogEntity.setPkId(pkId);
+							packageLogEntity.setPlAction("Update");
+							packageLogEntity.setPlAdate(new Date());
+							packageLogEntity.setPlComment("No Command");
+							packageLogEntity.setPlCreat(new Date());
+							packageLogEntity.setPlStatus("Active");
+							System.out.println(packageLogEntity);
+							customFunction.sentEmail(updatePackagedata, token, emailTemplateData, packageLogEntity);
+							System.out.println(instituteEntity.getInstituteAdmin().getAmdMnum());
+							System.out.println(instituteEntity.getInstituteAdmin().getAmdEmail());
+							customFunction.sentSMS(updatePackagedata, token, smsTemplateData);
+							return new GlobalResponse("Success", "Package Update Successfully", 200);
 						}
 						catch(Exception e)
 						{
 							throw new CustomException(e.getMessage());
 						}
 						
-						return new GlobalResponse("Success", "Subcription Package Update Succcessfully",200);
+						
 					}
 						else
 						{
@@ -598,7 +503,7 @@ public class PackageService {
 			throw new CustomException(e.getMessage());
 		}
 	}
-	public GlobalResponse suspend(@PathVariable long pkId,@RequestBody PackageLogEntity packageLogEntity,
+	public GlobalResponse suspend(long pkId, PackageLogEntity packageLogEntity,
 			@RequestHeader("Authorization") String token)
 	{
 		try {
@@ -618,94 +523,26 @@ public class PackageService {
 						logData.setPlAdate(packageLogEntity.getPlAdate());
 						logData.setPlComment(packageLogEntity.getPlComment());
 						logData.setPlCreat(new Date());
-						logData.setPlStatus("Running");
+						logData.setPlStatus("Active");
 						logData.setPlUpdate(null);
 						packageLogRepo.save(logData);
 						suspendedPackageData.setPkStatus("Suspended");
 						suspendedPackageData.setIsActive(isActive);
 						suspendedPackageData.setUpdatedOn(packageLogEntity.getPlAdate());
 						packageRepo.save(suspendedPackageData);
-						
-						try {
-							HttpHeaders headers = new HttpHeaders();
-							headers.set("Authorization", token);
-							headers.setContentType(MediaType.APPLICATION_JSON);
-							HttpEntity request = new HttpEntity(headers);
-							ResponseEntity<PackageGlobalTemplate> responseEmailTemp = new RestTemplate().exchange(
-									"http://65.1.66.115:8085/dev/emailTemplate/getPrimaryETByAction/Package_Suspend",
-									HttpMethod.GET, request, PackageGlobalTemplate.class);
-							ResponseEntity<PackageGlobalTemplate> responseSMSTemp = new RestTemplate().exchange(
-									"http://65.1.66.115:8085/dev/smsTemplate/getPrimarySTByAction/Package_Create",
-									HttpMethod.GET, request, PackageGlobalTemplate.class);
-							//System.out.println(responseEmailTemp);
-							String ETSubject= responseEmailTemp.getBody().getEtSubject();
-							String ETBody=responseEmailTemp.getBody().getEtBody();
-							String STSubject=responseSMSTemp.getBody().getStSubject();
-							String STBody=responseSMSTemp.getBody().getStBody();
-							String ETAdminFname="__$amdFname$__";
-							String ETinstId="__$instId$__";
-							String ETinstName="__$instName$__";
-							String ETinstMnum="__$instMnum$__";
-							String ETpkId="__$pkId$__";
-							String ETPackageFname="__$pkFname$__";
-							String ETPackageAdate="__$pkAdate$__";
-							String ETPackageValidityNo="__$pkValidityNum$__";
-							String ETPackgeValidityType="__$pkValidityType$__";
-//							String STAdminFname="__$amdFname$__";
-//							String STPackageFname="__$pkFname$__";
-//							String STPackageCdate="__$pkCdate$__";
-//							String STPackageValidityNo="__$pkValidityNum$__";
-//							String STPackgeValidityType="__$pkValidityType$__";
-							PackageEntity packageData=packageRepo.getById(suspendedPackageData.getPkId());
-							InstituteEntity instituteData=instituteRepo.getById(suspendedPackageData.getInstId());
-							PackageLogEntity packageLogData=packageLogRepo.getById(suspendedPackageData.getPkId());
+						try
+						{
+							ResponseEntity<PackageGlobalTemplate> emailTemplateData=customFunction.getEmailDetails("Package_Suspend", token);
+							ResponseEntity<PackageGlobalTemplate> smsTemplateData=customFunction.getSMSDetail(token,"Package_Suspend");
 							
-							String ETreplace = ETBody.replace(ETAdminFname,instituteData.getInstituteAdmin().getAmdFname());
-							String ETreplace1 = ETreplace.replace(ETinstId,packageData.getInstId().toString());
-							String ETreplace2 = ETreplace1.replace(ETinstName,instituteData.getInstName());
-							String ETreplace3 = ETreplace2.replace(ETinstMnum,instituteData.getInstMnum());
-							String ETreplace4= ETreplace3.replace(ETpkId,packageData.getPkId().toString());
-							String ETreplace5 = ETreplace4.replace(ETPackageFname,packageData.getPkFname());
-							String ETreplace6 = ETreplace5.replace(ETPackageAdate,packageLogEntity.getPlAdate().toString());
-							String ETreplace7 = ETreplace6.replace(ETPackageValidityNo,packageData.getPkValidityNum().toString() );
-							String ETreplace8 = ETreplace7.replace(ETPackgeValidityType,packageData.getPkValidityType() );
-							//InstituteEntity instData=instituteRepo.getById(updatePackagedata.getInstId());
-							InstituteEntity instData=instituteRepo.getById(suspendedPackageData.getInstId());
-							String mailId=instData.getInstEmail();
-							JSONObject requestJson = new JSONObject();
-							requestJson.put("senderMailId", mailId);
-							requestJson.put("subject", ETSubject);
-							requestJson.put("body", ETreplace8);;
-							//requestJson.put("body", replace1);
-							requestJson.put("enableHtml", true);
-							//log.info("requestJson "+requestJson.toString());
-							HttpEntity<String> entity = new HttpEntity(requestJson, headers);
-							String encode = UriUtils.encode(STBody, "UTF-8");
-							System.out.println(encode);
-							Unirest.setTimeouts(0, 0);
-							HttpResponse<JsonNode> asJson = Unirest.get(
-									"http://msg.jmdinfotek.in/api/mt/SendSMS?channel=Trans&DCS=0&flashsms=0&route=07&senderid=uLearn&user=technosoft_dev&password=Techno@8585&text="
-											+ encode + "&number=8777601693")
-									.asJson();
-
-							org.json.JSONObject object = asJson.getBody().getObject();
-							String ErrorCode = object.getString("ErrorCode");
-
-							if (ErrorCode.equals("006")) {
-								throw new CustomException("Invalid Template Text!");
-							} else if (!ErrorCode.equals("000")) {
-								throw new CustomException("Failed to Sent SMS!");
-							}
-							ResponseEntity<String> response = new RestTemplate()
-									.postForEntity("http://65.1.66.115:8085/dev/login/sendMail/", entity, String.class);
-							
+							customFunction.sentEmail(suspendedPackageData, token, emailTemplateData, logData);
+							customFunction.sentSMS(suspendedPackageData, token, smsTemplateData);
+							return new GlobalResponse("Success", "Package Suspended Successfully", 200);
 						}
 						catch(Exception e)
 						{
 							throw new CustomException(e.getMessage());
 						}
-						
-						return new GlobalResponse("Success", "PackageId Is Suspended",200);
 					}
 					else
 					{
@@ -739,4 +576,209 @@ public class PackageService {
 			throw new CustomException(e.getMessage());
 		}
 	}
+	public List<PackageEntity> getInstDetails(long instId) {
+		// TODO Auto-generated method stub
+		try
+		{
+			if(instId!=0)
+			{
+				List<PackageEntity> instPackageDetailsEntities=packageRepo.instData(instId);
+				return instPackageDetailsEntities;
+			}
+			else
+			{
+				throw new CustomException("invalid Institute Id");
+			}
+		}
+		catch(Exception e)
+		{
+			 throw new CustomException(e.getMessage());
+		}
+	}
+	public Map<String, Object> pagination(long instId,int limit,int isDelete,Optional<Integer> page,Optional<String> sortby,String sortName)
+	{
+		try
+		{
+			Pageable pageSort=null;
+			if(limit==0)
+			{
+				int countData=(int) instituteRepo.count();
+				limit=countData;
+			}
+			Pageable pagingSort=null;
+			if(sortName.equals("ASC"))
+			{
+				pagingSort = PageRequest.of(page.orElse(0), limit, Sort.Direction.DESC,
+						sortby.orElse("DESC"));
+			}
+			else
+			{
+				pagingSort = PageRequest.of(page.orElse(0), limit, Sort.Direction.DESC,
+						sortby.orElse("DESC"));
+			}
+			Page<PackageEntity> findAll = packageRepo.getInstData(instId,pageSort,isDelete);			
+			int totalPage=findAll.getTotalPages()-1;
+			if(totalPage < 0) {
+				totalPage=0;
+			}
+			Map<String, Object> response = new HashMap<>();
+			response.put("data", findAll.getContent());
+			response.put("currentPage", findAll.getNumber());
+			response.put("total", findAll.getTotalElements());
+			response.put("totalPage", totalPage);
+			response.put("perPage", findAll.getSize());
+			response.put("perPageElement", findAll.getNumberOfElements());
+
+			if (findAll.getSize() < 1) {
+				throw new CustomException("Institute Not Found!");
+			} else {
+				return response;
+			}
+			}
+		catch(Exception e)
+		{
+			throw new CustomException(e.getMessage());
+		}
+	}
+	public GlobalResponse approvePackage(long pkId ,String token) {
+		try
+		{
+			if(pkId!=0)
+			{
+				if(packageRepo.existsById(pkId))
+				{
+					PackageEntity packageDetail=packageRepo.getById(pkId);
+					packageDetail.setPkStatus("Approved");
+					packageRepo.save(packageDetail);
+					PackageLogEntity logData=new PackageLogEntity();
+					logData.setPkId(pkId);
+					logData.setPlAction("Approve");
+					logData.setPlAdate(new Date());
+					logData.setPlComment("Package Approved");
+					logData.setPlCreat(new Date());
+					logData.setPlStatus("Active");
+					packageLogRepo.save(logData);
+					//ResponseEntity<PackageGlobalTemplate> smsTemplateData=customFunction.getSMSDetail(token,"");
+					try
+					{
+						ResponseEntity<PackageGlobalTemplate> emailTemplateData=customFunction.getEmailDetails("Package_Approve", token);
+						ResponseEntity<PackageGlobalTemplate> smsTemplateData=customFunction.getSMSDetail(token,"Package_Approve");
+						System.out.println(smsTemplateData);
+						customFunction.sentEmail(packageDetail, token, emailTemplateData, logData);
+						customFunction.sentSMS(packageDetail, token, smsTemplateData);
+						return new GlobalResponse("Success", "Package Approved Successfully", 200);
+					}
+					catch(Exception e)
+					{
+						throw new CustomException(e.getMessage());
+					}
+				}
+				else
+				{
+					throw new CustomException("Package Does Not Exist");
+				}
+			}
+			else
+			{
+				throw new CustomException("Invalid Institute Id");
+			}
+		}
+		catch(Exception e)
+		{
+			throw new CustomException(e.getMessage());
+		}
+	}
+	public GlobalResponse endPackage(long pkId, String token) {
+		try
+		{
+			if(pkId!=0)
+			{
+				if(packageRepo.existsById(pkId))
+				{
+					PackageEntity packageEntity=packageRepo.getById(pkId);
+					packageEntity.setPkStatus("End");
+					PackageLogEntity logData=new PackageLogEntity();
+					logData.setPkId(pkId);
+					logData.setPlAction("End");
+					logData.setPlAdate(new Date());
+					logData.setPlComment("Package End");
+					logData.setPlCreat(new Date());
+					logData.setPlStatus("Active");
+					packageLogRepo.save(logData);
+					try
+					{
+						ResponseEntity<PackageGlobalTemplate> emailTemplateData=customFunction.getEmailDetails("Package_End", token);
+						ResponseEntity<PackageGlobalTemplate> smsTemplateData=customFunction.getSMSDetail(token,"Package_End");
+						System.out.println(smsTemplateData);
+						customFunction.sentEmail(packageEntity, token, emailTemplateData, logData);
+						customFunction.sentSMS(packageEntity, token, smsTemplateData);
+						return new GlobalResponse("Success", "Package Ended Succesfully", 200);
+					}
+					catch(Exception e)
+					{
+						throw new CustomException(e.getMessage());
+					}
+				}
+				else
+				{
+					throw new CustomException("Package Id Does Not Exist");
+				}
+			}
+			else
+			{
+				throw new CustomException("Invalid Package Id");
+			}
+		}
+		catch(Exception e)
+		{
+			throw new CustomException(e.getMessage());
+		}
+	}
+	public GlobalResponse restorePackage(long pkId, String token) {
+		try
+		{
+			if(pkId!=0)
+			{
+			if(packageRepo.existsById(pkId))
+			{
+				PackageEntity packageEntity=packageRepo.getById(pkId);
+				packageEntity.setPkStatus("Active");
+				PackageLogEntity logData=new PackageLogEntity();
+				logData.setPkId(pkId);
+				logData.setPlAction("Restore");
+				logData.setPlAdate(new Date());
+				logData.setPlComment("Package Restore");
+				logData.setPlCreat(new Date());
+				logData.setPlStatus("Active");
+				packageLogRepo.save(logData);
+				try
+				{
+					ResponseEntity<PackageGlobalTemplate> emailTemplateData=customFunction.getEmailDetails("Package_Restore", token);
+					ResponseEntity<PackageGlobalTemplate> smsTemplateData=customFunction.getSMSDetail(token,"Package_Restore");
+					System.out.println(smsTemplateData);
+					customFunction.sentEmail(packageEntity, token, emailTemplateData, logData);
+					customFunction.sentSMS(packageEntity, token, smsTemplateData);
+					return new GlobalResponse("Success", "Package Restored Succesfully", 200);
+				}
+				catch(Exception e)
+				{
+					throw new CustomException(e.getMessage());
+				}
+			}
+			else
+			{
+				throw new CustomException("Package Id Does Not Exist");
+			}
+		}
+			else
+		{
+			throw new CustomException("Invalid Package Id");
+		}
+		}
+		catch(Exception e)
+		{
+			throw new CustomException(e.getMessage());
+		}
+	}
+	
 }

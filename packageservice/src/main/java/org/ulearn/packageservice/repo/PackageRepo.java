@@ -31,5 +31,8 @@ public interface PackageRepo extends JpaRepository<PackageEntity, Long>{
 	List<PackageEntity> instData(Long instId);
 	@Query("SELECT packObj FROM PackageEntity packObj WHERE packObj.instId = ?1")
 	Optional<PackageEntity> findPackageData(Long instId);
+	@Query("SELECT packObj FROM PackageEntity packObj WHERE packObj.instId = ?1 AND packObj.isDeleted = ?2")
+	Page<PackageEntity> getInstData(long instId, Pageable pagingSort,int isDelete);
+	
 	
 }

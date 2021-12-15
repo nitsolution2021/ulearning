@@ -80,7 +80,7 @@ public class SmsTemplateController {
 	public GlobalResponseEntity deleteSmsTemplate(@RequestBody SmsTemplateEntity entity) {
 		LOGGER.info("Inside - SmsTemplateController.deleteSmsTemplate()");
 		try {
-			if (entity.getStId() == null) {
+			if (entity.getStId() != null) {
 				return smsTemplateService.deleteSmsTemplate(entity.getStId());
 			} else {
 				throw new CustomException("SMS Template Not Found");

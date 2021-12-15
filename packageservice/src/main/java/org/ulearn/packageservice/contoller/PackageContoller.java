@@ -19,8 +19,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
-
-
+import javax.ws.rs.Path;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,11 +33,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.ulearn.packageservice.entity.GlobalResponse;
-
+import org.ulearn.packageservice.entity.InstituteEntity;
 import org.ulearn.packageservice.entity.PackageEntity;
 import org.ulearn.packageservice.entity.PackageGlobalTemplate;
 import org.ulearn.packageservice.entity.PackageLogEntity;
 import org.ulearn.packageservice.exception.CustomException;
+import org.ulearn.packageservice.helper.CustomFunction;
 import org.ulearn.packageservice.services.PackageService;
 
 @RestController
@@ -47,7 +47,10 @@ public class PackageContoller {
 
 	@Autowired
 	private PackageService packageService;
-	private static final Logger log = LoggerFactory.getLogger(PackageContoller.class);
+	
+	@Autowired
+	private CustomFunction customFunction;
+	public static final Logger log = LoggerFactory.getLogger(PackageContoller.class);
 
 	@GetMapping("/list/{isDelete}")
 	public Map<String, Object> getPackage(@RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy,@PathVariable int isDelete) {
@@ -124,6 +127,66 @@ public class PackageContoller {
 		try
 		{
 			return this.packageService.ListOfInstData();
+		}
+		catch(Exception e)
+		{
+			throw new CustomException(e.getMessage());
+		}
+	}
+	@GetMapping("/listOfPackages/{instId}")
+	public List<PackageEntity> listOfAllPackages(@PathVariable long instId)
+	{
+		try {
+			return packageService.getInstDetails(instId);
+		}
+		catch(Exception e)
+		{
+			throw new CustomException(e.getMessage());
+		}
+	}
+	@GetMapping("/paginationList/{instId}/{limit}/{sortName}/{isDelete}")
+	public Map<String, Object> paginationList(@PathVariable long instId,@PathVariable int limit,@PathVariable int isDelete,
+								Optional<Integer> page,Optional<String>sortBy,@PathVariable String sortName)
+	{
+		try
+		{
+			return this.packageService.pagination(instId,limit, isDelete,page,sortBy,sortName);
+		}
+		catch(Exception e)
+		{
+			throw new CustomException(e.getMessage());
+		}
+	}
+	@PostMapping("/packageApproval/{pkId}")
+	public GlobalResponse packageApprove(@PathVariable long pkId,@RequestHeader("Authorization") String token)
+	{
+		try
+		{
+			return this.packageService.approvePackage(pkId,token);
+		}
+		catch(Exception e)
+		{
+			throw new CustomException(e.getMessage());
+		}
+	}
+	@PostMapping("/endPackage/{pkId}")
+	public GlobalResponse endPackage(@PathVariable long pkId,@RequestHeader("Authorization") String token)
+	{
+		try
+		{
+			return this.packageService.endPackage(pkId,token);
+		}
+		catch(Exception e)
+		{
+			throw new CustomException(e.getMessage());
+		}
+	}
+	@PostMapping("/restorePackage/{pkId}")
+	public GlobalResponse restorePackage(@PathVariable long pkId,@RequestHeader("Authorization") String token)
+	{
+		try
+		{
+			return this.packageService.restorePackage(pkId,token);
 		}
 		catch(Exception e)
 		{
