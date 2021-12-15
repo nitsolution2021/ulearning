@@ -76,6 +76,18 @@ public class InstuteController {
 
 	}
 	
+	@GetMapping("/geteditlicenselist")
+	public List<InstituteEntity> geteditlicenselist() {
+		LOGGER.info("Inside - InstituteController.geteditlicenselist()");
+
+		try {
+			return this.instituteService.getEditLicenseListInstuteService();
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+
+	}
+	
 	@GetMapping("/getlicenselist")
 	public List<InstituteEntity> getLicenseListInstute() {
 		LOGGER.info("Inside - InstituteController.getLicenseListInstute()");

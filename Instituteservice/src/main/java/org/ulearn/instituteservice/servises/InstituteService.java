@@ -329,6 +329,25 @@ public class InstituteService {
 		}
 	}
 
+	public List<InstituteEntity> getEditLicenseListInstuteService() {
+
+		try {
+			List<InstituteEntity> findAll = instituteRepo.findByEditLicenseListInst();
+//					.stream()
+//					.filter(Inst -> Inst.getIsDeleted() == 0).filter(Inst -> Inst.getIsActive() == 1)
+//					.filter(instituteLicense -> instituteLicense.getInstituteLicense().get(1).getInstId() == null)					
+//					.collect(Collectors.toList());
+			if (findAll.size() <= 1) {
+				throw new CustomException("Institute Not Found!");
+			} else {
+				return findAll;
+			}
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+	}
+	
+	
 	public GlobalResponse postInstituteDetailsService(@Valid InstituteGlobalEntity instituteGlobalEntrity,
 			String token) {
 		try {
