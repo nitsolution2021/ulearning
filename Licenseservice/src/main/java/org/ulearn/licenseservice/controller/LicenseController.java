@@ -1,6 +1,5 @@
 package org.ulearn.licenseservice.controller;
 
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -41,98 +40,98 @@ import org.ulearn.licenseservice.servises.LicenseService;
 public class LicenseController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(LicenseController.class);
-	
+
 	@Autowired
 	private LicenseService licenseService;
-	
-	
-	
+
 	@PostMapping("/add")
-	public GlobalResponse addLicense(@Valid @RequestBody LicenseEntity licenseEntity, @RequestHeader("Authorization") String token ) {
-		
+	public GlobalResponse addLicense(@Valid @RequestBody LicenseEntity licenseEntity,
+			@RequestHeader("Authorization") String token) {
+
 		LOGGER.info("Inside the LicenseController Add License");
 		try {
-			
-			return this.licenseService.addLicense(licenseEntity,token);
-			
+
+			return this.licenseService.addLicense(licenseEntity, token);
+
 		} catch (Exception e) {
 			// TODO: handle exception
 			throw new CustomException(e.getMessage());
 		}
-		
-		
+
 	}
-	
+
 	@PutMapping("/update/{licenseId}")
-	public GlobalResponse updateLicense(@PathVariable() int licenseId, @RequestBody LicenseEntity licenseForUpdate,@RequestHeader("Authorization") String token) {
-		
+	public GlobalResponse updateLicense(@PathVariable() int licenseId, @RequestBody LicenseEntity licenseForUpdate,
+			@RequestHeader("Authorization") String token) {
+
 		LOGGER.info("Inside the LicenseController Update License");
 		try {
-			
-			return this.licenseService.updateLicense(licenseId,licenseForUpdate,token);
-			
+
+			return this.licenseService.updateLicense(licenseId, licenseForUpdate, token);
+
 		} catch (Exception e) {
 			// TODO: handle exception
 			throw new CustomException(e.getMessage());
 		}
-		
-		
+
 	}
-	
+
 	@GetMapping("/list")
-	public Map<String, Object> getLicenseList(@RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy) {
-		
+	public Map<String, Object> getLicenseList(@RequestParam Optional<Integer> page,
+			@RequestParam Optional<String> sortBy) {
+
 		LOGGER.info("Inside the LicenseController view all License");
-		
+
 		try {
-		
-			return this.licenseService.getAllLicenseList(page,sortBy);
+
+			return this.licenseService.getAllLicenseList(page, sortBy);
 		} catch (Exception e) {
 			// TODO: handle exception
 			throw new CustomException(e.getMessage());
 		}
-		
-		
+
 	}
-	
+
 	@RequestMapping(value = { "/list/{page}/{limit}/{sortName}/{sort}/{isDeleted}" }, method = RequestMethod.GET)
 	public Map<String, Object> getLicensePagination(@PathVariable("page") int page, @PathVariable("limit") int limit,
-			@PathVariable("sort") String sort, @PathVariable("sortName") String sortName, @PathVariable("isDeleted") int isDeleted,
-			@RequestParam(defaultValue = "") Optional<String>keyword, @RequestParam Optional<String> sortBy) {
+			@PathVariable("sort") String sort, @PathVariable("sortName") String sortName,
+			@PathVariable("isDeleted") int isDeleted, @RequestParam(defaultValue = "") Optional<String> keyword,
+			@RequestParam Optional<String> sortBy) {
 		LOGGER.info("Inside - LicenseController.getLicensePagination()");
-		
+
 		try {
-			return licenseService.forGetLicensePagination(page,limit,sortBy,sortName,sort,isDeleted,keyword);
-			
+			return licenseService.forGetLicensePagination(page, limit, sortBy, sortName, sort, isDeleted, keyword);
+
 		} catch (Exception e) {
 			// TODO: handle exception
 			throw new CustomException(e.getMessage());
 		}
 	}
-	
+
 	@GetMapping("/view/{lcId}")
-	public Optional<LicenseEntity> getLicense(@PathVariable("lcId") int lcId){
-		
+	public Optional<LicenseEntity> getLicense(@PathVariable("lcId") int lcId) {
+
 		LOGGER.info("Inside the LicenseController view License by id");
-		
+
 		try {
-			
+
 			return this.licenseService.getLicense(lcId);
-			
+
 		} catch (Exception e) {
 			// TODO: handle exception
 			throw new CustomException(e.getMessage());
 		}
-	
+
 	}
-	
+
 	@PostMapping("/suspend/{lcId}")
-	public GlobalResponse addSuspend(@PathVariable("lcId") int lcId, @RequestBody LicenseLogEntity licenseLogEntitySuspend,@RequestHeader("Authorization") String token) {
-		
+	public GlobalResponse addSuspend(@PathVariable("lcId") int lcId,
+			@RequestBody LicenseLogEntity licenseLogEntitySuspend, @RequestHeader("Authorization") String token) {
+
 		LOGGER.info("Inside the suspend License");
 		try {
-			
-			return this.licenseService.addSuspendLicense(lcId,licenseLogEntitySuspend,token);
+
+			return this.licenseService.addSuspendLicense(lcId, licenseLogEntitySuspend, token);
 		} catch (Exception e) {
 			// TODO: handle exception
 			throw new CustomException(e.getMessage());
@@ -183,21 +182,23 @@ public class LicenseController {
 //		}
 //		
 //	}
-	
-	@RequestMapping(value = { "/getlist/{instId}/{page}/{limit}/{sortName}/{sort}/{isDeleted}" }, method = RequestMethod.GET)
-	public Map<String, Object> getSingleInstitutetLicense(@PathVariable("instId") Long instId, @PathVariable("page") int page, @PathVariable("limit") int limit,
-			@PathVariable("sort") String sort, @PathVariable("sortName") String sortName,@PathVariable("isDeleted") int isDeleted,
-			@RequestParam(defaultValue = "") Optional<String>keyword, @RequestParam Optional<String> sortBy) {
+
+	@RequestMapping(value = {
+			"/getlist/{instId}/{page}/{limit}/{sortName}/{sort}/{isDeleted}" }, method = RequestMethod.GET)
+	public Map<String, Object> getSingleInstitutetLicense(@PathVariable("instId") Long instId,
+			@PathVariable("page") int page, @PathVariable("limit") int limit, @PathVariable("sort") String sort,
+			@PathVariable("sortName") String sortName, @PathVariable("isDeleted") int isDeleted,
+			@RequestParam(defaultValue = "") Optional<String> keyword, @RequestParam Optional<String> sortBy) {
 		LOGGER.info("Inside - LicenseController.getSingleInstitutetLicense()");
-		
+
 		try {
-			return licenseService.getSingleInstitutetLicenseService(instId,page,limit,sortBy,sortName,sort,keyword,isDeleted);
-			
+			return licenseService.getSingleInstitutetLicenseService(instId, page, limit, sortBy, sortName, sort,
+					keyword, isDeleted);
+
 		} catch (Exception e) {
 			// TODO: handle exception
 			throw new CustomException(e.getMessage());
 		}
 	}
-	
-	
+
 }
