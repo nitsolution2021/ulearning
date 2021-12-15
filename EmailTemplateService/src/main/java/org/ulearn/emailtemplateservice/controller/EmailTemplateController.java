@@ -211,11 +211,12 @@ public class EmailTemplateController {
 		}	
 	}
 	
-	@DeleteMapping("/delete/{id}")
-	public GlobalResponse emailTemplateDelete(@PathVariable("id") Long id) {
+	@PutMapping("/delete")
+	public GlobalResponse emailTemplateDelete(@RequestBody() EmailTemplateEntity emailTemplateEntityParam) {
 		
 		LOGGER.info("Inside - EmailTemplateController.emailTemplateDelete()");
 		try {
+			Long id = emailTemplateEntityParam.getEtId();
 			Optional<EmailTemplateEntity> findById = emailTemplateRepo.findById(id);
 			if(findById.isPresent()) {
 				List<EmailTemplateEntity> findByIdAndDelete = emailTemplateRepo.findByIdAndDelete(0, id);
@@ -238,6 +239,40 @@ public class EmailTemplateController {
 					
 				}else {
 					throw new CustomException("Item is Deleted");
+				}
+			}else {
+				throw new CustomException("Item is Not Present");
+			}
+		}catch(Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+	}
+	
+	@PutMapping("/restore")
+	public GlobalResponse emailTemplateRestore(@RequestBody() EmailTemplateEntity emailTemplateEntityParam) {
+		
+		LOGGER.info("Inside - EmailTemplateController.emailTemplateRestore()");
+		try {
+			Long id = emailTemplateEntityParam.getEtId();
+			Optional<EmailTemplateEntity> findById = emailTemplateRepo.findById(id);
+			if(findById.isPresent()) {
+				List<EmailTemplateEntity> findByIdAndDelete = emailTemplateRepo.findByIdAndDelete(1, id);
+				if(findByIdAndDelete.size()>0) {
+					if(findByIdAndDelete.get(0).getEtType().equals("CUSTOM")) {
+						EmailTemplateEntity emailTemplateEntity = findById.get();
+						emailTemplateEntity.setIsDeleted(0);
+						EmailTemplateEntity save = emailTemplateRepo.save(emailTemplateEntity);
+						if(save.equals(null)) {
+							throw new CustomException("Data Not Save Try Again");
+						}else {
+							return new GlobalResponse("Data Restored Successfully","SUCCESS",200);
+						}	
+					}else {
+						throw new CustomException("Default Template Can't be Restore");
+					}
+					
+				}else {
+					throw new CustomException("Item is Already Restored");
 				}
 			}else {
 				throw new CustomException("Item is Not Present");

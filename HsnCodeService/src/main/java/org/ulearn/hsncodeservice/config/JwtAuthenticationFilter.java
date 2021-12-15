@@ -14,6 +14,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.ulearn.hsncodeservice.entity.LoginEntity;
 import org.ulearn.hsncodeservice.exception.CustomException;
@@ -23,6 +24,7 @@ import org.ulearn.hsncodeservice.services.SuperAdminDetailsService;
 
 
 
+@Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	
 	@Autowired
