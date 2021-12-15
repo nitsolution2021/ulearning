@@ -314,7 +314,8 @@ public class InstituteService {
 	public List<InstituteEntity> getListInstuteService() {
 
 		try {
-			List<InstituteEntity> findAll = instituteRepo.findByListInst().stream()
+			List<InstituteEntity> findAll = instituteRepo.findByListInst()
+					.stream()
 					.filter(Inst -> Inst.getIsDeleted() == 0).filter(Inst -> Inst.getIsActive() == 1)
 //					.filter(instituteLicense -> instituteLicense.getInstituteLicense().get(1).getInstId() == null)					
 					.collect(Collectors.toList());
