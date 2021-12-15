@@ -333,10 +333,10 @@ public class PackageService {
 							}
 							catch(Exception e)
 							{
-								org.json.JSONObject jsonObject = new org.json.JSONObject(e.getMessage().substring(7));																		
-								if(!jsonObject.getString("messagee").equals("")) {										
-									throw new CustomException(jsonObject.getString("messagee"));
-								}
+// 								org.json.JSONObject jsonObject = new org.json.JSONObject(e.getMessage().substring(7));																		
+// 								if(!jsonObject.getString("messagee").equals("")) {										
+// 									throw new CustomException(jsonObject.getString("messagee"));
+// 								}
 								
 								throw new CustomException("Email Service Is Not Running!");
 							}
