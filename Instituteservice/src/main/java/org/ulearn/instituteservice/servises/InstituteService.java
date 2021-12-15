@@ -899,8 +899,7 @@ public class InstituteService {
 				}else {
 					InstStatus="0";
 				}
-				
-				
+							
 				findById.setIsActive(isStatus);
 				findById.setInstStatus(InstStatus);				
 				findById.setUpdatedOn(new Date());

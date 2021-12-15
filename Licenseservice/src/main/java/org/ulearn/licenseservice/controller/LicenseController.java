@@ -183,4 +183,21 @@ public class LicenseController {
 //		}
 //		
 //	}
+	
+	@RequestMapping(value = { "/getlist/{instId}/{page}/{limit}/{sortName}/{sort}/{isDeleted}" }, method = RequestMethod.GET)
+	public Map<String, Object> getSingleInstitutetLicense(@PathVariable("instId") Long instId, @PathVariable("page") int page, @PathVariable("limit") int limit,
+			@PathVariable("sort") String sort, @PathVariable("sortName") String sortName,@PathVariable("isDeleted") int isDeleted,
+			@RequestParam(defaultValue = "") Optional<String>keyword, @RequestParam Optional<String> sortBy) {
+		LOGGER.info("Inside - LicenseController.getSingleInstitutetLicense()");
+		
+		try {
+			return licenseService.getSingleInstitutetLicenseService(instId,page,limit,sortBy,sortName,sort,keyword,isDeleted);
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			throw new CustomException(e.getMessage());
+		}
+	}
+	
+	
 }

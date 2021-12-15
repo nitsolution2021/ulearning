@@ -34,4 +34,8 @@ public interface LicenseRepo extends JpaRepository<LicenseEntity, Integer> {
 //	void updateLicenseStatusById(String lStatus,int lcId);
 	@Query(value="UPDATE tbl_inst_license SET LC_STATUS = ?1 WHERE LC_ID = ?2",nativeQuery = true)
 	void updateLicenseStatusById(String lStatus,int lcId);
+	
+	@Query("SELECT licenseObj FROM LicenseEntity licenseObj WHERE licenseObj.instId = ?1 AND licenseObj.isDeleted = ?2")
+	Page<LicenseEntity> findByAllInstLicense(Long instId,int isDeleted,Pageable pagingSort);
+	
 }

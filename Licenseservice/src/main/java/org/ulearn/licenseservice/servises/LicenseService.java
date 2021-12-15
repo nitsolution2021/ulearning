@@ -960,6 +960,51 @@ public class LicenseService {
 		}
 	}
 
+
+	public Map<String, Object> getSingleInstitutetLicenseService(Long instId,int page, int limit, Optional<String> sortBy, String sortName,
+			String sort, Optional<String> keyword, int isDeleted) {
+		
+		try {
+				Pageable pagingSort = null;
+				int CountData=(int) licenseRepo.count();							
+				if(limit==0) {
+					limit=CountData;
+				}
+				if (sort.equals("ASC")) {
+					pagingSort = PageRequest.of(page, limit, Sort.Direction.ASC, sortBy.orElse(sortName));
+				} else {
+					pagingSort = PageRequest.of(page, limit, Sort.Direction.DESC, sortBy.orElse(sortName));
+				}
+	
+				Page<LicenseEntity> findAll = licenseRepo.findByAllInstLicense(instId,isDeleted,pagingSort);
+					
+				
+				
+				int totalPage=findAll.getTotalPages()-1;
+				if(totalPage < 0) {
+					totalPage=0;
+				}
+				
+				Map<String, Object> response = new HashMap<>();
+				response.put("data", findAll.getContent());
+				response.put("currentPage", findAll.getNumber());
+				response.put("total", findAll.getTotalElements());
+				response.put("totalPage", totalPage);
+				response.put("perPage", findAll.getSize());
+				response.put("perPageElement", findAll.getNumberOfElements());
+	
+				if (findAll.getSize() < 1) {
+					throw new CustomException("License Not Found!");
+				} else {
+					return response;
+				}
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+
+	}
+
+	
 	
 
 }
