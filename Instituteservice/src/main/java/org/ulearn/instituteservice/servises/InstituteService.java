@@ -314,11 +314,11 @@ public class InstituteService {
 	public List<InstituteEntity> getListInstuteService() {
 
 		try {
-			List<InstituteEntity> findAll = instituteRepo.findByListInst()
-					.stream()
-					.filter(Inst -> Inst.getIsDeleted() == 0).filter(Inst -> Inst.getIsActive() == 1)
+			List<InstituteEntity> findAll = instituteRepo.findByListInst();
+//					.stream()
+//					.filter(Inst -> Inst.getIsDeleted() == 0).filter(Inst -> Inst.getIsActive() == 1)
 //					.filter(instituteLicense -> instituteLicense.getInstituteLicense().get(1).getInstId() == null)					
-					.collect(Collectors.toList());
+//					.collect(Collectors.toList());
 			if (findAll.size() <= 1) {
 				throw new CustomException("Institute Not Found!");
 			} else {
@@ -887,11 +887,11 @@ public class InstituteService {
 			if (findById.getInstId() == null) {
 				throw new CustomException("Institute Not Found!");
 			} else {
-				if(findById.getIsActive()==0) {
-					findById.setIsActive(1);
-				}else {
-					findById.setIsActive(0);
-				}
+//				if(findById.getIsActive()==0) {
+//					findById.setIsActive(1);
+//				}else {
+//					findById.setIsActive(0);
+//				}
 				if(findById.getInstStatus()=="0") {
 					findById.setInstStatus("1");
 				}else {
