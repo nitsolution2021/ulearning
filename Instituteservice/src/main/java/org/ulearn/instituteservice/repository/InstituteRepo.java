@@ -18,10 +18,10 @@ public interface InstituteRepo extends JpaRepository<InstituteEntity, Long> {
 	@Query(value = "SELECT instObj FROM InstituteEntity instObj INNER JOIN InstituteAdminEntity instAmdObj on instAmdObj.instId = instObj.instId WHERE instObj.isDeleted = ?1")
 	Page<InstituteEntity> findByAllInst(int isDeleted,Pageable pagingSort);
 	
-	@Query(value = "SELECT instObj FROM InstituteEntity instObj LEFT JOIN LicenseEntity instLicObj on instLicObj.instId = instObj.instId WHERE instLicObj.instId = null AND instObj.isDeleted = 0 AND instObj.isActive = 1 AND instObj.instStatus = 1")
+	@Query(value = "SELECT instObj FROM InstituteEntity instObj LEFT JOIN LicenseEntity instLicObj on instLicObj.instId = instObj.instId WHERE instLicObj.lcEndDate < CURRENT_DATE OR instLicObj.instId = null AND instObj.isDeleted = 0 AND instObj.isActive = 1 AND instObj.instStatus = 1")
 	List<InstituteEntity> findByListInst();
 	
-	@Query(value = "SELECT instObj FROM InstituteEntity instObj LEFT JOIN LicenseEntity instLicObj on instLicObj.instId = instObj.instId WHERE instLicObj.instId != null AND instObj.isDeleted = 0 AND instObj.isActive = 1 AND instObj.instStatus = 1")
+	@Query(value = "SELECT instObj FROM InstituteEntity instObj LEFT JOIN LicenseEntity instLicObj on instLicObj.instId = instObj.instId WHERE instLicObj.lcEndDate >= CURRENT_DATE OR instLicObj.instId != null AND instObj.isDeleted = 0 AND instObj.isActive = 1 AND instObj.instStatus = 1")
 	List<InstituteEntity> findByLicenseListInst();
 	
 	@Query(value = "SELECT instObj FROM InstituteEntity instObj LEFT JOIN LicenseEntity instLicObj on instLicObj.instId = instObj.instId WHERE instObj.isDeleted = 0 AND instObj.isActive = 1 AND instObj.instStatus = 1")
