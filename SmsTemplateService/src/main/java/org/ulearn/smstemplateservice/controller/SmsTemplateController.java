@@ -154,6 +154,20 @@ public class SmsTemplateController {
 		}
 	}
 	
+	@PutMapping("/setPrimaryAndNonPrimary")
+	public GlobalResponseEntity changeIsprimary(@RequestBody SmsTemplateEntity smsTemplateEntity) {
+		LOGGER.info("Inside - SmsTemplateController.changeIsprimary()");
+		try {
+			if (smsTemplateEntity.getStId() != null) {
+				return smsTemplateService.changeIsprimary(smsTemplateEntity.getStId());
+			} else {
+				throw new CustomException("Id can't be Null");
+			}
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+	}
+	
 	
 	
 }

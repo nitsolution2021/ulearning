@@ -456,5 +456,40 @@ public class EmailTemplateController {
 		}
 	}
 	
+	@PutMapping("/setPrimaryAndNonPrimary")
+	public GlobalResponse changeIsprimary(@RequestBody EmailTemplateEntity emailTemplateEntity) {
+		LOGGER.info("Inside - EmailTemplateController.changeIsprimary()");
+		try {
+			if (emailTemplateEntity.getEtId() == null) {
+				throw new CustomException("Id can't be Null");
+			}
+			Optional<EmailTemplateEntity> findById = emailTemplateRepo.findById(emailTemplateEntity.getEtId());
+			EmailTemplateEntity templateEntity = findById.get();
+			if (findById.isPresent()) {
+				if (templateEntity.getIsPrimary() == 0) {
+					templateEntity.setIsPrimary(1);
+					EmailTemplateEntity save = emailTemplateRepo.save(templateEntity);
+					if (!save.equals(null)) {
+						return new GlobalResponse("SUCCESS", "Template Change As Primary", 200);
+					} else {
+						throw new CustomException("Can't Set this Template As Primary");
+					}
+				} else {
+					templateEntity.setIsPrimary(0);
+					EmailTemplateEntity save = emailTemplateRepo.save(templateEntity);
+					if (!save.equals(null)) {
+						return new GlobalResponse("SUCCESS", "Template Change As Non Primary", 200);
+					} else {
+						throw new CustomException("Can't Set this Template As Non Primary");
+					}
+				}
+			} else {
+				throw new CustomException("Could Not Find Any Template");
+			}
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+	}
+	
 
 }

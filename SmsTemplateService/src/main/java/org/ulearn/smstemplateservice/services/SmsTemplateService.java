@@ -466,4 +466,35 @@ public class SmsTemplateService {
 		}
 	}
 
+	public GlobalResponseEntity changeIsprimary(Long stId) {
+		LOGGER.info("Inside - SmsTemplateService.changeIsprimary()");
+		try {
+			Optional<SmsTemplateEntity> findById = smsTemplateRepo.findById(stId);
+			SmsTemplateEntity smsTemplateEntity = findById.get();
+			if (findById.isPresent()) {
+				if (smsTemplateEntity.getIsPrimary() == 0) {
+					smsTemplateEntity.setIsPrimary(1);
+					SmsTemplateEntity save = smsTemplateRepo.save(smsTemplateEntity);
+					if (!save.equals(null)) {
+						return new GlobalResponseEntity("SUCCESS", "Template Change As Primary", 200);
+					} else {
+						throw new CustomException("Can't Set this Template As Primary");
+					}
+				} else {
+					smsTemplateEntity.setIsPrimary(0);
+					SmsTemplateEntity save = smsTemplateRepo.save(smsTemplateEntity);
+					if (!save.equals(null)) {
+						return new GlobalResponseEntity("SUCCESS", "Template Change As Non Primary", 200);
+					} else {
+						throw new CustomException("Can't Set this Template As Non Primary");
+					}
+				}
+			} else {
+				throw new CustomException("Could Not Find Any Template");
+			}
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage());
+		}
+	}
+
 }
