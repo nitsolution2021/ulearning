@@ -313,13 +313,14 @@ public class InstituteService {
 
 	public List<InstituteEntity> getListInstuteService() {
 
+		LOGGER.info("Inside - InstituteController.getInstutePagination()"+new Date());
 		try {
 			List<InstituteEntity> findAll = instituteRepo.findByListInst();
 //					.stream()
 //					.filter(Inst -> Inst.getIsDeleted() == 0).filter(Inst -> Inst.getIsActive() == 1)
 //					.filter(instituteLicense -> instituteLicense.getInstituteLicense().get(1).getInstId() == null)					
 //					.collect(Collectors.toList());
-			if (findAll.size() <= 1) {
+			if (findAll.size() <= 0) {
 				throw new CustomException("Institute Not Found!");
 			} else {
 				return findAll;
