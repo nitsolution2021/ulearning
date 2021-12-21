@@ -128,23 +128,23 @@ public class CustomFunction {
 		{
 			String STSubject=smsTemplateData.getBody().getStSubject();
 			String STBody=smsTemplateData.getBody().getStBody();
-			
-//			String STAdminFname="__$amdFname$__";
-//			String STPackageFname="__$pkFname$__";
+			InstituteEntity instituteData=instituteRepo.getById(packageEntity.getInstId());
+			String STAdminFname="__$amdFname$__";
+			String STPackageFname="_$InstName$_";
 //			String STPackageCdate="__$pkCdate$__";
 //			String STPackageValidityNo="__$pkValidityNum$__";
 //			String STPackgeValidityType="__$pkValidityType$__";
-//			String STreplace = STBody.replace(STAdminFname,instituteData.getInstituteAdmin().getAmdFname());
-//			String STreplace1 = STreplace.replace(STPackageFname,packageData.getPkFname());
+			String STreplace = STBody.replace(STAdminFname,instituteData.getInstituteAdmin().getAmdFname());
+			String STreplace1 = STreplace.replace(STPackageFname,packageEntity.getPkFname());
 //			String STreplace2 = STreplace1.replace(STPackageCdate,packageData.getPkCdate().toString() );
 //			String STreplace3 = STreplace2.replace(STPackageValidityNo,packageData.getPkValidityNum().toString() );
 //			String STreplace4 = STreplace3.replace(STPackgeValidityType,packageData.getPkValidityType() );
-			InstituteEntity instData=instituteRepo.getById(packageEntity.getInstId());
-			System.out.println(instData);
-			String amdMnum=instData.getInstMnum().substring(3);
-			System.out.println(amdMnum);
 			
-			String encode = UriUtils.encode(STBody, "UTF-8");
+			//System.out.println(instData);
+			String amdMnum=instituteData.getInstMnum().substring(3);
+			//System.out.println(amdMnum);
+			
+			String encode = UriUtils.encode(STreplace1, "UTF-8");
 			//System.out.println(encode);
 			Unirest.setTimeouts(0, 0);
 			HttpResponse<JsonNode> asJson = Unirest.get(
