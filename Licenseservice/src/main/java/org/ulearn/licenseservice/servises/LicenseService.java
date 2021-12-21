@@ -703,7 +703,7 @@ public class LicenseService {
 
 						LicenseLogEntity licenseLogEntityForSuspend = new LicenseLogEntity();
 						licenseLogEntityForSuspend.setLcIdFk(lcId);
-						licenseLogEntityForSuspend.setLlAction("Add suspend");
+						licenseLogEntityForSuspend.setLlAction("Add Suspend");
 						licenseLogEntityForSuspend.setLlEdate(licenseLogEntitySuspend.getLlEdate());
 						licenseLogEntityForSuspend.setLlComment(licenseLogEntitySuspend.getLlComment());
 						licenseLogEntityForSuspend.setLlStatus("Complete");
@@ -731,6 +731,7 @@ public class LicenseService {
 						String stLicnServerType = "";
 						String stLicnType = "";
 						String ETStTempId = "";
+						String stLicnSusDate=null;
 
 						String ETTargetName = "__$AdmName$__";
 						String stInstNameTags = "__$InstName$__";
@@ -853,6 +854,7 @@ public class LicenseService {
 							stLicnEndDate = save2.getLcEndDate() + "";
 							stLicnServerType = save2.getLcStype();
 							stLicnType = save2.getLcType();
+							stLicnSusDate = licenseLogEntitySuspend.getLlEdate().toString();
 
 							String replace = STBody.replace(ETTargetName, ETNameReplacement);
 							String replace2 = replace.replace(stInstNameTags, stInstName);
@@ -863,7 +865,8 @@ public class LicenseService {
 							String replace7 = replace6.replace(stLicnCreateDateTags, stLicnCreateDate);
 							String replace8 = replace7.replace(stLicnEndDateTags, stLicnEndDate);
 							String replace9 = replace8.replace(stLicnServerTypeTags, stLicnServerType);
-							processedSMSBodyContent = replace9.replace(stLicnTypeTags, stLicnType);
+							String replace10 = replace9.replace(licenseSuspendDate, stLicnSusDate);
+							processedSMSBodyContent = replace10.replace(stLicnTypeTags, stLicnType);
 
 							number = number.substring(3);
 
