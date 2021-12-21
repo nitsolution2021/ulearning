@@ -292,8 +292,8 @@ public class InstituteService {
 						String processedInstPan = processedInstMobile.replace(STTargetInstPan, STInstPanReplacement);
 						String processedInstGST = processedInstPan.replace(STTargetInstGST, STInstGSTReplacement);
 						String processedUsername = processedInstGST.replace(STTargetUsername, STUsernameReplacement);
-						String processedCreateDate = processedUsername.replace(STTargetCreateDate, STUsernameReplacement);
-						processedSMSBodyContent = processedCreateDate.replace(STTargetPassword, formattedDate);
+						String processedCreateDate = processedUsername.replace(STTargetCreateDate, formattedDate);
+						processedSMSBodyContent = processedCreateDate.replace(STTargetPassword, STPasswordReplacement);
 
 
 						number = findByIdAndEmail.get(0).getInstMnum();
@@ -828,8 +828,7 @@ public class InstituteService {
 									String processedInstMobile = processedInstEmail.replace(STTargetInstMobile,
 											STInstMobileReplacement);
 									String processedInstPan = processedInstMobile.replace(STTargetInstPan,
-											STInstPanReplacement);
-									
+											STInstPanReplacement);									
 									String processedCreateDate = processedInstPan.replace(STTargetCreateDate, formattedDate);
 									
 									
