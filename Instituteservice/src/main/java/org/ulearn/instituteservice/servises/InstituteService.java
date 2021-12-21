@@ -533,6 +533,7 @@ public class InstituteService {
 							String STTargetInstMobile = "__$InstMobile$__";
 							String STTargetInstPan = "__$InstPan$__";
 							String STTargetInstGST = "__$InstGST$__";
+							String STTargetCreateDate = "__$CreateDate$__";
 
 							String STAdmNameReplacement = instituteGlobalEntrity.getAmdFname() + " "
 									+ instituteGlobalEntrity.getAmdLname();
@@ -541,6 +542,11 @@ public class InstituteService {
 							String STInstMobileReplacement = instituteGlobalEntrity.getInstMnum();
 							String STInstPanReplacement = instituteGlobalEntrity.getInstPanNum();
 							String STInstGSTReplacement = instituteGlobalEntrity.getInstGstNum();
+							
+							Date STInstCreateDateReplacement = new Date();
+							String strDateFormat = "yyyy-MM-dd";
+						    DateFormat dateFormat = new SimpleDateFormat(strDateFormat);
+						    String formattedDate= dateFormat.format(STInstCreateDateReplacement);
 
 							String processedName = STBody.replace(STTargetAdmName, STAdmNameReplacement);
 							String processedInstName = processedName.replace(STTargetInstName, STInstNameReplacement);
@@ -550,7 +556,8 @@ public class InstituteService {
 									STInstMobileReplacement);
 							String processedInstPan = processedInstMobile.replace(STTargetInstPan,
 									STInstPanReplacement);
-							processedSMSBodyContent = processedInstPan.replace(STTargetInstGST, STInstGSTReplacement);
+							String processedCreateDate = processedInstPan.replace(STTargetCreateDate, formattedDate);
+							processedSMSBodyContent = processedCreateDate.replace(STTargetInstGST, STInstGSTReplacement);
 
 							number = instituteGlobalEntrity.getInstMnum();
 							number = number.substring(3);
