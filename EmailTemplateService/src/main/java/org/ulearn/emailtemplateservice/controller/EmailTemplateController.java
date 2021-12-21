@@ -145,7 +145,7 @@ public class EmailTemplateController {
 				Optional<EmailTemplateEntity> findById = emailTemplateRepo.findById(id);
 				if(findById.isPresent()) {
 					if(findById.get().getEtType().equals("DEFAULT")) {
-						throw new CustomException("Default Template Can't Delete");
+						throw new CustomException("Default Template Can't Update");
 					}
 					List<EmailTemplateEntity> findByIdAndDelete = emailTemplateRepo.findByIdAndDelete(0, id);
 					if(findByIdAndDelete.size()>0) {
@@ -431,22 +431,27 @@ public class EmailTemplateController {
 					"DEFAULT");
 			if (findTagByActionAndType.isPresent()) {
 				EmailTemplateEntity emailTemplateEntity = findTagByActionAndType.get();
-				String etTags = emailTemplateEntity.getEtTags();
-				String[] split = etTags.split(",");
+				try {
+					String etTags = emailTemplateEntity.getEtTags();
+					String[] split = etTags.split(",");
 
-				String etTagsName = emailTemplateEntity.getEtTagsName();
-				String[] split2 = etTagsName.split(",");
+					String etTagsName = emailTemplateEntity.getEtTagsName();
+					String[] split2 = etTagsName.split(",");
 
-				List<Map<String, String>> list = new ArrayList<>();
+					List<Map<String, String>> list = new ArrayList<>();
 
-				for (int i = 0; i < split.length; i++) {
+					for (int i = 0; i < split.length; i++) {
 
-					Map<String, String> map = new HashMap<String, String>();
-					map.put("value", split[i]);
-					map.put("name", split2[i]);
-					list.add(map);
+						Map<String, String> map = new HashMap<String, String>();
+						map.put("value", split[i]);
+						map.put("name", split2[i]);
+						list.add(map);
+					}
+					return list;
+				}catch (Exception e) {
+					throw new CustomException("Tags Are Not Present in Default Template");
 				}
-				return list;
+				
 			}
 			else {
 				throw new CustomException("Data not present");
