@@ -906,7 +906,7 @@ public class LicenseService {
 						// **** CLOSED ****//
 
 						if (!save.equals(null)) {
-							return new GlobalResponse("SUCCESS", "This License Will Be Suspend Or The Selected Date.",
+							return new GlobalResponse("SUCCESS", "This License Will Be Suspend Of The Selected Date.",
 									200);
 						} else {
 							throw new CustomException("Suspend Date Not Add.. ");
