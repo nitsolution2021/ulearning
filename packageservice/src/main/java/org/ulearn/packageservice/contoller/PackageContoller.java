@@ -33,7 +33,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.ulearn.packageservice.entity.GlobalResponse;
-import org.ulearn.packageservice.entity.InstituteEntity;
 import org.ulearn.packageservice.entity.PackageEntity;
 import org.ulearn.packageservice.entity.PackageGlobalTemplate;
 import org.ulearn.packageservice.entity.PackageLogEntity;

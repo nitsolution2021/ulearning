@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriUtils;
-import org.ulearn.packageservice.entity.GlobalResponse;
 import org.ulearn.packageservice.entity.InstituteEntity;
 import org.ulearn.packageservice.entity.PackageEntity;
 import org.ulearn.packageservice.entity.PackageGlobalTemplate;
@@ -101,7 +100,7 @@ public class CustomFunction {
 			String ETreplace8 = ETreplace7.replace(ETPackgeValidityType,packageEntity.getPkValidityType() );
 			InstituteEntity instData=instituteRepo.getById(packageEntity.getInstId());
 			JSONObject requestJson = new JSONObject();
-			String mailId=instData.getInstituteAdmin().getAmdEmail();
+			String mailId=instData.getInstEmail();
 			requestJson.put("senderMailId", mailId);
 			requestJson.put("subject", ETSubject);
 			requestJson.put("body", ETreplace8);
@@ -142,7 +141,7 @@ public class CustomFunction {
 //			String STreplace4 = STreplace3.replace(STPackgeValidityType,packageData.getPkValidityType() );
 			InstituteEntity instData=instituteRepo.getById(packageEntity.getInstId());
 			System.out.println(instData);
-			String amdMnum=instData.getInstituteAdmin().getAmdMnum().substring(3);
+			String amdMnum=instData.getInstMnum().substring(3);
 			System.out.println(amdMnum);
 			
 			String encode = UriUtils.encode(STBody, "UTF-8");
