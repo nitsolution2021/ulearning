@@ -1,5 +1,7 @@
 package org.ulearn.instituteservice.servises;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -262,6 +264,7 @@ public class InstituteService {
 						String STTargetInstGST = "__$InstGST$__";
 						String STTargetUsername = "__$username$__";
 						String STTargetPassword = "__$password$__";
+						String STTargetCreateDate = "__$CreateDate$__";
 
 						String STAdmNameReplacement = findByIdAndEmail.get(0).getInstituteAdmin().get(0).getAmdFname()
 								+ " " + findByIdAndEmail.get(0).getInstituteAdmin().get(0).getAmdLname();
@@ -273,7 +276,13 @@ public class InstituteService {
 						String STUsernameReplacement = findByIdAndEmail.get(0).getInstituteAdmin().get(0)
 								.getAmdUsername();
 						String STPasswordReplacement = Password;
-
+						Date STInstCreateDateReplacement = findByIdAndEmail.get(0).getCreatedOn();
+						
+						String strDateFormat = "yyyy-MM-dd";
+					    DateFormat dateFormat = new SimpleDateFormat(strDateFormat);
+					    String formattedDate= dateFormat.format(STInstCreateDateReplacement);
+					    
+					    
 						String processedName = STBody.replace(STTargetAdmName, STAdmNameReplacement);
 						String processedInstName = processedName.replace(STTargetInstName, STInstNameReplacement);
 						String processedInstEmail = processedInstName.replace(STTargetEmailname,
@@ -283,9 +292,10 @@ public class InstituteService {
 						String processedInstPan = processedInstMobile.replace(STTargetInstPan, STInstPanReplacement);
 						String processedInstGST = processedInstPan.replace(STTargetInstGST, STInstGSTReplacement);
 						String processedUsername = processedInstGST.replace(STTargetUsername, STUsernameReplacement);
-						processedSMSBodyContent = processedUsername.replace(STTargetPassword, STPasswordReplacement);
+						String processedCreateDate = processedUsername.replace(STTargetCreateDate, STUsernameReplacement);
+						processedSMSBodyContent = processedCreateDate.replace(STTargetPassword, formattedDate);
 
-//						LOGGER.info("Inside - InstituteController.getInstutePagination(////)"+processedSMSBodyContent);
+
 						number = findByIdAndEmail.get(0).getInstMnum();
 						number = number.substring(3);
 
@@ -795,6 +805,7 @@ public class InstituteService {
 									String STTargetInstMobile = "__$InstMobile$__";
 									String STTargetInstPan = "__$InstPan$__";
 									String STTargetInstGST = "__$InstGST$__";
+									String STTargetCreateDate = "__$CreateDate$__";
 
 									String STAdmNameReplacement = instituteGlobalEntrity.getAmdFname() + " "
 											+ instituteGlobalEntrity.getAmdLname();
@@ -803,6 +814,11 @@ public class InstituteService {
 									String STInstMobileReplacement = instituteGlobalEntrity.getInstMnum();
 									String STInstPanReplacement = instituteGlobalEntrity.getInstPanNum();
 									String STInstGSTReplacement = instituteGlobalEntrity.getInstGstNum();
+									
+									Date STInstCreateDateReplacement = new Date();
+									String strDateFormat = "yyyy-MM-dd";
+								    DateFormat dateFormat = new SimpleDateFormat(strDateFormat);
+								    String formattedDate= dateFormat.format(STInstCreateDateReplacement);
 
 									String processedAmdName = STBody.replace(STTargetAdmName, STAdmNameReplacement);
 									String processedInstName = processedAmdName.replace(STTargetInstName,
@@ -813,7 +829,11 @@ public class InstituteService {
 											STInstMobileReplacement);
 									String processedInstPan = processedInstMobile.replace(STTargetInstPan,
 											STInstPanReplacement);
-									processedSMSBodyContent = processedInstPan.replace(STTargetInstGST,
+									
+									String processedCreateDate = processedInstPan.replace(STTargetCreateDate, formattedDate);
+									
+									
+									processedSMSBodyContent = processedCreateDate.replace(STTargetInstGST,
 											STInstGSTReplacement);
 
 									number = instituteGlobalEntrity.getInstMnum();
