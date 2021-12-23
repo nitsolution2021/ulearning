@@ -22,7 +22,7 @@ public class InstituteGlobalEntity {
 	@JsonFormat(shape = Shape.STRING,pattern = "yyyy/MM/dd")
 	private Date instEndDate;
 	private String instWebsite;
-	@Email
+	@Email 
 	private String instEmail;
 	@NotEmpty(message = "The Institute Contact Number is Required")
 	private String instCnum;
