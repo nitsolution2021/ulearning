@@ -1,5 +1,7 @@
 package org.ulearn.licenseservice.servises;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -703,7 +705,7 @@ public class LicenseService {
 
 						LicenseLogEntity licenseLogEntityForSuspend = new LicenseLogEntity();
 						licenseLogEntityForSuspend.setLcIdFk(lcId);
-						licenseLogEntityForSuspend.setLlAction("Add suspend");
+						licenseLogEntityForSuspend.setLlAction("Add Suspend");
 						licenseLogEntityForSuspend.setLlEdate(licenseLogEntitySuspend.getLlEdate());
 						licenseLogEntityForSuspend.setLlComment(licenseLogEntitySuspend.getLlComment());
 						licenseLogEntityForSuspend.setLlStatus("Complete");
@@ -731,6 +733,7 @@ public class LicenseService {
 						String stLicnServerType = "";
 						String stLicnType = "";
 						String ETStTempId = "";
+						String stLicnSusDate=null;
 
 						String ETTargetName = "__$AdmName$__";
 						String stInstNameTags = "__$InstName$__";
@@ -749,6 +752,11 @@ public class LicenseService {
 						String amdLname = "";
 						String number = "";
 						String stInstName = "";
+						
+						String strDateFormat = "yyyy-MM-dd";
+					    DateFormat dateFormat = new SimpleDateFormat(strDateFormat);
+					    String formattedDate= dateFormat.format(licenseLogEntitySuspend.getLlEdate());
+					    
 						try {
 
 							Unirest.setTimeouts(0, 0);
@@ -796,7 +804,7 @@ public class LicenseService {
 							stLicnType = save2.getLcType();
 
 							ETNameReplacement = amdFname + " " + amdLname;
-							ETDateReplacement = licenseLogEntitySuspend.getLlEdate().toString();
+							ETDateReplacement = formattedDate;
 							processedDate = ETBody.replace(licenseSuspendDate, ETDateReplacement);
 							String replace2 = processedDate.replace(stInstNameTags, stInstName);
 							String replace3 = replace2.replace(stInstMailTags, emailId);
@@ -853,6 +861,7 @@ public class LicenseService {
 							stLicnEndDate = save2.getLcEndDate() + "";
 							stLicnServerType = save2.getLcStype();
 							stLicnType = save2.getLcType();
+							stLicnSusDate = formattedDate;
 
 							String replace = STBody.replace(ETTargetName, ETNameReplacement);
 							String replace2 = replace.replace(stInstNameTags, stInstName);
@@ -863,7 +872,8 @@ public class LicenseService {
 							String replace7 = replace6.replace(stLicnCreateDateTags, stLicnCreateDate);
 							String replace8 = replace7.replace(stLicnEndDateTags, stLicnEndDate);
 							String replace9 = replace8.replace(stLicnServerTypeTags, stLicnServerType);
-							processedSMSBodyContent = replace9.replace(stLicnTypeTags, stLicnType);
+							String replace10 = replace9.replace(licenseSuspendDate, stLicnSusDate);
+							processedSMSBodyContent = replace10.replace(stLicnTypeTags, stLicnType);
 
 							number = number.substring(3);
 
@@ -896,7 +906,7 @@ public class LicenseService {
 						// **** CLOSED ****//
 
 						if (!save.equals(null)) {
-							return new GlobalResponse("SUCCESS", "This License Will Be Suspend Or The Selected Date.",
+							return new GlobalResponse("SUCCESS", "This License Will Be Suspend Of The Selected Date.",
 									200);
 						} else {
 							throw new CustomException("Suspend Date Not Add.. ");

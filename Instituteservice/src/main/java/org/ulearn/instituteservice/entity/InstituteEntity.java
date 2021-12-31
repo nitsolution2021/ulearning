@@ -70,7 +70,7 @@ public class InstituteEntity {
 	private List<InstituteAdminEntity> instituteAdmin = new ArrayList<>();
 	
 	@OneToMany
-	@JoinColumn(name = "INST_ID",referencedColumnName = "INST_ID")
+	@JoinColumn(name = "INST_ID",referencedColumnName = "INST_ID",insertable=false, updatable=false)
 	private List<LicenseEntity> instituteLicense = new ArrayList<>();
 
 	public InstituteEntity() {
