@@ -99,6 +99,7 @@ public class PackageGlobalTemplate {
 	private String stTags;
 	private String stTempId;
 	private String stTagsName;
+	private PackageLogEntity packageLogEntity;
 	public PackageGlobalTemplate(Long instId, String instName, Date instEndDate, String instWebsite, String instEmail,
 			String instCnum, String instMnum, Date isntRegDate, String instLogo, String instPanNum, String instGstNum,
 			String instStatus, int instIsActive, int instIsDeleted, Date instCreatedOn, Date instUpdatedOn, Long pkId,
@@ -112,7 +113,8 @@ public class PackageGlobalTemplate {
 			String amdFname, String amdLname, Date amdDob, String amdMnum, String amdEmail, String amdUsername,
 			String amdPassword, String amdPpic, Date amdCreatedOn, Date amdUpdatedOn, Long etId, String etName,
 			String etSubject, String etBody, String etType, String etAction, Long stId, String stName, String stSubject,
-			String stBody, String stType, String stAction, String stTags, String stTempId, String stTagsName) {
+			String stBody, String stType, String stAction, String stTags, String stTempId, String stTagsName,
+			PackageLogEntity packageLogEntity) {
 		super();
 		this.instId = instId;
 		this.instName = instName;
@@ -171,6 +173,7 @@ public class PackageGlobalTemplate {
 		this.stTags = stTags;
 		this.stTempId = stTempId;
 		this.stTagsName = stTagsName;
+		this.packageLogEntity = packageLogEntity;
 	}
 	public PackageGlobalTemplate() {
 		super();
@@ -518,6 +521,12 @@ public class PackageGlobalTemplate {
 	public void setStTagsName(String stTagsName) {
 		this.stTagsName = stTagsName;
 	}
+	public PackageLogEntity getPackageLogEntity() {
+		return packageLogEntity;
+	}
+	public void setPackageLogEntity(PackageLogEntity packageLogEntity) {
+		this.packageLogEntity = packageLogEntity;
+	}
 	@Override
 	public String toString() {
 		return "PackageGlobalTemplate [instId=" + instId + ", instName=" + instName + ", instEndDate=" + instEndDate
@@ -536,7 +545,9 @@ public class PackageGlobalTemplate {
 				+ ", etId=" + etId + ", etName=" + etName + ", etSubject=" + etSubject + ", etBody=" + etBody
 				+ ", etType=" + etType + ", etAction=" + etAction + ", stId=" + stId + ", stName=" + stName
 				+ ", stSubject=" + stSubject + ", stBody=" + stBody + ", stType=" + stType + ", stAction=" + stAction
-				+ ", stTags=" + stTags + ", stTempId=" + stTempId + ", stTagsName=" + stTagsName + "]";
+				+ ", stTags=" + stTags + ", stTempId=" + stTempId + ", stTagsName=" + stTagsName + ", packageLogEntity="
+				+ packageLogEntity + "]";
 	}
+	
 	
 }

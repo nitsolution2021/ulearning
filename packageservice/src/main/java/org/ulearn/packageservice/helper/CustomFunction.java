@@ -8,9 +8,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriUtils;
+import org.ulearn.packageservice.entity.GlobalResponse;
 import org.ulearn.packageservice.entity.InstituteEntity;
 import org.ulearn.packageservice.entity.PackageEntity;
 import org.ulearn.packageservice.entity.PackageGlobalTemplate;
@@ -35,7 +37,7 @@ public class CustomFunction {
 	@Autowired
 	private PackageLogRepo packageLogRepo;
 	
-	
+	//@Async("asyncExecutor")
 	public ResponseEntity<PackageGlobalTemplate> getEmailDetails(String ETAction,String token)
 	{
 		try
@@ -51,24 +53,22 @@ public class CustomFunction {
 		}
 		catch(Exception e)
 		{
-			org.json.JSONObject jsonObject = new org.json.JSONObject(e.getMessage().substring(7));																		
-			if(!jsonObject.getString("messagee").equals("")) {										
-				throw new CustomException(jsonObject.getString("messagee"));
-			}
-			
 			throw new CustomException("Email TemplateData Not Found");
 		}
 	}
-	public void sentEmail( PackageEntity newPackageEntity,String token,ResponseEntity<PackageGlobalTemplate>responseEmailTemp,PackageLogEntity packageLogEntity)
+	//@Async("asyncExecutor")
+	public void sentEmail( PackageEntity newPackageEntity,String token,ResponseEntity<PackageGlobalTemplate>responseEmailTemp,PackageLogEntity packageLogEntity,String ETAction)
 	{
 		try
 		{
+			
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("Authorization", token);
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity request = new HttpEntity(headers);
 			String ETSubject= responseEmailTemp.getBody().getEtSubject();
 			String ETBody=responseEmailTemp.getBody().getEtBody();
+			System.out.println("okk_Email");
 			String ETAdminFname="__$amdFname$__";
 			String ETinstId="__$instId$__";
 			String ETinstName="__$instName$__";
@@ -88,7 +88,8 @@ public class CustomFunction {
 			String ETreplace4= ETreplace3.replace(ETpkId,packageEntity.getPkId().toString());
 			String ETreplace5 = ETreplace4.replace(ETPackageFname,packageEntity.getPkFname());
 			String ETreplace6=null;
-			if(packageLogEntity.getPlAction().equals("Suspended"))
+			
+			if(packageLogEntity.getPlAction().equals("Suspended") || packageLogEntity.getPlAction().equals("Package_End") || packageLogEntity.getPlAction().equals("Package_Restore"))
 			{
 				ETreplace6 = ETreplace5.replace(ETPackageDate,packageLogEntity.getPlAdate().toString());
 			}
@@ -110,18 +111,14 @@ public class CustomFunction {
 			ResponseEntity<String> response = new RestTemplate()
 					.postForEntity("http://65.1.66.115:8085/dev/login/sendMail/", entity, String.class);
 			
+			
 		}
 		catch(Exception e)
 		{
-//			org.json.JSONObject jsonObject = new org.json.JSONObject(e.getMessage().substring(7));																		
-//			if(!jsonObject.getString("messagee").equals("")) {										
-//				throw new CustomException(jsonObject.getString("messagee"));
-//			}
-//			
-//			throw new CustomException("Email Service Is Not Running!");
-			throw new CustomException(e.getMessage());
+			getSMSDetail(token, ETAction);
 		}
 	}
+	//@Async("asyncExecutor")
 	public void sentSMS(PackageEntity packageEntity,String token,ResponseEntity<PackageGlobalTemplate> smsTemplateData)
 	{
 		try
@@ -139,38 +136,24 @@ public class CustomFunction {
 //			String STreplace2 = STreplace1.replace(STPackageCdate,packageData.getPkCdate().toString() );
 //			String STreplace3 = STreplace2.replace(STPackageValidityNo,packageData.getPkValidityNum().toString() );
 //			String STreplace4 = STreplace3.replace(STPackgeValidityType,packageData.getPkValidityType() );
-			
-			//System.out.println(instData);
 			String amdMnum=instituteData.getInstMnum().substring(3);
-			//System.out.println(amdMnum);
 			
 			String encode = UriUtils.encode(STreplace1, "UTF-8");
-			//System.out.println(encode);
+			
 			Unirest.setTimeouts(0, 0);
 			HttpResponse<JsonNode> asJson = Unirest.get(
 					"http://msg.jmdinfotek.in/api/mt/SendSMS?channel=Trans&DCS=0&flashsms=0&route=07&senderid=uLearn&user=technosoft_dev&password=Techno@8585&text="
 							+ encode + "&number="+amdMnum+"&dlt="+smsTemplateData.getBody().getStTempId())
 					.asJson();
-			//System.out.println(asJson);
-			org.json.JSONObject object = asJson.getBody().getObject();
-			String ErrorCode = object.getString("ErrorCode");
-
-			if (ErrorCode.equals("006")) {
-				throw new CustomException("Invalid Template Text!");
-			} else if (!ErrorCode.equals("000")) {
-				throw new CustomException("Failed to Sent SMS!");
-			}
+			System.out.println("okk_SMS");
 		}
 		catch(Exception e)
 		{
-			org.json.JSONObject jsonObject = new org.json.JSONObject(e.getMessage().substring(7));																		
-			if(!jsonObject.getString("messagee").equals("")) {										
-				throw new CustomException(jsonObject.getString("messagee"));
-			}
 			
 			throw new CustomException("SMS Service Is Not Running!");
 		}
 	}
+	//@Async("asyncExecutor")
 	public ResponseEntity<PackageGlobalTemplate> getSMSDetail(String token,String SMSAction)
 	{
 		HttpHeaders headers = new HttpHeaders();
@@ -185,13 +168,8 @@ public class CustomFunction {
 			return responseSMSTemp;
 		}
 		catch(Exception e)
-		{
-			org.json.JSONObject jsonObject = new org.json.JSONObject(e.getMessage().substring(7));																		
-			if(!jsonObject.getString("messagee").equals("")) {										
-				throw new CustomException(jsonObject.getString("messagee"));
-			}
-			
-			throw new CustomException("SMS Template Data Not Found");
+		{			
+			throw new CustomException("Communication Service Not Woring But Process has been Successfully Done");
 		}
 	}
 }

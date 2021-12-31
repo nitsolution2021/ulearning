@@ -34,6 +34,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -181,7 +182,6 @@ public class PackageService {
 				if (packageRepo.existsById(pkId)) {
 					PackageEntity packageData = packageRepo.getById(pkId);
 					InstituteEntity instituteEntity= instituteRepo.getById(packageData.getInstId());
-					//insttituteEntity.setPackageEntity((List<PackageEntity>) packageData);
 					DataResponseEntity dataResponseEntity=new DataResponseEntity();
 					dataResponseEntity.setInstituteData(instituteEntity);
 					dataResponseEntity.setPackageData(packageData);
@@ -213,7 +213,6 @@ public class PackageService {
 					& (fieldValidation.isEmpty(packageGlobalData.getPkCdate()))
 					& (fieldValidation.isEmpty(packageGlobalData.getPkValidityType()))) {
 				long defaultId=0;
-				//System.out.println(packageGlobalData);
 				PackageEntity newData=new PackageEntity();
 				newData.setPkFname(packageGlobalData.getPkFname());
 				newData.setPkName(packageGlobalData.getPkName());
@@ -243,24 +242,18 @@ public class PackageService {
 					}
 					if(licenseExixtense!=0)
 					{
-						//packageRepo.save(newData);
-						
 						List<PackageEntity> packData=packageRepo.instData(newData.getInstId()); 
-						//System.out.println(licenseExixtense);
 						int packageExixtense=0;
 						for(int i=0;i<packData.size();i++)
 						{
 							PackageEntity packageEntity=packData.get(i);
 							if(packageEntity.getInstId()==newData.getInstId())
 							{
-								//
 								packageExixtense++;
 								newData.setParentId(packageEntity.getPkId());
 							}
 							else
 							{
-								System.out.println("hi");
-								//newData.setPkType("NewPackage");
 								newData.setParentId(defaultId);
 							}
 						}
@@ -300,14 +293,12 @@ public class PackageService {
 						}
 						if(licenceValidityHours>=packageValidityHours)
 						{
-							//return new GlobalResponse("Success", "okk", 200);
 							newData.setPkStatus("Active");
 							newData.setCreatedOn(new Date());
 							newData.setIsActive(2);
 							newData.setIsDeleted(0);
 							packageRepo.save(newData);
 							List<PackageEntity> recentPackageEntity=packageRepo.recentData();
-							//System.out.println(recentPackageEntity);
 							PackageEntity newPackageEntity=recentPackageEntity.get(0);
 							PackageLogEntity packageLogData=new PackageLogEntity();
 							packageLogData.setPkId(newPackageEntity.getPkId());
@@ -323,39 +314,11 @@ public class PackageService {
 							headers.set("Authorization", token);
 							headers.setContentType(MediaType.APPLICATION_JSON);
 							HttpEntity request = new HttpEntity(headers);
-							try {
-								InstituteEntity instData=instituteRepo.getById(newPackageEntity.getInstId());
-								//System.out.println(instData.getInstituteAdmin().getAmdMnum());
-								ResponseEntity<PackageGlobalTemplate> responseEmailTemp=customFunction.getEmailDetails("Package_Create", token);
-								//System.out.println(responseEmailTemp.getBody().getStTempId());
-								//System.out.println();
-								customFunction.sentEmail(newPackageEntity, token, responseEmailTemp,packageLogData);
-							}
-							catch(Exception e)
-							{
-// 								org.json.JSONObject jsonObject = new org.json.JSONObject(e.getMessage().substring(7));																		
-// 								if(!jsonObject.getString("messagee").equals("")) {										
-// 									throw new CustomException(jsonObject.getString("messagee"));
-// 								}
-								
-								throw new CustomException("Email Service Is Not Running!");
-							}
-							try
-							{
-								ResponseEntity<PackageGlobalTemplate> responseSMSTemp=customFunction.getSMSDetail(token,"Package_Create");
-								customFunction.sentSMS(newPackageEntity, token, responseSMSTemp);
-								return new GlobalResponse("Success", "Package Added Succesfully", 200);
-							}
-							catch(Exception e)
-							{
-								org.json.JSONObject jsonObject = new org.json.JSONObject(e.getMessage().substring(7));																		
-								if(!jsonObject.getString("messagee").equals("")) {										
-									throw new CustomException(jsonObject.getString("messagee"));
-								}
-								
-								throw new CustomException("SMS Service Is Not Running!");
-							}
-							
+							ResponseEntity<PackageGlobalTemplate> responseEmailTemp=customFunction.getEmailDetails("Package_Create", token);
+							customFunction.sentEmail(newPackageEntity, token, responseEmailTemp,packageLogData,"Package_Create");
+							ResponseEntity<PackageGlobalTemplate> responseSMSTemp=customFunction.getSMSDetail(token,"Package_Create");
+							customFunction.sentSMS(newPackageEntity, token, responseSMSTemp);
+							return new GlobalResponse("Success", "Package Added Succesfully", 200);
 						}
 						else
 						{
@@ -402,9 +365,6 @@ public class PackageService {
 						}
 						List<LicenseEntity> licenseData=licenseRepo.findInst(updatePackagedata.getInstId());
 						int licenseExixtense=0;
-//						LicenseEntity licenseEntity=licenseData.get(0);
-//						System.out.println(licenseEntity);
-//						System.out.println(newData.getInstId());
 						LicenseEntity licenseEntity=new LicenseEntity();
 						for(int i=0;i<licenseData.size();i++)
 						{
@@ -412,7 +372,6 @@ public class PackageService {
 							
 							if(licenseEntity.getInstId()==updatePackagedata.getInstId())
 							{
-								//LicenseEntity licenseEntity1=
 								licenseExixtense++;
 							}
 						}
@@ -459,20 +418,14 @@ public class PackageService {
 						try
 						{
 							ResponseEntity<PackageGlobalTemplate> emailTemplateData=customFunction.getEmailDetails("Package_Update", token);
-							//System.out.println(emailTemplateData);
 							ResponseEntity<PackageGlobalTemplate> smsTemplateData=customFunction.getSMSDetail(token,"Package_Update");
-							//System.out.println();
-							System.out.println(updatePackagedata);
 							packageLogEntity.setPkId(pkId);
 							packageLogEntity.setPlAction("Update");
 							packageLogEntity.setPlAdate(new Date());
 							packageLogEntity.setPlComment("No Command");
 							packageLogEntity.setPlCreat(new Date());
 							packageLogEntity.setPlStatus("Active");
-							System.out.println(packageLogEntity);
-							customFunction.sentEmail(updatePackagedata, token, emailTemplateData, packageLogEntity);
-							System.out.println(instituteEntity.getInstituteAdmin().getAmdMnum());
-							System.out.println(instituteEntity.getInstituteAdmin().getAmdEmail());
+							customFunction.sentEmail(updatePackagedata, token, emailTemplateData, packageLogEntity,"Package_Update");
 							customFunction.sentSMS(updatePackagedata, token, smsTemplateData);
 							return new GlobalResponse("Success", "Package Update Successfully", 200);
 						}
@@ -480,8 +433,6 @@ public class PackageService {
 						{
 							throw new CustomException(e.getMessage());
 						}
-						
-						
 					}
 						else
 						{
@@ -535,7 +486,7 @@ public class PackageService {
 							ResponseEntity<PackageGlobalTemplate> emailTemplateData=customFunction.getEmailDetails("Package_Suspend", token);
 							ResponseEntity<PackageGlobalTemplate> smsTemplateData=customFunction.getSMSDetail(token,"Package_Suspend");
 							
-							customFunction.sentEmail(suspendedPackageData, token, emailTemplateData, logData);
+							customFunction.sentEmail(suspendedPackageData, token, emailTemplateData, logData,"Package_Suspend");
 							customFunction.sentSMS(suspendedPackageData, token, smsTemplateData);
 							return new GlobalResponse("Success", "Package Suspended Successfully", 200);
 						}
@@ -569,16 +520,15 @@ public class PackageService {
 		try
 		{
 			List<InstituteEntity> instData=instituteRepo.findAll();
-			ArrayList<InstituteEntity> instituteData=new ArrayList<>();
+			ArrayList<Long>instArrayList=new ArrayList<>();
 			for(int i=0;i<instData.size();i++)
 			{
-				if(licenseRepo.findInst(instData.get(i).getInstId())!=null)
-				{
-					
-					instituteData.add(instData.get(i));
-				}
+				
+				instArrayList.add(instData.get(i).getInstId());
 			}
-			return instituteData;
+			System.out.println(instArrayList);
+			return instData;
+			
 		}
 		catch(Exception e)
 		{
@@ -661,14 +611,13 @@ public class PackageService {
 					logData.setPlComment("Package Approved");
 					logData.setPlCreat(new Date());
 					logData.setPlStatus("Active");
+					logData.setPlUpdate(new Date());
 					packageLogRepo.save(logData);
-					//ResponseEntity<PackageGlobalTemplate> smsTemplateData=customFunction.getSMSDetail(token,"");
 					try
 					{
 						ResponseEntity<PackageGlobalTemplate> emailTemplateData=customFunction.getEmailDetails("Package_Approve", token);
 						ResponseEntity<PackageGlobalTemplate> smsTemplateData=customFunction.getSMSDetail(token,"Package_Approve");
-						System.out.println(smsTemplateData);
-						customFunction.sentEmail(packageDetail, token, emailTemplateData, logData);
+						customFunction.sentEmail(packageDetail, token, emailTemplateData, logData,"Package_Approve");
 						customFunction.sentSMS(packageDetail, token, smsTemplateData);
 						return new GlobalResponse("Success", "Package Approved Successfully", 200);
 					}
@@ -713,8 +662,7 @@ public class PackageService {
 					{
 						ResponseEntity<PackageGlobalTemplate> emailTemplateData=customFunction.getEmailDetails("Package_End", token);
 						ResponseEntity<PackageGlobalTemplate> smsTemplateData=customFunction.getSMSDetail(token,"Package_End");
-						System.out.println(smsTemplateData);
-						customFunction.sentEmail(packageEntity, token, emailTemplateData, logData);
+						customFunction.sentEmail(packageEntity, token, emailTemplateData, logData,"Package_End");
 						customFunction.sentSMS(packageEntity, token, smsTemplateData);
 						return new GlobalResponse("Success", "Package Ended Succesfully", 200);
 					}
@@ -759,9 +707,9 @@ public class PackageService {
 				{
 					ResponseEntity<PackageGlobalTemplate> emailTemplateData=customFunction.getEmailDetails("Package_Restore", token);
 					ResponseEntity<PackageGlobalTemplate> smsTemplateData=customFunction.getSMSDetail(token,"Package_Restore");
-					System.out.println(smsTemplateData);
-					customFunction.sentEmail(packageEntity, token, emailTemplateData, logData);
+					customFunction.sentEmail(packageEntity, token, emailTemplateData, logData,"Package_Restore");
 					customFunction.sentSMS(packageEntity, token, smsTemplateData);
+					//Thread.sleep(20000);
 					return new GlobalResponse("Success", "Package Restored Succesfully", 200);
 				}
 				catch(Exception e)
@@ -784,5 +732,4 @@ public class PackageService {
 			throw new CustomException(e.getMessage());
 		}
 	}
-	
 }

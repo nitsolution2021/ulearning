@@ -8,6 +8,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.ulearn.packageservice.config.YMLConfig;
 
@@ -17,6 +18,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @ComponentScan(basePackages= {"org.ulearn.packageservice.*"})
 @EnableSwagger2
 @EnableEurekaClient
+@EnableAsync
 public class PackageserviceApplication implements CommandLineRunner{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PackageserviceApplication.class);

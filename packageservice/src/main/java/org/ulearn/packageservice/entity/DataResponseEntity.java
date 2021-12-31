@@ -12,10 +12,13 @@ public class DataResponseEntity implements Serializable{
 
 	private PackageEntity packageData;
 	private InstituteEntity instituteData;
-	public DataResponseEntity(PackageEntity packageData, InstituteEntity instituteData) {
+	private PackageLogEntity packageLogEntity;
+	public DataResponseEntity(PackageEntity packageData, InstituteEntity instituteData,
+			PackageLogEntity packageLogEntity) {
 		super();
 		this.packageData = packageData;
 		this.instituteData = instituteData;
+		this.packageLogEntity = packageLogEntity;
 	}
 	public DataResponseEntity() {
 		super();
@@ -33,8 +36,16 @@ public class DataResponseEntity implements Serializable{
 	public void setInstituteData(InstituteEntity instituteData) {
 		this.instituteData = instituteData;
 	}
+	public PackageLogEntity getPackageLogEntity() {
+		return packageLogEntity;
+	}
+	public void setPackageLogEntity(PackageLogEntity packageLogEntity) {
+		this.packageLogEntity = packageLogEntity;
+	}
 	@Override
 	public String toString() {
-		return "DataResponseEntity [packageData=" + packageData + ", instituteData=" + instituteData + "]";
+		return "DataResponseEntity [packageData=" + packageData + ", instituteData=" + instituteData
+				+ ", packageLogEntity=" + packageLogEntity + "]";
 	}
+	
 }

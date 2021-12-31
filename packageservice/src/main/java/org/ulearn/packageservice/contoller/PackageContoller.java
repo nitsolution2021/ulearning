@@ -2,24 +2,11 @@ package org.ulearn.packageservice.contoller;
 
 import java.util.List;
 import java.util.Map;
-
-import static org.junit.Assert.assertThrows;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-
-import org.apache.tomcat.util.json.JSONParser;
-import org.hibernate.internal.build.AllowSysOut;
-import org.hibernate.type.descriptor.sql.TinyIntTypeDescriptor;
-import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.validation.Valid;
-import javax.ws.rs.Path;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +16,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.ulearn.packageservice.entity.GlobalResponse;
@@ -169,7 +155,7 @@ public class PackageContoller {
 		}
 	}
 	@PostMapping("/endPackage/{pkId}")
-	public GlobalResponse endPackage(@PathVariable long pkId,@RequestHeader("Authorization") String token,PackageLogEntity packageLogEntity)
+	public GlobalResponse endPackage(@PathVariable long pkId,@RequestHeader("Authorization") String token,@RequestBody PackageLogEntity packageLogEntity)
 	{
 		try
 		{
@@ -181,10 +167,11 @@ public class PackageContoller {
 		}
 	}
 	@PostMapping("/restorePackage/{pkId}")
-	public GlobalResponse restorePackage(@PathVariable long pkId,@RequestHeader("Authorization") String token,PackageLogEntity packageLogEntity)
+	public GlobalResponse restorePackage(@PathVariable long pkId,@RequestHeader("Authorization") String token, @RequestBody PackageLogEntity packageLogEntity)
 	{
 		try
 		{
+			System.out.println(packageLogEntity);
 			return this.packageService.restorePackage(pkId,token,packageLogEntity);
 		}
 		catch(Exception e)

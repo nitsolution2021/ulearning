@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 
 import java.util.Date;
 
@@ -24,7 +25,7 @@ public class PackageLogEntity {
 	@Column(name = "PL_ACTION")
 	private String plAction;
 	@Column(name = "PL_ADATE")
-	@JsonFormat(pattern = "yyyy/mm/dd")
+	@JsonFormat(shape = Shape.STRING,pattern = "yyyy/MM/dd")
 	private Date plAdate;
 	@Column(name = "PL_COMMENT")
 	private String plComment;

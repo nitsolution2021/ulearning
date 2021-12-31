@@ -55,8 +55,6 @@ spring:
     hibernate: 
       ddl-auto: none
       use-new-id-generator-mappings: false
-  jackson:
-    time-zone: Asia/Kolkata
 server: 
   port: 8089
   servlet: 
